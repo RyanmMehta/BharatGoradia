@@ -1,0 +1,31 @@
+{
+  "hero": {
+    "image": "/src/assets/hero/hero/image.svg",
+    "alt": "Placeholder for a portrait of Bharat Goradia",
+    "focalPoint": "50% 25%",
+    "placeholder": true
+  },
+  "introVideo": "",
+  "artistPhotos": [
+    "placeholder-photo-1",
+    "placeholder-photo-2",
+    "placeholder-photo-3",
+    "placeholder-photo-4",
+    "placeholder-photo-5",
+    "placeholder-photo-6"
+  ],
+  "featuredVideos": [
+    "placeholder-video-interview",
+    "placeholder-video-event",
+    "placeholder-video-greeting"
+  ],
+  "awards": [
+    "placeholder-award-1",
+    "placeholder-award-2"
+  ],
+  "testimonials": [
+    "placeholder-testimonial-1",
+    "placeholder-testimonial-2",
+    "placeholder-greeting-1"
+  ]
+}

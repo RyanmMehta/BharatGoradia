@@ -1,0 +1,10 @@
+{
+  "publication": "Publication to be confirmed",
+  "title": "Article title to be confirmed",
+  "date": "",
+  "url": "https://example.com/",
+  "summary": "Placeholder for a selected press item with an outbound link.",
+  "order": 10,
+  "status": "published",
+  "placeholder": true
+}

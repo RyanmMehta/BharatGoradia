@@ -1,0 +1,260 @@
+---
+import { LIMITS, type EnquiryInput, type FieldErrors } from '../lib/enquiry/validate.ts';
+import { settings } from '../lib/site';
+
+interface Props {
+  values?: Partial<EnquiryInput>;
+  errors?: FieldErrors;
+  formError?: string;
+}
+const { values = {}, errors = {}, formError } = Astro.props;
+const errorEntries = Object.entries(errors) as [keyof EnquiryInput, string][];
+const describedBy = (f: keyof EnquiryInput, hint?: boolean) =>
+  [hint && `${f}-hint`, `${f}-error`].filter(Boolean).join(' ');
+---
+
+<div class="enquiry" data-enquiry>
+  <form class="enquiry-form" method="post" action="/contact/send" novalidate data-enquiry-form>
+    <div class="error-summary" tabindex="-1" data-error-summary hidden={errorEntries.length === 0 && !formError} role="alert">
+      {
+        errorEntries.length > 0 && (
+          <>
+            <h3>Please check the form</h3>
+            <ul>
+              {errorEntries.map(([field, message]) => (
+                <li>
+                  <a href={`#enquiry-${field}`}>{message}</a>
+                </li>
+              ))}
+            </ul>
+          </>
+        )
+      }
+      {
+        formError && (
+          <>
+            <h3>Your message was not sent</h3>
+            <p>{formError}</p>
+            <p>
+              Email: <a href={`mailto:${settings.email}`}>{settings.email}</a>
+            </p>
+          </>
+        )
+      }
+    </div>
+
+    <p class="required-note">All fields are required except phone number.</p>
+
+    <div class:list={['field', errors.name && 'has-error']}>
+      <label for="enquiry-name">Your name</label>
+      <p class="field-error" id="name-error" data-error-for="name">{errors.name}</p>
+      <input
+        id="enquiry-name"
+        name="name"
+        type="text"
+        autocomplete="name"
+        required
+        value={values.name}
+        aria-invalid={errors.name ? 'true' : undefined}
+        aria-describedby={describedBy('name')}
+      />
+    </div>
+
+    <div class:list={['field', errors.email && 'has-error']}>
+      <label for="enquiry-email">Your email address</label>
+      <p class="field-hint" id="email-hint">So Bharat can reply to you.</p>
+      <p class="field-error" id="email-error" data-error-for="email">{errors.email}</p>
+      <input
+        id="enquiry-email"
+        name="email"
+        type="email"
+        autocomplete="email"
+        inputmode="email"
+        spellcheck="false"
+        required
+        value={values.email}
+        aria-invalid={errors.email ? 'true' : undefined}
+        aria-describedby={describedBy('email', true)}
+      />
+    </div>
+
+    <div class:list={['field', errors.phone && 'has-error']}>
+      <label for="enquiry-phone">Phone number <span class="optional">(optional)</span></label>
+      <p class="field-error" id="phone-error" data-error-for="phone">{errors.phone}</p>
+      <input
+        id="enquiry-phone"
+        name="phone"
+        type="tel"
+        autocomplete="tel"
+        value={values.phone}
+        aria-invalid={errors.phone ? 'true' : undefined}
+        aria-describedby={describedBy('phone')}
+      />
+    </div>
+
+    <div class:list={['field', errors.message && 'has-error']}>
+      <label for="enquiry-message">Your message</label>
+      <p class="field-hint" id="message-hint">
+        Tell Bharat about your event or question. Up to {LIMITS.message.toLocaleString('en-GB')} characters.
+      </p>
+      <p class="field-error" id="message-error" data-error-for="message">{errors.message}</p>
+      <textarea
+        id="enquiry-message"
+        name="message"
+        rows="7"
+        required
+        aria-invalid={errors.message ? 'true' : undefined}
+        aria-describedby={describedBy('message', true)}>{values.message}</textarea
+      >
+      <p class="char-count" aria-live="polite" data-char-count></p>
+    </div>
+
+    <div class="hp" aria-hidden="true">
+      <label for="enquiry-website">Leave this field empty</label>
+      <input id="enquiry-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+    </div>
+    <input type="hidden" name="requestId" value="" data-request-id />
+
+    <button class="button submit" type="submit" data-submit>Send message</button>
+    <p class="status" role="status" data-form-status></p>
+  </form>
+
+  <div class="success" tabindex="-1" data-success hidden>
+    <h3>Thank you. Your enquiry has been received.</h3>
+    <p>Bharat will reply to the email address you gave.</p>
+    <p>Your reference: <strong data-success-id></strong></p>
+  </div>
+</div>
+
+<script>
+  import { initEnquiryForm } from '../scripts/enquiry-form';
+  initEnquiryForm();
+</script>
+
+<style>
+  .enquiry {
+    max-width: 44rem;
+  }
+  .required-note {
+    color: var(--charcoal-soft);
+    font-size: var(--text-support);
+  }
+  .field {
+    margin-bottom: 1.75rem;
+  }
+  label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+  }
+  .optional {
+    font-weight: 400;
+    color: var(--charcoal-soft);
+  }
+  .field-hint {
+    margin: 0 0 0.5rem;
+    font-size: var(--text-support);
+    color: var(--charcoal-soft);
+  }
+  .field-error {
+    margin: 0 0 0.5rem;
+    font-weight: 700;
+    color: #9b1c1c;
+  }
+  .field-error:empty {
+    display: none;
+  }
+  .field-error:not(:empty)::before {
+    content: 'Error: ';
+  }
+  input,
+  textarea {
+    width: 100%;
+    min-height: 3.25rem;
+    padding: 0.75rem 0.9rem;
+    font: inherit;
+    color: var(--charcoal);
+    background: #fff;
+    border: 2px solid #7a7067;
+    border-radius: 8px;
+  }
+  textarea {
+    resize: vertical;
+    line-height: 1.5;
+  }
+  input:focus-visible,
+  textarea:focus-visible {
+    outline: var(--focus);
+    outline-offset: 2px;
+    border-color: var(--burgundy);
+  }
+  .has-error input,
+  .has-error textarea {
+    border-color: #9b1c1c;
+    border-width: 3px;
+  }
+  .has-error {
+    padding-left: 1rem;
+    border-left: 4px solid #9b1c1c;
+  }
+  .char-count {
+    margin: 0.4rem 0 0;
+    font-size: var(--text-support);
+    color: var(--charcoal-soft);
+  }
+  .char-count:empty {
+    display: none;
+  }
+  .hp {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .submit {
+    font-size: 1.25rem;
+    padding-inline: 2.25rem;
+  }
+  .status {
+    margin-top: 1rem;
+    font-weight: 600;
+  }
+  .status:empty {
+    display: none;
+  }
+  .error-summary {
+    margin-bottom: 2rem;
+    padding: 1.25rem 1.5rem;
+    border: 3px solid #9b1c1c;
+    border-radius: var(--radius);
+    background: #fff;
+  }
+  .error-summary h3 {
+    font-family: var(--font-body);
+    font-size: 1.375rem;
+    color: #9b1c1c;
+  }
+  .error-summary ul {
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+  .error-summary a {
+    color: #9b1c1c;
+    font-weight: 600;
+  }
+  .success {
+    padding: 1.75rem;
+    border: 2px solid var(--burgundy);
+    border-left-width: 6px;
+    border-radius: var(--radius);
+    background: #fff;
+  }
+  .success:focus {
+    outline: var(--focus);
+    outline-offset: 3px;
+  }
+  .success h3 {
+    color: var(--burgundy);
+  }
+</style>

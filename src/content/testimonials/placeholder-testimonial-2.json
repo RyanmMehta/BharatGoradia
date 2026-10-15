@@ -1,0 +1,15 @@
+{
+  "kind": "testimonial",
+  "quote": "Placeholder for an exact, approved quote from an organiser or collaborator describing working with Bharat.",
+  "speaker": "Name to be confirmed",
+  "role": "Role to be confirmed",
+  "organization": "Organisation to be confirmed",
+  "approval": {
+    "approved": false,
+    "date": "",
+    "record": ""
+  },
+  "order": 20,
+  "status": "published",
+  "placeholder": true
+}

@@ -1,0 +1,117 @@
+---
+import { Image } from 'astro:assets';
+import { heroImage, homepage, isPrototype, settings, unconfirmed } from '../lib/site';
+const image = heroImage();
+const showTag = (k: string) => isPrototype && unconfirmed(k);
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="container hero-grid">
+    <div class="hero-text enter">
+      {settings.businessName && <p class="eyebrow">{settings.businessName}</p>}
+      <h1 id="hero-title">{settings.personName}</h1>
+      <p class="hero-descriptor">
+        {settings.descriptor}
+        {showTag('descriptor') && <span class="placeholder-tag">Draft wording</span>}
+      </p>
+      <p class="hero-intro">
+        {settings.introduction}
+        {showTag('introduction') && <span class="placeholder-tag">Draft wording</span>}
+      </p>
+      <div class="hero-actions">
+        <a class="button" href="/contact" data-track="contact_cta_click" data-track-id="hero">Contact Bharat</a>
+        {homepage.introVideo && <a class="button button-secondary" href="#videos">Watch an introduction</a>}
+      </div>
+    </div>
+    {
+      image && (
+        <div class="hero-photo enter enter-delay">
+          <Image
+            src={image}
+            alt={homepage.hero.alt}
+            widths={[480, 720, 960, 1200]}
+            sizes="(min-width: 56rem) 34rem, 100vw"
+            loading="eager"
+            fetchpriority="high"
+            style={`object-position: ${homepage.hero.focalPoint}`}
+          />
+          {homepage.hero.placeholder && isPrototype && <span class="placeholder-tag hero-tag">Placeholder</span>}
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-block: clamp(1.5rem, 1rem + 3vw, 4.5rem) clamp(3rem, 2rem + 4vw, 6rem);
+  }
+  .hero-grid {
+    display: grid;
+    gap: clamp(2rem, 1rem + 3vw, 4rem);
+    align-items: center;
+  }
+  @media (min-width: 56rem) {
+    .hero-grid {
+      grid-template-columns: 1.1fr 0.9fr;
+    }
+  }
+  .hero-text h1 {
+    margin-bottom: 0.3em;
+  }
+  .hero-descriptor {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 1.25rem + 1vw, 2.125rem);
+    line-height: 1.25;
+    color: var(--burgundy);
+    font-weight: 600;
+    margin-bottom: 0.75em;
+  }
+  .hero-intro {
+    font-size: clamp(1.25rem, 1.15rem + 0.4vw, 1.4375rem);
+    color: var(--charcoal-soft);
+    max-width: 34em;
+  }
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.75rem;
+  }
+  .hero-actions .button {
+    font-size: clamp(1.25rem, 1.2rem + 0.2vw, 1.375rem);
+    padding-inline: 2rem;
+  }
+  .hero-photo {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    max-height: 80vh;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    background: var(--ivory-deep);
+  }
+  .hero-photo::after {
+    content: '';
+    position: absolute;
+    inset: 0.75rem;
+    border: 1px solid rgb(169 132 69 / 0.55);
+    border-radius: calc(var(--radius) - 4px);
+    pointer-events: none;
+  }
+  .hero-photo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .hero-tag {
+    position: absolute;
+    top: 1.25rem;
+    left: 1.25rem;
+  }
+  @media (max-width: 55.99rem) {
+    .hero-photo {
+      max-width: 30rem;
+    }
+  }
+</style>

@@ -1,0 +1,114 @@
+---
+import '@fontsource-variable/source-sans-3/wght.css';
+import '@fontsource-variable/source-serif-4/wght.css';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { isPrototype, settings } from '../lib/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Extra JSON-LD for the page; must reflect verified, visible information only. */
+  structuredData?: object;
+}
+
+const { title, description = settings.seo.description || settings.introduction, structuredData } = Astro.props;
+const fullTitle = title ? `${title} | ${settings.personName}` : `${settings.personName} | ${settings.descriptor}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL('/og-default.png', Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {isPrototype && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="theme-color" content="#faf7f0" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    {
+      structuredData && !isPrototype && (
+        <script type="application/ld+json" is:inline set:html={JSON.stringify(structuredData)} />
+      )
+    }
+    <script is:inline>
+      // Progressive enhancement flags. Motion is opt-in: no reduced-motion preference,
+      // no data-saver, and a browser that can run the reveal script. If that script has not
+      // reported in after 2.5s, the flag is removed so no image stays hidden.
+      (function () {
+        var root = document.documentElement;
+        root.classList.add('js');
+        var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var saveData = navigator.connection && navigator.connection.saveData;
+        if ('IntersectionObserver' in window && !reduce && !saveData) {
+          root.classList.add('motion-ok');
+          setTimeout(function () {
+            if (!window.__revealReady) root.classList.remove('motion-ok');
+          }, 2500);
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+    {
+      isPrototype && (
+        <aside class="prototype-banner" aria-label="Prototype notice">
+          <div class="container">
+            <strong>Prototype preview.</strong> Items marked <span class="placeholder-tag">Placeholder</span> are
+            stand-ins awaiting approved content. This page is hidden from search engines.
+          </div>
+        </aside>
+      )
+    }
+    <Header />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      import { initClickTracking } from '../scripts/analytics';
+      import { initReveal } from '../scripts/reveal';
+      initClickTracking();
+      initReveal();
+    </script>
+  </body>
+</html>
+
+<style>
+  .skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -10rem;
+    z-index: 100;
+    padding: 0.75rem 1.25rem;
+    background: var(--charcoal);
+    color: #fff;
+    font-weight: 600;
+    border-radius: 6px;
+  }
+  .skip-link:focus {
+    top: 1rem;
+  }
+  main:focus {
+    outline: none;
+  }
+  .prototype-banner {
+    background: var(--placeholder-bg);
+    color: var(--placeholder-ink);
+    border-bottom: 1px solid #e7d48a;
+    padding-block: 0.6rem;
+    font-size: var(--text-support);
+  }
+</style>

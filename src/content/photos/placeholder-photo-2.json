@@ -1,0 +1,21 @@
+{
+  "title": "Placeholder photograph 2",
+  "caption": "Placeholder caption: names of the people pictured, the event, and Bharat's confirmed role.",
+  "alt": "Placeholder image 2",
+  "people": [
+    "Artist name to be confirmed",
+    "Bharat Goradia"
+  ],
+  "event": "Event name to be confirmed",
+  "bharatRole": "",
+  "date": "",
+  "image": "../../assets/photos/placeholder-photo-2/image.svg",
+  "focalPoint": "50% 30%",
+  "sourceUrl": "",
+  "attribution": "",
+  "rights": "approved",
+  "evidence": "",
+  "order": 20,
+  "status": "published",
+  "placeholder": true
+}

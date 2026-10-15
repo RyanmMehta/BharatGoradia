@@ -1,0 +1,198 @@
+---
+import { isPrototype, settings, unconfirmed } from '../lib/site';
+
+interface Props {
+  /** "large" stacked actions for the contact page and homepage; "compact" list for the footer. */
+  variant?: 'large' | 'compact';
+  /** Context for analytics, e.g. "contact-page", "home", "footer". */
+  location: string;
+}
+const { variant = 'large', location } = Astro.props;
+const showTag = (key: string) => isPrototype && unconfirmed(key);
+const phone = settings.phone.show && settings.phone.tel ? settings.phone : null;
+---
+
+<ul class:list={['contact-actions', `contact-${variant}`]} data-contact-actions>
+  <li class="contact-item">
+    <span class="contact-label">
+      Email {showTag('email') && <span class="placeholder-tag">Placeholder</span>}
+    </span>
+    <span class="contact-value" data-email-text>{settings.email}</span>
+    <span class="contact-buttons">
+      <a
+        class="button"
+        href={`mailto:${settings.email}`}
+        data-track="contact_email_click"
+        data-track-id={location}>Email Bharat</a
+      >
+      <button type="button" class="button button-secondary" data-copy-email hidden>Copy email address</button>
+    </span>
+    <span class="copy-status" role="status" data-copy-status></span>
+  </li>
+  <li class="contact-item">
+    <span class="contact-label">
+      Instagram {showTag('instagram') && <span class="placeholder-tag">Placeholder</span>}
+    </span>
+    <span class="contact-value">{settings.instagram.handle}</span>
+    <span class="contact-buttons">
+      <a
+        class="button button-secondary"
+        href={settings.instagram.url}
+        data-track="social_click"
+        data-track-id={`instagram:${location}`}>Open Instagram</a
+      >
+    </span>
+  </li>
+  <li class="contact-item">
+    <span class="contact-label">
+      Facebook {showTag('facebook') && <span class="placeholder-tag">Placeholder</span>}
+    </span>
+    <span class="contact-value">{settings.facebook.name}</span>
+    <span class="contact-buttons">
+      <a
+        class="button button-secondary"
+        href={settings.facebook.url}
+        data-track="social_click"
+        data-track-id={`facebook:${location}`}>Open Facebook</a
+      >
+    </span>
+  </li>
+  {
+    phone && (
+      <li class="contact-item">
+        <span class="contact-label">Telephone</span>
+        <span class="contact-value">{phone.display}</span>
+        <span class="contact-buttons">
+          <a class="button button-secondary" href={`tel:${phone.tel}`} data-track="phone_click" data-track-id={location}>
+            Call Bharat
+          </a>
+        </span>
+      </li>
+    )
+  }
+</ul>
+
+<script>
+  import { track } from '../scripts/analytics';
+
+  // Copy email: progressive enhancement. The address stays visible and selectable either way.
+  document.querySelectorAll<HTMLElement>('[data-contact-actions]').forEach((list) => {
+    const button = list.querySelector<HTMLButtonElement>('[data-copy-email]');
+    const status = list.querySelector<HTMLElement>('[data-copy-status]');
+    const text = list.querySelector<HTMLElement>('[data-email-text]');
+    if (!button || !status || !text || !navigator.clipboard) return;
+    button.hidden = false;
+    button.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(text.textContent?.trim() ?? '');
+        status.textContent = 'Email address copied.';
+        track('contact_email_copy');
+      } catch {
+        status.textContent = 'Could not copy automatically. Please select the email address above and copy it.';
+        const range = document.createRange();
+        range.selectNodeContents(text);
+        const sel = getSelection();
+        sel?.removeAllRanges();
+        sel?.addRange(range);
+      }
+    });
+  });
+</script>
+
+<style>
+  .contact-actions {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .contact-large .contact-item {
+    display: grid;
+    gap: 0.35rem 1.5rem;
+    padding: clamp(1.25rem, 1rem + 1vw, 1.75rem);
+    background: #fff;
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--gold);
+    border-radius: var(--radius);
+  }
+
+  .contact-label {
+    font-size: var(--text-support);
+    font-weight: 600;
+    color: var(--charcoal-soft);
+  }
+
+  .contact-value {
+    font-size: clamp(1.375rem, 1.2rem + 0.8vw, 1.75rem);
+    font-weight: 600;
+    color: var(--charcoal);
+    overflow-wrap: anywhere;
+    user-select: all;
+    -webkit-user-select: all;
+  }
+
+  .contact-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  .copy-status:empty {
+    display: none;
+  }
+
+  .copy-status {
+    font-size: var(--text-support);
+    font-weight: 600;
+    color: var(--burgundy);
+  }
+
+  @media (min-width: 48rem) {
+    .contact-large .contact-item {
+      grid-template-columns: 1fr auto;
+      align-items: center;
+    }
+    .contact-large .contact-label,
+    .contact-large .contact-value {
+      grid-column: 1;
+    }
+    .contact-large .contact-buttons {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+      margin: 0;
+      justify-content: flex-end;
+    }
+    .contact-large .copy-status {
+      grid-column: 1 / -1;
+    }
+  }
+
+  /* Compact footer variant on the dark footer */
+  .contact-compact {
+    gap: 1.25rem;
+  }
+  .contact-compact .contact-item {
+    display: grid;
+    gap: 0.15rem;
+  }
+  .contact-compact .contact-label {
+    color: var(--on-night-soft);
+  }
+  .contact-compact .contact-value {
+    font-size: var(--text-body);
+    color: var(--on-night);
+  }
+  .contact-compact .contact-buttons {
+    margin-top: 0.35rem;
+  }
+  .contact-compact .button {
+    padding: 0.6rem 1.1rem;
+    font-size: var(--text-support);
+  }
+  .contact-compact .copy-status {
+    color: var(--gold-light);
+  }
+</style>

@@ -1,0 +1,63 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { formatPartialDate } from '../lib/site';
+
+interface Props {
+  entry: CollectionEntry<'photos'>;
+  headingLevel?: 'h2' | 'h3' | 'h4';
+  class?: string;
+}
+const { entry, headingLevel = 'h3', class: className } = Astro.props;
+const { data } = entry;
+const isPortrait = data.image.height > data.image.width;
+const Heading = headingLevel;
+const meta = [data.event, formatPartialDate(data.date)].filter(Boolean).join(' · ');
+---
+
+<figure class:list={['photo-card', className]}>
+  <div class:list={['frame', 'reveal', isPortrait ? 'frame-portrait' : 'frame-landscape']}>
+    <Image
+      src={data.image}
+      alt={data.alt}
+      widths={[480, 720, 960, 1280]}
+      sizes="(min-width: 64rem) 22rem, (min-width: 40rem) 45vw, 100vw"
+      loading="lazy"
+      decoding="async"
+      style={`object-position: ${data.focalPoint}`}
+    />
+  </div>
+  <figcaption>
+    {data.placeholder && <span class="placeholder-tag">Placeholder</span>}
+    {data.people.length > 0 && <Heading class="photo-people">{data.people.join(', ')}</Heading>}
+    <p class="photo-caption">{data.caption}</p>
+    {meta && <p class="photo-meta">{meta}</p>}
+    {data.bharatRole && <p class="photo-meta">Bharat's role: {data.bharatRole}</p>}
+    {data.attribution && <p class="photo-credit">Photo: {data.attribution}</p>}
+  </figcaption>
+</figure>
+
+<style>
+  .photo-card {
+    margin: 0;
+  }
+  figcaption {
+    padding-top: 0.9rem;
+  }
+  .photo-people {
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    font-weight: 700;
+    line-height: 1.35;
+    margin: 0 0 0.25rem;
+  }
+  .photo-caption {
+    margin: 0 0 0.35rem;
+  }
+  .photo-meta,
+  .photo-credit {
+    margin: 0;
+    font-size: var(--text-support);
+    color: var(--charcoal-soft);
+  }
+</style>

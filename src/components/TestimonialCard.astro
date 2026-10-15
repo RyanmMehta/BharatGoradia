@@ -1,0 +1,81 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  entry: CollectionEntry<'testimonials'>;
+}
+const { entry } = Astro.props;
+const { data } = entry;
+const attribution = [data.role, data.organization].filter(Boolean).join(', ');
+---
+
+<figure class:list={['testimonial', data.kind === 'greeting' && 'is-greeting']}>
+  <p class="testimonial-kind">
+    {data.placeholder && <span class="placeholder-tag">Placeholder</span>}
+    {data.kind === 'greeting' ? 'Greeting' : 'Testimonial'}
+  </p>
+  <blockquote>
+    <p>{data.quote}</p>
+  </blockquote>
+  <figcaption>
+    {data.photo && <Image src={data.photo} alt="" width={64} height={64} class="speaker-photo" loading="lazy" />}
+    <span>
+      <span class="speaker">{data.speaker}</span>
+      {attribution && <span class="speaker-role">{attribution}</span>}
+    </span>
+  </figcaption>
+</figure>
+
+<style>
+  .testimonial {
+    margin: 0;
+    padding: clamp(1.5rem, 1rem + 1.5vw, 2.25rem);
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+  }
+  .testimonial-kind {
+    font-size: var(--text-support);
+    font-weight: 600;
+    color: var(--burgundy);
+    margin-bottom: 0.75rem;
+  }
+  .is-greeting {
+    background: var(--ivory);
+    border-style: dashed;
+  }
+  blockquote {
+    margin: 0 0 1.25rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 1.15rem + 0.4vw, 1.4375rem);
+    line-height: 1.5;
+    position: relative;
+    padding-left: 1.25rem;
+    border-left: 3px solid var(--gold);
+  }
+  blockquote p {
+    margin: 0;
+  }
+  figcaption {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    margin-top: auto;
+  }
+  .speaker {
+    display: block;
+    font-weight: 700;
+  }
+  .speaker-role {
+    display: block;
+    font-size: var(--text-support);
+    color: var(--charcoal-soft);
+  }
+  .speaker-photo {
+    border-radius: 50%;
+    object-fit: cover;
+  }
+</style>

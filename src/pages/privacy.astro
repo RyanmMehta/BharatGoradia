@@ -1,0 +1,63 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { isPrototype, settings } from '../lib/site';
+const retentionDays = 90;
+---
+
+<BaseLayout title="Privacy" description="How this website handles enquiries, videos and visitor information.">
+  <section class="section">
+    <div class="container prose">
+      <h1>Privacy</h1>
+      {
+        isPrototype && (
+          <p>
+            <span class="placeholder-tag">Draft wording</span> This text describes how the site is currently built. It needs owner and
+            legal review before launch, and must be updated if the email or analytics providers change.
+          </p>
+        )
+      }
+
+      <h2>Enquiries you send</h2>
+      <p>
+        If you use the enquiry form, we receive your name, email address, optional phone number and message. We use them only to reply
+        to your enquiry. They are stored securely on the website's server and kept for {retentionDays} days, then deleted. A copy is
+        sent by email to {settings.personName} so he can reply. These details never appear in web addresses or in website statistics.
+      </p>
+      <p>If you email Bharat directly instead, your email is handled by his email provider like any other email.</p>
+
+      <h2>Videos</h2>
+      <p>
+        Videos hosted on YouTube are not loaded until you press Play. When you do, the video is played by YouTube (Google) using its
+        privacy-enhanced mode, and YouTube receives information such as your IP address and device details under its own privacy
+        policy.
+      </p>
+
+      <h2>Instagram and Facebook links</h2>
+      <p>
+        Links to Instagram and Facebook take you to those websites, which have their own privacy policies. This website does not load
+        Instagram or Facebook content on its pages.
+      </p>
+
+      <h2>Website statistics</h2>
+      <p>
+        This website does not use advertising trackers. If visitor statistics are added, they will count actions such as pressing a
+        contact link or playing a video, and will not include your name, email address or message.
+      </p>
+
+      <h2>Questions</h2>
+      <p>
+        To ask about your information or request that an enquiry be deleted, email <a href={`mailto:${settings.email}`}>{settings.email}</a>.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .prose {
+    max-width: 46rem;
+  }
+  h2 {
+    font-size: var(--h3);
+    margin-top: 2.25rem;
+  }
+</style>

@@ -1,0 +1,386 @@
+/* Visual system — PRD §11. Proposed tokens, pending design validation. */
+:root {
+  --ivory: #faf7f0;
+  --ivory-deep: #f2ecdf;
+  --charcoal: #202020;
+  --charcoal-soft: #4a4540; /* 8.9:1 on ivory */
+  --burgundy: #6e2032; /* 11.5:1 on ivory */
+  --burgundy-dark: #561827;
+  --gold: #a98445; /* decorative only on ivory (3.3:1) */
+  --gold-light: #d9b878; /* 9.6:1 on near-black, used for text in dark sections */
+  --night: #171717;
+  --night-raised: #232121;
+  --on-night: #f5f1e8;
+  --on-night-soft: #d7d0c3;
+  --line: #ddd3c2;
+  --placeholder-bg: #fff3c4;
+  --placeholder-ink: #5a4300;
+
+  --font-body: 'Source Sans 3 Variable', 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Source Serif 4 Variable', 'Source Serif 4', Georgia, 'Times New Roman', serif;
+
+  /* Body ~20px mobile → 21px desktop; supporting text 18px. rem-based so browser text size is respected. */
+  --text-body: clamp(1.25rem, 1.2rem + 0.2vw, 1.3125rem);
+  --text-support: 1.125rem;
+  --text-small: 1rem;
+  --h1: clamp(2.25rem, 1.6rem + 2.8vw, 4rem);
+  --h2: clamp(2rem, 1.6rem + 1.6vw, 3rem);
+  --h3: clamp(1.375rem, 1.25rem + 0.5vw, 1.625rem);
+
+  --measure: 65ch;
+  --gutter: clamp(1rem, 0.5rem + 2.5vw, 2.5rem);
+  --section-space: clamp(3.5rem, 2.5rem + 4vw, 6.5rem);
+  --radius: 10px;
+  --target: 48px;
+  --shadow: 0 1px 2px rgb(32 32 32 / 0.06), 0 6px 20px rgb(32 32 32 / 0.06);
+  --focus: 3px solid var(--burgundy);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: 6rem;
+}
+
+body {
+  margin: 0;
+  background: var(--ivory);
+  color: var(--charcoal);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: 1.6;
+  font-weight: 400;
+  overflow-wrap: break-word;
+}
+
+img,
+video,
+iframe {
+  display: block;
+  max-width: 100%;
+}
+
+img {
+  height: auto;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.5em;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--h1);
+}
+h2 {
+  font-size: var(--h2);
+}
+h3 {
+  font-size: var(--h3);
+  line-height: 1.25;
+}
+
+p {
+  margin: 0 0 1em;
+  max-width: var(--measure);
+}
+
+a {
+  color: var(--burgundy);
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.18em;
+}
+
+a:hover {
+  color: var(--burgundy-dark);
+  text-decoration-thickness: 0.14em;
+}
+
+:focus-visible {
+  outline: var(--focus);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.section-dark :focus-visible {
+  outline-color: var(--gold-light);
+}
+
+/* ---------- Layout ---------- */
+
+.container {
+  width: min(100% - 2 * var(--gutter), 72rem);
+  margin-inline: auto;
+}
+
+.section {
+  padding-block: var(--section-space);
+}
+
+.section + .section:not(.section-dark, .section-tint) {
+  border-top: 1px solid var(--line);
+}
+
+.section-tint {
+  background: var(--ivory-deep);
+}
+
+.section-dark {
+  background: var(--night);
+  color: var(--on-night);
+}
+
+.section-dark a {
+  color: var(--gold-light);
+}
+
+.section-head {
+  margin-bottom: clamp(1.75rem, 1rem + 2vw, 2.75rem);
+}
+
+.section-head p {
+  font-size: var(--text-body);
+  color: var(--charcoal-soft);
+}
+
+.section-dark .section-head p {
+  color: var(--on-night-soft);
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: var(--text-support);
+  font-weight: 600;
+  color: var(--burgundy);
+  margin-bottom: 0.75rem;
+}
+
+.eyebrow::before {
+  content: '';
+  width: 2.25rem;
+  height: 2px;
+  background: var(--gold);
+}
+
+.section-dark .eyebrow {
+  color: var(--gold-light);
+}
+
+.grid {
+  display: grid;
+  gap: clamp(1.25rem, 0.75rem + 1.5vw, 2rem);
+}
+
+@media (min-width: 40rem) {
+  .grid-2,
+  .grid-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 64rem) {
+  .grid-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.stack > * + * {
+  margin-top: 1.25rem;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Buttons ---------- */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: var(--target);
+  min-width: var(--target);
+  padding: 0.75rem 1.5rem;
+  border: 2px solid var(--burgundy);
+  border-radius: 999px;
+  background: var(--burgundy);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease;
+}
+
+.button:hover {
+  background: var(--burgundy-dark);
+  border-color: var(--burgundy-dark);
+  color: #fff;
+}
+
+.button-secondary {
+  background: transparent;
+  color: var(--burgundy);
+}
+
+.button-secondary:hover {
+  background: var(--burgundy);
+  color: #fff;
+}
+
+.section-dark .button-secondary {
+  border-color: var(--gold-light);
+  color: var(--on-night);
+}
+
+.section-dark .button-secondary:hover {
+  background: var(--gold-light);
+  color: var(--night);
+}
+
+.button[disabled],
+.button[aria-disabled='true'] {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.text-link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: var(--target);
+  font-weight: 600;
+}
+
+/* ---------- Placeholder labelling (prototype builds only) ---------- */
+
+.placeholder-tag {
+  display: inline-block;
+  padding: 0.1rem 0.55rem;
+  margin: 0 0.35rem 0.35rem 0;
+  border: 1px dashed var(--placeholder-ink);
+  border-radius: 4px;
+  background: var(--placeholder-bg);
+  color: var(--placeholder-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-small);
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0;
+  vertical-align: middle;
+}
+
+/* ---------- Media ---------- */
+
+.frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--ivory-deep);
+}
+
+.frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.frame-landscape {
+  aspect-ratio: 3 / 2;
+}
+
+/* Portrait photos keep their shape inside a consistent landscape-ish cell rather than being face-cropped. */
+.frame-portrait {
+  aspect-ratio: 3 / 2;
+}
+
+.frame-portrait img {
+  object-fit: contain;
+}
+
+/* ---------- Motion — PRD §12 ---------- */
+
+/* Hero entrance: one short transition, no more than 12px of movement. Pure CSS: no script dependency. */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.enter {
+  animation: rise-in 400ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.enter-delay {
+  animation-delay: 120ms;
+}
+
+/* Section entry for images only. Text is never hidden. The hidden state only applies once the
+   inline head script has confirmed the reveal script can run, and a timer there removes it if
+   the script fails, so nothing is stranded invisible. */
+.motion-ok .reveal:not(.is-visible) {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.motion-ok .reveal {
+  transition:
+    opacity 300ms ease,
+    transform 300ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Primary buttons on dark surfaces use the light gold so they stand out against near-black. */
+.section-dark .button:not(.button-secondary) {
+  background: var(--gold-light);
+  border-color: var(--gold-light);
+  color: var(--night);
+}
+
+.section-dark .button:not(.button-secondary):hover {
+  background: #ecd5a3;
+  border-color: #ecd5a3;
+  color: var(--night);
+}

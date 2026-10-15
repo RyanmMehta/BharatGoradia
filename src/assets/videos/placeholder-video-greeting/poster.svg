@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1600" viewBox="0 0 900 1600">
+<rect width="900" height="1600" fill="#2a2626"/>
+<circle cx="450" cy="638" r="99" fill="#4a4242"/>
+<path d="M252 926 a198 162 0 0 1 396 0 z" fill="#4a4242"/>
+<text x="450" y="1034" text-anchor="middle" font-family="system-ui, sans-serif" font-size="45" fill="#d8cfc0">Placeholder video cover</text>
+</svg>

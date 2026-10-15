@@ -1,0 +1,23 @@
+{
+  "videoType": "event",
+  "title": "Event highlight (placeholder)",
+  "description": "Highlights from a cultural celebration, with the artists and organisers named.",
+  "people": [],
+  "event": "",
+  "date": "",
+  "poster": "../../assets/videos/placeholder-video-event/poster.svg",
+  "provider": "link",
+  "youtubeId": "",
+  "fileUrl": "",
+  "captionsUrl": "",
+  "duration": "1:45",
+  "orientation": "landscape",
+  "sourceUrl": "",
+  "sourceLabel": "",
+  "attribution": "",
+  "rights": "approved",
+  "evidence": "",
+  "order": 20,
+  "status": "published",
+  "placeholder": true
+}

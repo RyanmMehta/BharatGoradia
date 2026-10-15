@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AwardCard from '../components/AwardCard.astro';
+import { formatPartialDate, publicCollection } from '../lib/site';
+
+const [awards, press] = await Promise.all([publicCollection('awards'), publicCollection('press')]);
+---
+
+<BaseLayout title="Recognition" description="Awards, honours and selected press coverage for Bharat Goradia.">
+  <section class="section recognition-top" aria-labelledby="awards-title">
+    <div class="container narrow">
+      <p class="eyebrow">Recognition</p>
+      <h1>Recognition</h1>
+      <p class="lead">Awards and honours Bharat has received, followed by selected press coverage.</p>
+
+      <h2 id="awards-title">Awards and honours</h2>
+      {
+        awards.length ? (
+          <div class="award-list">
+            {awards.map((entry) => (
+              <AwardCard entry={entry} detailed headingLevel="h3" />
+            ))}
+          </div>
+        ) : (
+          <p>Details of awards and honours will be added soon.</p>
+        )
+      }
+    </div>
+  </section>
+
+  {
+    press.length > 0 && (
+      <section class="section section-tint" aria-labelledby="press-title">
+        <div class="container narrow">
+          <h2 id="press-title">Selected press</h2>
+          <ul class="press-list">
+            {press.map(({ data }) => (
+              <li class="press-item">
+                {data.placeholder && <span class="placeholder-tag">Placeholder</span>}
+                <p class="press-meta">{[data.publication, formatPartialDate(data.date)].filter(Boolean).join(' · ')}</p>
+                <h3>
+                  <a href={data.url} data-track="press_click">{data.title}</a>
+                </h3>
+                {data.summary && <p>{data.summary}</p>}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+</BaseLayout>
+
+<style>
+  .narrow {
+    max-width: 60rem;
+  }
+  .recognition-top {
+    padding-top: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+  }
+  .lead {
+    font-size: clamp(1.25rem, 1.15rem + 0.4vw, 1.4375rem);
+    color: var(--charcoal-soft);
+    margin-bottom: 2.5rem;
+  }
+  .award-list {
+    display: grid;
+    gap: 1.75rem;
+  }
+  .press-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.25rem;
+  }
+  .press-item {
+    padding: 1.25rem 1.5rem;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+  .press-meta {
+    margin: 0 0 0.25rem;
+    font-size: var(--text-support);
+    color: var(--charcoal-soft);
+    font-weight: 600;
+  }
+  .press-item p:last-child {
+    margin-bottom: 0;
+  }
+</style>

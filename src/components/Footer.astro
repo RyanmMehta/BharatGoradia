@@ -1,0 +1,86 @@
+---
+import ContactActions from './ContactActions.astro';
+import { navItems, settings } from '../lib/site';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer section-dark">
+  <div class="container footer-grid">
+    <div>
+      <p class="footer-name">{settings.personName}</p>
+      {settings.businessName && <p class="footer-sub">{settings.businessName}</p>}
+      <p class="footer-sub">{settings.descriptor}</p>
+    </div>
+    <div>
+      <h2 class="footer-heading">Contact Bharat</h2>
+      <ContactActions variant="compact" location="footer" />
+    </div>
+    <nav aria-label="Footer">
+      <h2 class="footer-heading">Pages</h2>
+      <ul class="footer-links">
+        {navItems.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+        <li><a href="/contact">Contact Bharat</a></li>
+        <li><a href="/privacy">Privacy</a></li>
+      </ul>
+    </nav>
+  </div>
+  <div class="container footer-base">
+    {settings.footerNote && <p>{settings.footerNote}</p>}
+    <p>© {year} {settings.personName}</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding-block: clamp(3rem, 2rem + 3vw, 4.5rem) 2rem;
+  }
+  .footer-grid {
+    display: grid;
+    gap: 2.5rem;
+  }
+  @media (min-width: 56rem) {
+    .footer-grid {
+      grid-template-columns: 1fr 1.3fr 0.8fr;
+    }
+  }
+  .footer-name {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+  .footer-sub {
+    color: var(--on-night-soft);
+    margin: 0;
+    font-size: var(--text-support);
+  }
+  .footer-heading {
+    font-family: var(--font-body);
+    font-size: var(--text-support);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--gold-light);
+    margin-bottom: 1rem;
+  }
+  .footer-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .footer-links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target);
+    color: var(--on-night);
+  }
+  .footer-base {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #3a3636;
+    color: var(--on-night-soft);
+    font-size: var(--text-support);
+  }
+  .footer-base p {
+    margin: 0 0 0.25rem;
+  }
+</style>

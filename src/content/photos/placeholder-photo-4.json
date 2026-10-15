@@ -1,0 +1,20 @@
+{
+  "title": "Placeholder photograph 4",
+  "caption": "Placeholder caption: names of the people pictured, the event, and Bharat's confirmed role.",
+  "alt": "Placeholder image 4",
+  "people": [
+    "Artist names to be confirmed"
+  ],
+  "event": "Event name to be confirmed",
+  "bharatRole": "",
+  "date": "",
+  "image": "../../assets/photos/placeholder-photo-4/image.svg",
+  "focalPoint": "50% 30%",
+  "sourceUrl": "",
+  "attribution": "",
+  "rights": "approved",
+  "evidence": "",
+  "order": 40,
+  "status": "published",
+  "placeholder": true
+}

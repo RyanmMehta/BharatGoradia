@@ -1,0 +1,23 @@
+{
+  "videoType": "interview",
+  "title": "Introduction and interview (placeholder)",
+  "description": "A short introduction in Bharat's own words about the events he supports.",
+  "people": [],
+  "event": "",
+  "date": "",
+  "poster": "../../assets/videos/placeholder-video-interview/poster.svg",
+  "provider": "link",
+  "youtubeId": "",
+  "fileUrl": "",
+  "captionsUrl": "",
+  "duration": "2:30",
+  "orientation": "landscape",
+  "sourceUrl": "",
+  "sourceLabel": "",
+  "attribution": "",
+  "rights": "approved",
+  "evidence": "",
+  "order": 10,
+  "status": "published",
+  "placeholder": true
+}

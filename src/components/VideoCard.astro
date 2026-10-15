@@ -1,0 +1,198 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  entry: CollectionEntry<'videos'>;
+  headingLevel?: 'h2' | 'h3' | 'h4';
+}
+const { entry, headingLevel = 'h3' } = Astro.props;
+const { data } = entry;
+const video = data;
+const Heading = headingLevel;
+
+const typeLabel = {
+  interview: 'Interview',
+  event: 'Event highlight',
+  testimonial: 'Testimonial',
+  greeting: 'Greeting',
+}[data.videoType ?? 'event'];
+
+function spokenDuration(d: string) {
+  const parts = d.split(':').map(Number);
+  const [h, m, s] = parts.length === 3 ? parts : [0, ...parts];
+  const out = [];
+  if (h) out.push(`${h} hour${h === 1 ? '' : 's'}`);
+  if (m) out.push(`${m} minute${m === 1 ? '' : 's'}`);
+  if (s) out.push(`${s} second${s === 1 ? '' : 's'}`);
+  return out.join(' ');
+}
+
+const youtubeUrl = video.youtubeId ? `https://www.youtube.com/watch?v=${video.youtubeId}` : undefined;
+const sourceUrl = data.sourceUrl ?? youtubeUrl ?? (video.fileUrl || undefined);
+const sourceLabel =
+  data.sourceLabel || (video.provider === 'youtube' ? 'Watch on YouTube' : video.provider === 'file' ? 'Open video file' : 'Watch at source');
+const playable = video.provider === 'youtube' ? Boolean(video.youtubeId) : video.provider === 'file' ? Boolean(video.fileUrl) : false;
+const facadeHref = sourceUrl;
+const playLabel = `Play video: ${data.title}, ${spokenDuration(video.duration)}`;
+---
+
+<article
+  class="video-card"
+  data-video-card
+  data-id={entry.id}
+  data-provider={video.provider}
+  data-youtube-id={video.youtubeId}
+  data-file-url={video.fileUrl || undefined}
+  data-captions-url={video.captionsUrl || undefined}
+  data-title={data.title}
+>
+  <div class:list={['video-stage', `video-${video.orientation}`]} data-video-stage>
+    {
+      facadeHref ? (
+        <a class="video-facade" href={facadeHref} data-video-facade={playable ? '' : undefined} aria-label={playLabel}>
+          <Image
+            src={data.poster}
+            alt=""
+            widths={[480, 800, 1200]}
+            sizes="(min-width: 64rem) 22rem, (min-width: 40rem) 45vw, 100vw"
+            loading="lazy"
+          />
+          <span class="play-badge" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="28" height="28"><path d="M8 5v14l11-7z" fill="currentColor" /></svg>
+            Play
+          </span>
+        </a>
+      ) : (
+        <div class="video-facade is-unavailable">
+          <Image src={data.poster} alt="" widths={[480, 800]} sizes="(min-width: 40rem) 45vw, 100vw" loading="lazy" />
+          <span class="unavailable-note">Video link to be added</span>
+        </div>
+      )
+    }
+  </div>
+  <div class="video-body">
+    {data.placeholder && <span class="placeholder-tag">Placeholder</span>}
+    <p class="video-meta">
+      <span>{typeLabel}</span> · <span><span aria-hidden="true">{video.duration}</span><span class="visually-hidden">{spokenDuration(video.duration)}</span></span>
+    </p>
+    <Heading class="video-title">{data.title}</Heading>
+    <p class="video-desc">{data.description}</p>
+    <p class="video-status" role="status" data-video-status></p>
+    {sourceUrl && <a class="text-link-arrow" href={sourceUrl} data-track="video_source_click" data-track-id={entry.id}>{sourceLabel}</a>}
+  </div>
+</article>
+
+<script>
+  import { initVideos } from '../scripts/video';
+  initVideos();
+</script>
+
+<style>
+  .video-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--night-raised);
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid #333;
+  }
+  .video-stage {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: #0d0d0d;
+  }
+  /* Vertical footage keeps its own shape inside a neutral frame instead of being cropped to landscape. */
+  .video-stage.video-portrait > :global(*) {
+    position: absolute;
+    inset: 0;
+    margin-inline: auto;
+    width: auto;
+    height: 100%;
+    aspect-ratio: 9 / 16;
+  }
+  .video-facade {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    color: var(--on-night);
+  }
+  .video-facade :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .play-badge {
+    position: absolute;
+    left: 1rem;
+    bottom: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: var(--target);
+    padding: 0.5rem 1.1rem 0.5rem 0.8rem;
+    border-radius: 999px;
+    background: var(--gold-light);
+    color: var(--night);
+    font-weight: 700;
+    box-shadow: 0 2px 10px rgb(0 0 0 / 0.35);
+    transition: background-color 150ms ease;
+  }
+  .video-facade:hover .play-badge,
+  .video-facade:focus-visible .play-badge {
+    background: #fff;
+  }
+  .unavailable-note {
+    position: absolute;
+    left: 50%;
+    bottom: 1rem;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    padding: 0.4rem 0.8rem;
+    background: rgb(0 0 0 / 0.75);
+    border-radius: 6px;
+  }
+  .video-stage :global(iframe),
+  .video-stage :global(video) {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: #000;
+  }
+  .video-body {
+    padding: 1.25rem 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .video-body > .placeholder-tag {
+    align-self: flex-start;
+  }
+  .video-meta {
+    font-size: var(--text-support);
+    color: var(--gold-light);
+    font-weight: 600;
+    margin: 0 0 0.35rem;
+  }
+  .video-title {
+    color: var(--on-night);
+    margin-bottom: 0.4rem;
+  }
+  .video-desc {
+    color: var(--on-night-soft);
+    font-size: var(--text-support);
+  }
+  .video-status:empty {
+    display: none;
+  }
+  .video-status {
+    padding: 0.75rem 1rem;
+    border-left: 4px solid var(--gold-light);
+    background: #2e2a2a;
+    font-size: var(--text-support);
+  }
+  .text-link-arrow {
+    margin-top: auto;
+  }
+</style>

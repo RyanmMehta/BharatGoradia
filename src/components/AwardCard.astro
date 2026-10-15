@@ -1,0 +1,82 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { formatPartialDate } from '../lib/site';
+
+interface Props {
+  entry: CollectionEntry<'awards'>;
+  /** Detailed entries (Recognition page) show the photo large and any supporting link. */
+  detailed?: boolean;
+  headingLevel?: 'h2' | 'h3';
+}
+const { entry, detailed = false, headingLevel = 'h3' } = Astro.props;
+const { data } = entry;
+const Heading = headingLevel;
+// Only public fields are read here. data.evidence is a private editorial record and is never rendered.
+const meta = [data.issuer, data.location, formatPartialDate(data.date)].filter(Boolean);
+---
+
+<article class:list={['award', detailed && 'award-detailed']}>
+  {
+    data.image && (
+      <div class="frame frame-landscape reveal award-photo">
+        <Image src={data.image} alt={data.imageAlt} widths={[480, 800, 1200]} sizes="(min-width: 48rem) 40vw, 100vw" loading="lazy" />
+      </div>
+    )
+  }
+  <div class="award-body">
+    {data.placeholder && <span class="placeholder-tag">Placeholder</span>}
+    <p class="award-kind">{data.kind === 'honour' ? 'Honour' : 'Award'}</p>
+    <Heading class="award-title">{data.title}</Heading>
+    {meta.length > 0 && <p class="award-meta">{meta.join(' · ')}</p>}
+    <p>{data.description}</p>
+    {detailed && data.link && <a class="text-link-arrow" href={data.link}>{data.linkLabel || 'Read more about this award'}</a>}
+  </div>
+</article>
+
+<style>
+  .award {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--gold);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .award-photo {
+    border-radius: 0;
+  }
+  .award-body {
+    padding: 1.25rem 1.25rem 1.5rem;
+  }
+  .award-kind {
+    margin: 0 0 0.25rem;
+    font-size: var(--text-support);
+    font-weight: 600;
+    color: var(--burgundy);
+  }
+  .award-title {
+    font-size: var(--h3);
+  }
+  .award-meta {
+    font-size: var(--text-support);
+    color: var(--charcoal-soft);
+  }
+  .award-body p:last-child {
+    margin-bottom: 0;
+  }
+  @media (min-width: 48rem) {
+    .award-detailed {
+      flex-direction: row;
+    }
+    .award-detailed .award-photo {
+      flex: 0 0 40%;
+      aspect-ratio: auto;
+      min-height: 100%;
+    }
+    .award-detailed .award-body {
+      padding: 1.75rem 2rem;
+    }
+  }
+</style>

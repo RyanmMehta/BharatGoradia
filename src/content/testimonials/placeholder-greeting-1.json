@@ -1,0 +1,15 @@
+{
+  "kind": "greeting",
+  "quote": "Placeholder for a short, approved greeting from an artist. Greetings are labelled separately from testimonials.",
+  "speaker": "Artist name to be confirmed",
+  "role": "",
+  "organization": "",
+  "approval": {
+    "approved": false,
+    "date": "",
+    "record": ""
+  },
+  "order": 30,
+  "status": "published",
+  "placeholder": true
+}

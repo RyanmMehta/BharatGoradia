@@ -1,0 +1,209 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import SectionHead from '../components/SectionHead.astro';
+import PhotoCard from '../components/PhotoCard.astro';
+import VideoCard from '../components/VideoCard.astro';
+import AwardCard from '../components/AwardCard.astro';
+import TestimonialCard from '../components/TestimonialCard.astro';
+import ContactActions from '../components/ContactActions.astro';
+import { homepage, isPrototype, publicCollection, selected, settings, unconfirmed } from '../lib/site';
+
+const [photos, videos, awards, testimonials, services] = await Promise.all([
+  selected('photos', homepage.artistPhotos),
+  selected('videos', homepage.featuredVideos),
+  selected('awards', homepage.awards),
+  selected('testimonials', homepage.testimonials),
+  publicCollection('services'),
+]);
+
+const sameAs = [
+  !unconfirmed('instagram') && settings.instagram.url,
+  !unconfirmed('facebook') && settings.facebook.url,
+].filter(Boolean);
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: settings.personName,
+  description: settings.descriptor,
+  url: Astro.site?.href,
+  ...(sameAs.length ? { sameAs } : {}),
+  ...(settings.businessName && !unconfirmed('names')
+    ? { worksFor: { '@type': 'Organization', name: settings.businessName } }
+    : {}),
+};
+---
+
+<BaseLayout structuredData={structuredData}>
+  <Hero />
+
+  {
+    photos.length > 0 && (
+      <section class="section" aria-labelledby="artists-title">
+        <div class="container">
+          <SectionHead id="artists-title" eyebrow="Photographs" title="With the artists">
+            <p>Moments from events and appearances. Each caption names the people pictured and the occasion.</p>
+          </SectionHead>
+          <div class="grid grid-3">
+            {photos.map((entry) => (
+              <PhotoCard entry={entry} />
+            ))}
+          </div>
+          <p class="section-more">
+            <a class="text-link-arrow" href="/gallery">
+              See more photographs and videos <span aria-hidden="true">→</span>
+            </a>
+          </p>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    videos.length > 0 && (
+      <section class="section section-dark" id="videos" aria-labelledby="videos-title">
+        <div class="container">
+          <SectionHead id="videos-title" eyebrow="Videos" title="Featured videos">
+            <p>Press Play to watch here. Videos start only when you choose, with sound and caption controls.</p>
+          </SectionHead>
+          <div class="grid grid-3">
+            {videos.map((entry) => (
+              <VideoCard entry={entry} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section section-tint" aria-labelledby="services-title">
+    <div class="container">
+      <SectionHead id="services-title" eyebrow="Services" title="How Bharat can help">
+        {settings.biography && (
+          <p>
+            {settings.biography}
+            {isPrototype && unconfirmed('biography') && <span class="placeholder-tag">Draft wording</span>}
+          </p>
+        )}
+      </SectionHead>
+      <div class="grid grid-3 services">
+        {
+          services.map((s, i) => (
+            <article class="service">
+              <span class="service-number" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              {s.data.placeholder && <span class="placeholder-tag">Draft wording</span>}
+              <h3>{s.data.title}</h3>
+              <p>{s.data.description}</p>
+            </article>
+          ))
+        }
+      </div>
+      <div class="process">
+        <h3 id="process-title">How an enquiry works</h3>
+        <ol class="process-steps" aria-labelledby="process-title">
+          <li><strong>Share your event.</strong> Tell Bharat what you are planning and when.</li>
+          <li><strong>Discuss suitable options.</strong> Talk through what would suit your occasion.</li>
+          <li><strong>Agree next steps.</strong> Confirm the arrangements you decide on together.</li>
+        </ol>
+        <a class="button" href="/contact" data-track="contact_cta_click" data-track-id="services">Contact Bharat</a>
+      </div>
+    </div>
+  </section>
+
+  {
+    awards.length > 0 && (
+      <section class="section" aria-labelledby="recognition-title">
+        <div class="container">
+          <SectionHead id="recognition-title" eyebrow="Recognition" title="Awards and honours" />
+          <div class="grid grid-2">
+            {awards.map((entry) => (
+              <AwardCard entry={entry} />
+            ))}
+          </div>
+          <p class="section-more">
+            <a class="text-link-arrow" href="/recognition">
+              Read about all recognition <span aria-hidden="true">→</span>
+            </a>
+          </p>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    testimonials.length > 0 && (
+      <section class="section section-tint" aria-labelledby="testimonials-title">
+        <div class="container">
+          <SectionHead id="testimonials-title" eyebrow="Kind words" title="What people say" />
+          <div class="grid grid-3">
+            {testimonials.map((entry) => (
+              <TestimonialCard entry={entry} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section" aria-labelledby="contact-title">
+    <div class="container contact-summary">
+      <SectionHead id="contact-title" eyebrow="Get in touch" title="Planning an event? Contact Bharat.">
+        <p>Email is the most direct way to reach him. You can also send a message on Instagram or Facebook.</p>
+      </SectionHead>
+      <ContactActions location="home" />
+      <p class="section-more">
+        <a class="text-link-arrow" href="/contact">Or send a short message from the contact page <span aria-hidden="true">→</span></a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .section-more {
+    margin: 2rem 0 0;
+  }
+  .services {
+    margin-bottom: 3rem;
+  }
+  .service {
+    position: relative;
+    padding: 1.75rem 1.5rem 1.5rem;
+    background: var(--ivory);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+  .service-number {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 0.75rem;
+  }
+  .service p {
+    margin: 0;
+  }
+  .process {
+    padding: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+    background: #fff;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+  }
+  .process-steps {
+    margin: 0 0 1.75rem;
+    padding-left: 1.5rem;
+    max-width: var(--measure);
+  }
+  .process-steps li {
+    padding-left: 0.25rem;
+    margin-bottom: 0.6rem;
+  }
+  .process-steps li::marker {
+    font-weight: 700;
+    color: var(--burgundy);
+  }
+  .contact-summary {
+    max-width: 56rem;
+  }
+</style>

@@ -1,0 +1,23 @@
+{
+  "videoType": "greeting",
+  "title": "Greeting from an artist (placeholder)",
+  "description": "A short greeting recorded by an artist. Labelled as a greeting, not a testimonial.",
+  "people": [],
+  "event": "",
+  "date": "",
+  "poster": "../../assets/videos/placeholder-video-greeting/poster.svg",
+  "provider": "link",
+  "youtubeId": "",
+  "fileUrl": "",
+  "captionsUrl": "",
+  "duration": "0:40",
+  "orientation": "portrait",
+  "sourceUrl": "",
+  "sourceLabel": "",
+  "attribution": "",
+  "rights": "approved",
+  "evidence": "",
+  "order": 30,
+  "status": "published",
+  "placeholder": true
+}
