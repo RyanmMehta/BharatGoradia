@@ -13,7 +13,8 @@ const json = (body: unknown, status = 200) =>
   });
 
 // JSON endpoint used by the enhanced contact form. The no-JavaScript form posts to /contact/send.
-export const POST: APIRoute = async ({ request, clientAddress }) => {
+export const POST: APIRoute = async (context) => {
+  const { request } = context;
   const length = Number(request.headers.get('content-length') ?? 0);
   if (length > MAX_BODY_BYTES) return json({ ok: false, formError: FORM_ERRORS.badRequest }, 413);
 
@@ -29,7 +30,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 
   let result;
   try {
-    result = await submitEnquiry(raw, clientKey(request, clientAddress), enquiryDeps());
+    result = await submitEnquiry(raw, clientKey(request, () => context.clientAddress), enquiryDeps());
   } catch (err) {
     console.error('[enquiry] unexpected failure', err);
     return json({ ok: false, formError: FORM_ERRORS.unavailable }, 500);

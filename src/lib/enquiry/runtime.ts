@@ -19,9 +19,13 @@ export function notifyConfigFromEnv(): NotifyConfig {
   };
 }
 
+// Vercel functions can only write to /tmp, which is temporary. Fine for the prototype preview;
+// connect a hosted database before real enquiries are expected (see docs/DEPLOY.md).
+const defaultDbPath = () => (env('VERCEL') ? '/tmp/enquiries.db' : './data/enquiries.db');
+
 export function createDepsFromEnv(): EnquiryDeps {
   return {
-    store: new SqliteEnquiryStore(env('ENQUIRY_DB_PATH') ?? './data/enquiries.db'),
+    store: new SqliteEnquiryStore(env('ENQUIRY_DB_PATH') ?? defaultDbPath()),
     notifier: createNotifier(notifyConfigFromEnv()),
     limiter: new RateLimiter(),
     retentionDays: Number(env('ENQUIRY_RETENTION_DAYS') ?? 90),
@@ -45,8 +49,17 @@ export function enquiryDeps(): EnquiryDeps {
   return deps;
 }
 
-/** Best-effort client key for rate limiting. Behind a proxy, configure it to set X-Forwarded-For. */
-export function clientKey(request: Request, clientAddress?: string): string {
-  const forwarded = env('TRUST_PROXY') === 'true' ? request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() : undefined;
-  return forwarded || clientAddress || 'unknown';
+/**
+ * Best-effort client key for rate limiting. Behind a proxy that sets X-Forwarded-For (Vercel always does),
+ * set TRUST_PROXY=true. `getClientAddress` may throw on adapters that cannot determine it.
+ */
+export function clientKey(request: Request, getClientAddress: () => string): string {
+  const trustProxy = env('TRUST_PROXY') === 'true' || Boolean(env('VERCEL'));
+  const forwarded = trustProxy ? request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() : undefined;
+  if (forwarded) return forwarded;
+  try {
+    return getClientAddress() || 'unknown';
+  } catch {
+    return 'unknown';
+  }
 }

@@ -9,6 +9,19 @@ wherever a host asks.
 
 Check each host's current pricing before you start. Plans and free allowances change often.
 
+## Vercel (currently in use: https://bharat-goradia.vercel.app)
+
+Vercel builds the site automatically. When it builds, the site switches to Vercel's adapter: pages are
+served as static files, and the contact form runs as a serverless function.
+
+- **Production branch:** `claude/sleepy-cray-cohvcw`. Every push to it redeploys.
+- **Contact form storage:** Vercel functions can only write to temporary storage, so form messages on Vercel
+  are **not kept** between requests or redeploys. That is fine for trying out the form. Before real visitors
+  use it, connect a hosted database (for example Turso or Vercel Postgres) or switch to Railway/Fly with a volume.
+- **Email notifications:** add `NOTIFY_PROVIDER=resend`, `RESEND_API_KEY`, `NOTIFY_FROM`, `NOTIFY_TO` and
+  `NOTIFY_BACKUP_TO` under **Settings → Environment Variables**, then redeploy.
+- Keep `SITE_MODE` unset (prototype) until `npm run check:content` reports no launch blockers.
+
 ## Option A: Railway (everything in the browser)
 
 1. Go to <https://railway.com> and sign in with GitHub.
