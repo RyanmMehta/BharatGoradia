@@ -8,7 +8,9 @@ import keystatic from '@keystatic/astro';
 // SITE_MODE controls prototype vs. public behaviour (see docs/IMPLEMENTATION_PLAN.md).
 //   prototype (default): placeholder content is shown with visible labels, pages are noindex.
 //   launch: placeholder content is withheld, pages are indexable.
-const siteUrl = process.env.SITE_URL ?? 'http://localhost:4321';
+const siteUrl =
+  process.env.SITE_URL ||
+  (process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : 'http://localhost:4321');
 
 // The editor is always available in development. In production it is only mounted when
 // GitHub storage has been configured (see keystatic.config.ts), so a deployed site never

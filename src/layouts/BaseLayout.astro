@@ -15,7 +15,9 @@ interface Props {
 
 const { title, description = settings.seo.description || settings.introduction, structuredData } = Astro.props;
 const fullTitle = title ? `${title} | ${settings.personName}` : `${settings.personName} | ${settings.descriptor}`;
-const canonical = new URL(Astro.url.pathname, Astro.site);
+// Pages are built as files (gallery.html), so normalise to the clean public path.
+const cleanPath = Astro.url.pathname.replace(/(\/index)?\.html$/, '') || '/';
+const canonical = new URL(cleanPath, Astro.site);
 const ogImage = new URL('/og-default.png', Astro.site);
 ---
 

@@ -67,14 +67,15 @@ docs/             PRD, implementation plan, owner guide
 
 ## Deploying
 
-Any host that runs a long-lived Node.js process with a persistent disk works, for example a small VPS, Render,
-Railway or Fly.io. The enquiry database must sit on persistent storage.
+**Prototype preview:** follow [docs/DEPLOY.md](docs/DEPLOY.md) to put it on Railway or Fly.io. Both use the included
+`Dockerfile` (`railway.json` and `fly.toml` are already set up).
 
-1. Set the environment variables in `.env.example`. In particular, `SITE_URL` must be the public address,
-   because form submissions are rejected when their origin does not match.
-2. `npm ci && SITE_MODE=launch npm run build && npm start`
-3. Schedule `npm run enquiries:retry` every 15 minutes.
-4. Back up the `ENQUIRY_DB_PATH` file along with the server's normal backups.
+For a production launch on any host:
+
+1. Set the environment variables in `.env.example`, especially `SITE_URL` (the public address).
+2. Build with `SITE_MODE=launch`. The build stops while anything in `npm run check:content` blocks launch.
+3. Mount persistent storage at `/data` (the enquiry database) and back it up.
+4. Schedule `node scripts/enquiry-maintenance.ts` every 15 minutes.
 
 The hosting, email provider, analytics and domain are still open decisions in the PRD. The code keeps each
 behind a small interface so the choice can be made later.

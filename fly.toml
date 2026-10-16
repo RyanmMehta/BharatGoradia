@@ -1,0 +1,26 @@
+# Fly.io configuration. Change `app` (and SITE_URL to match) if the name is taken.
+app = "bharat-goradia"
+primary_region = "lhr"
+
+[build]
+  [build.args]
+    SITE_URL = "https://bharat-goradia.fly.dev"
+
+[env]
+  PORT = "8080"
+  ENQUIRY_DB_PATH = "/data/enquiries.db"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+[[mounts]]
+  source = "enquiries"
+  destination = "/data"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"
