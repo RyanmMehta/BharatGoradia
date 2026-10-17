@@ -1,13 +1,12 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
-import SectionHead from '../components/SectionHead.astro';
 import PhotoCard from '../components/PhotoCard.astro';
 import VideoCard from '../components/VideoCard.astro';
 import AwardCard from '../components/AwardCard.astro';
 import TestimonialCard from '../components/TestimonialCard.astro';
 import ContactActions from '../components/ContactActions.astro';
-import { homepage, isPrototype, publicCollection, selected, settings, unconfirmed } from '../lib/site';
+import { homepage, publicCollection, selected, settings, unconfirmed } from '../lib/site';
 
 const [photos, videos, awards, testimonials, services] = await Promise.all([
   selected('photos', homepage.artistPhotos),
@@ -16,6 +15,8 @@ const [photos, videos, awards, testimonials, services] = await Promise.all([
   selected('testimonials', homepage.testimonials),
   publicCollection('services'),
 ]);
+const [featuredVideo, ...moreVideos] = videos;
+const [featuredQuote, ...moreQuotes] = testimonials;
 
 const sameAs = [
   !unconfirmed('instagram') && settings.instagram.url,
@@ -32,6 +33,9 @@ const structuredData = {
     ? { worksFor: { '@type': 'Organization', name: settings.businessName } }
     : {}),
 };
+
+// Mosaic: a large feature photo, two beside it, then rows of three.
+const tileClass = (i: number) => (i === 0 ? 'tile-feature' : i < 3 ? 'tile-side' : i < 6 ? 'tile-third' : 'tile-half');
 ---
 
 <BaseLayout structuredData={structuredData}>
@@ -39,19 +43,28 @@ const structuredData = {
 
   {
     photos.length > 0 && (
-      <section class="section" aria-labelledby="artists-title">
-        <div class="container">
-          <SectionHead id="artists-title" eyebrow="Photographs" title="With the artists">
-            <p>Moments from events and appearances. Each caption names the people pictured and the occasion.</p>
-          </SectionHead>
-          <div class="grid grid-3">
-            {photos.map((entry) => (
-              <PhotoCard entry={entry} />
+      <section class="section band" id="work" aria-labelledby="work-title">
+        <div class="wrap">
+          <div class="section-head split">
+            <p class="credit">Photographs</p>
+            <h2 id="work-title">With the stars</h2>
+            <p class="lead">
+              Moments from celebrations and appearances. Every caption names the people pictured and the occasion.
+            </p>
+          </div>
+          <div class="mosaic">
+            {photos.map((entry, i) => (
+              <PhotoCard
+                entry={entry}
+                class={tileClass(i)}
+                ratio={i === 0 ? 'fill' : 'landscape'}
+                sizes={i === 0 ? '(min-width: 64rem) 46rem, 100vw' : '(min-width: 64rem) 30rem, (min-width: 40rem) 45vw, 100vw'}
+              />
             ))}
           </div>
-          <p class="section-more">
-            <a class="text-link-arrow" href="/gallery">
-              See more photographs and videos <span aria-hidden="true">→</span>
+          <p class="section-foot">
+            <a class="more" href="/gallery">
+              See all photographs and videos <span class="arrow" aria-hidden="true">→</span>
             </a>
           </p>
         </div>
@@ -60,69 +73,95 @@ const structuredData = {
   }
 
   {
-    videos.length > 0 && (
-      <section class="section section-dark" id="videos" aria-labelledby="videos-title">
-        <div class="container">
-          <SectionHead id="videos-title" eyebrow="Videos" title="Featured videos">
-            <p>Press Play to watch here. Videos start only when you choose, with sound and caption controls.</p>
-          </SectionHead>
-          <div class="grid grid-3">
-            {videos.map((entry) => (
-              <VideoCard entry={entry} />
-            ))}
+    featuredVideo && (
+      <section class="section on-night screening" id="videos" aria-labelledby="videos-title">
+        <div class="wrap">
+          <div class="section-head split">
+            <p class="credit">Screening room</p>
+            <h2 id="videos-title">Watch Bharat at work</h2>
+            <p class="lead">Press Play to watch here. Nothing plays until you choose, and every video has sound and caption controls.</p>
+          </div>
+          <div class="screen-grid">
+            <div class="screen-main">
+              <VideoCard entry={featuredVideo} sizes="(min-width: 64rem) 52rem, 100vw" />
+            </div>
+            {moreVideos.length > 0 && (
+              <div class="screen-side">
+                {moreVideos.map((entry) => (
+                  <VideoCard entry={entry} sizes="(min-width: 64rem) 26rem, 100vw" />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </section>
     )
   }
 
-  <section class="section section-tint" aria-labelledby="services-title">
-    <div class="container">
-      <SectionHead id="services-title" eyebrow="Services" title="How Bharat can help">
-        {settings.biography && (
-          <p>
-            {settings.biography}
-            {isPrototype && unconfirmed('biography') && <span class="placeholder-tag">Draft wording</span>}
-          </p>
-        )}
-      </SectionHead>
-      <div class="grid grid-3 services">
+  <section class="section" aria-labelledby="services-title">
+    <div class="wrap services-grid">
+      <div class="services-intro">
+        <p class="credit">Services</p>
+        <h2 id="services-title">What Bharat does</h2>
+        {settings.biography && <p class="lead">{settings.biography}</p>}
+      </div>
+      <ol class="service-list">
         {
           services.map((s, i) => (
-            <article class="service">
-              <span class="service-number" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-              {s.data.placeholder && <span class="placeholder-tag">Draft wording</span>}
-              <h3>{s.data.title}</h3>
-              <p>{s.data.description}</p>
-            </article>
+            <li class="service">
+              <span class="service-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <div>
+                <h3>{s.data.title}</h3>
+                <p>{s.data.description}</p>
+              </div>
+            </li>
           ))
         }
-      </div>
-      <div class="process">
-        <h3 id="process-title">How an enquiry works</h3>
-        <ol class="process-steps" aria-labelledby="process-title">
-          <li><strong>Share your event.</strong> Tell Bharat what you are planning and when.</li>
-          <li><strong>Discuss suitable options.</strong> Talk through what would suit your occasion.</li>
-          <li><strong>Agree next steps.</strong> Confirm the arrangements you decide on together.</li>
-        </ol>
-        <a class="button" href="/contact" data-track="contact_cta_click" data-track-id="services">Contact Bharat</a>
-      </div>
+      </ol>
+    </div>
+
+    <div class="wrap process">
+      <h3 id="process-title" class="process-title">How an enquiry works</h3>
+      <ol class="steps" aria-labelledby="process-title">
+        <li>
+          <span class="step-num" aria-hidden="true">1</span>
+          <strong>Share your event</strong>
+          <span>Tell Bharat what you are planning and when.</span>
+        </li>
+        <li>
+          <span class="step-num" aria-hidden="true">2</span>
+          <strong>Talk through options</strong>
+          <span>Discuss what would suit your occasion.</span>
+        </li>
+        <li>
+          <span class="step-num" aria-hidden="true">3</span>
+          <strong>Agree next steps</strong>
+          <span>Confirm the arrangements you decide on together.</span>
+        </li>
+      </ol>
+      <a class="button" href="/contact" data-track="contact_cta_click" data-track-id="process">
+        Start a conversation <span class="arrow" aria-hidden="true">→</span>
+      </a>
     </div>
   </section>
 
   {
     awards.length > 0 && (
-      <section class="section" aria-labelledby="recognition-title">
-        <div class="container">
-          <SectionHead id="recognition-title" eyebrow="Recognition" title="Awards and honours" />
-          <div class="grid grid-2">
+      <section class="section band" aria-labelledby="recognition-title">
+        <div class="wrap">
+          <div class="section-head split">
+            <p class="credit">Recognition</p>
+            <h2 id="recognition-title">Awards and honours</h2>
+            <p class="lead">Recognition Bharat has received for his work in entertainment and the community.</p>
+          </div>
+          <div class="honours">
             {awards.map((entry) => (
               <AwardCard entry={entry} />
             ))}
           </div>
-          <p class="section-more">
-            <a class="text-link-arrow" href="/recognition">
-              Read about all recognition <span aria-hidden="true">→</span>
+          <p class="section-foot">
+            <a class="more" href="/recognition">
+              All recognition and press <span class="arrow" aria-hidden="true">→</span>
             </a>
           </p>
         </div>
@@ -131,12 +170,18 @@ const structuredData = {
   }
 
   {
-    testimonials.length > 0 && (
-      <section class="section section-tint" aria-labelledby="testimonials-title">
-        <div class="container">
-          <SectionHead id="testimonials-title" eyebrow="Kind words" title="What people say" />
-          <div class="grid grid-3">
-            {testimonials.map((entry) => (
+    featuredQuote && (
+      <section class="section" aria-labelledby="testimonials-title">
+        <div class="wrap">
+          <div class="section-head">
+            <p class="credit">Kind words</p>
+            <h2 id="testimonials-title">What people say</h2>
+          </div>
+          <div class="quotes">
+            <div class="quote-feature">
+              <TestimonialCard entry={featuredQuote} featured />
+            </div>
+            {moreQuotes.map((entry) => (
               <TestimonialCard entry={entry} />
             ))}
           </div>
@@ -145,65 +190,262 @@ const structuredData = {
     )
   }
 
-  <section class="section" aria-labelledby="contact-title">
-    <div class="container contact-summary">
-      <SectionHead id="contact-title" eyebrow="Get in touch" title="Planning an event? Contact Bharat.">
-        <p>Email is the most direct way to reach him. You can also send a message on Instagram or Facebook.</p>
-      </SectionHead>
-      <ContactActions location="home" />
-      <p class="section-more">
-        <a class="text-link-arrow" href="/contact">Or send a short message from the contact page <span aria-hidden="true">→</span></a>
-      </p>
+  <section class="section on-red contact-band" aria-labelledby="contact-title">
+    <div class="wrap contact-grid">
+      <div class="contact-head">
+        <p class="credit">Get in touch</p>
+        <h2 id="contact-title">Planning an event? Speak to Bharat.</h2>
+        <p class="lead">Email is the quickest way to reach him. You can also send a message on Instagram or Facebook.</p>
+        <a class="more" href="/contact">Or use the short enquiry form <span class="arrow" aria-hidden="true">→</span></a>
+      </div>
+      <ContactActions variant="red" location="home" />
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  .section-more {
-    margin: 2rem 0 0;
+  .section-foot {
+    margin: clamp(2rem, 1.5rem + 1.5vw, 3rem) 0 0;
   }
-  .services {
-    margin-bottom: 3rem;
+
+  /* ---- Photo mosaic ---- */
+  .mosaic {
+    display: grid;
+    gap: clamp(2rem, 1.25rem + 2vw, 3rem) clamp(1.25rem, 0.75rem + 1.5vw, 2rem);
+  }
+  @media (min-width: 40rem) {
+    .mosaic {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .mosaic :global(.tile-feature) {
+      grid-column: 1 / -1;
+    }
+    .mosaic :global(.tile-feature .photo) {
+      aspect-ratio: 16 / 10;
+    }
+  }
+  @media (min-width: 64rem) {
+    .mosaic {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+    .mosaic :global(.tile-feature) {
+      grid-column: 1 / span 7;
+      grid-row: span 2;
+    }
+    .mosaic :global(.tile-feature .photo) {
+      aspect-ratio: auto;
+    }
+    .mosaic :global(.tile-side) {
+      grid-column: span 5;
+    }
+    .mosaic :global(.tile-third) {
+      grid-column: span 4;
+    }
+    .mosaic :global(.tile-half) {
+      grid-column: span 6;
+    }
+  }
+
+  /* ---- Screening room ---- */
+  .screening {
+    background:
+      radial-gradient(120% 70% at 50% 0%, #2c1612 0%, transparent 60%),
+      var(--night);
+  }
+  .screen-grid {
+    display: grid;
+    gap: 3rem 2.5rem;
+  }
+  .screen-side {
+    display: grid;
+    gap: 3rem;
+  }
+  @media (min-width: 64rem) {
+    .screen-grid {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+      align-items: start;
+    }
+    .screen-main :global(.video-title) {
+      font-size: var(--display-m);
+    }
+  }
+  @media (min-width: 40rem) and (max-width: 63.99rem) {
+    .screen-side {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  /* ---- Services ---- */
+  .services-grid {
+    display: grid;
+    gap: 2.5rem 5rem;
+  }
+  @media (min-width: 60rem) {
+    .services-grid {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    }
+    .services-intro {
+      position: sticky;
+      top: 8rem;
+      align-self: start;
+    }
+  }
+  .service-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 2px solid var(--ink);
   }
   .service {
-    position: relative;
-    padding: 1.75rem 1.5rem 1.5rem;
-    background: var(--ivory);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
+    display: grid;
+    grid-template-columns: 4.5rem 1fr;
+    gap: 1.25rem;
+    padding: 2rem 0;
+    border-bottom: 1px solid var(--rule);
   }
-  .service-number {
-    display: block;
+  .service-num {
     font-family: var(--font-display);
-    font-size: 1.75rem;
-    font-weight: 600;
-    color: var(--gold);
-    line-height: 1;
-    margin-bottom: 0.75rem;
+    font-size: 3.25rem;
+    line-height: 0.9;
+    color: var(--sindoor);
+  }
+  .service h3 {
+    font-size: var(--display-m);
+    margin-bottom: 0.4rem;
   }
   .service p {
     margin: 0;
+    color: var(--ink-2);
   }
+
   .process {
-    padding: clamp(1.5rem, 1rem + 2vw, 2.5rem);
-    background: #fff;
+    margin-top: clamp(4rem, 3rem + 4vw, 7rem);
+    padding: clamp(2rem, 1.5rem + 2.5vw, 3.5rem);
+    background: var(--card);
+    border: 1px solid var(--rule);
     border-radius: var(--radius);
-    border: 1px solid var(--line);
   }
-  .process-steps {
-    margin: 0 0 1.75rem;
-    padding-left: 1.5rem;
-    max-width: var(--measure);
+  .process-title {
+    font-size: var(--display-m);
+    margin-bottom: 2rem;
   }
-  .process-steps li {
-    padding-left: 0.25rem;
-    margin-bottom: 0.6rem;
+  .steps {
+    display: grid;
+    gap: 1.75rem;
+    margin: 0 0 2.5rem;
+    padding: 0;
+    list-style: none;
   }
-  .process-steps li::marker {
-    font-weight: 700;
-    color: var(--burgundy);
+  .steps li {
+    position: relative;
+    display: grid;
+    align-content: start;
+    grid-template-columns: 3.5rem 1fr;
+    column-gap: 1rem;
+    align-items: start;
   }
-  .contact-summary {
-    max-width: 56rem;
+  .steps strong {
+    font-size: var(--text-lead);
+    line-height: 1.3;
+    padding-top: 0.6rem;
+  }
+  .steps li > span:last-child {
+    grid-column: 2;
+    color: var(--ink-2);
+  }
+  .step-num {
+    grid-row: span 2;
+    display: grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    background: var(--marigold);
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    position: relative;
+    z-index: 1;
+  }
+  @media (min-width: 56rem) {
+    .steps {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2.5rem;
+    }
+    .steps li {
+      grid-template-columns: 1fr;
+    }
+    .steps li > span:last-child {
+      grid-column: 1;
+    }
+    .step-num {
+      grid-row: auto;
+      margin-bottom: 0.5rem;
+    }
+    /* Dotted garland line connecting the steps */
+    .steps li:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 1.75rem;
+      left: 4.5rem;
+      right: -1.5rem;
+      border-top: 3px dotted var(--marigold);
+    }
+  }
+
+  /* ---- Recognition ---- */
+  .honours {
+    border-bottom: 1px solid var(--rule);
+  }
+
+  /* ---- Testimonials ---- */
+  .quotes {
+    display: grid;
+    gap: 3rem 3rem;
+  }
+  @media (min-width: 48rem) {
+    .quotes {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .quote-feature {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (min-width: 64rem) {
+    .quote-feature {
+      max-width: 60rem;
+    }
+  }
+
+  /* ---- Contact band ---- */
+  .contact-band {
+    background:
+      radial-gradient(90% 120% at 100% 0%, #8f1218 0%, transparent 55%),
+      var(--sindoor-deep);
+  }
+  .contact-grid {
+    display: grid;
+    gap: 2.5rem;
+  }
+  @media (min-width: 64rem) {
+    .contact-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      column-gap: 5rem;
+      align-items: end;
+    }
+    .contact-head .credit {
+      grid-column: 1 / -1;
+    }
+    .contact-head h2 {
+      margin: 0;
+      grid-row: 2 / span 2;
+    }
+  }
+  .contact-band h2 {
+    color: var(--paper);
+  }
+  .contact-band .more {
+    color: var(--paper);
   }
 </style>

@@ -28,7 +28,7 @@ if (!result.ok) Astro.response.status = result.status;
 
 <BaseLayout title={result.ok ? 'Enquiry received' : 'Please check your message'} description="Contact Bharat Goradia.">
   <section class="section">
-    <div class="container narrow">
+    <div class="wrap narrow">
       {
         result.ok ? (
           <div class="success-page">
@@ -36,7 +36,7 @@ if (!result.ok) Astro.response.status = result.status;
             <p class="lead">Bharat will reply to the email address you gave.</p>
             {result.id !== 'received' && <p>Your reference: <strong>{result.id}</strong></p>}
             <p>
-              <a class="button button-secondary" href="/">Return to the home page</a>
+              <a class="button button-outline" href="/">Return to the home page</a>
             </p>
           </div>
         ) : (
@@ -61,6 +61,6 @@ if (!result.ok) Astro.response.status = result.status;
   }
   .lead {
     font-size: clamp(1.25rem, 1.15rem + 0.4vw, 1.4375rem);
-    color: var(--charcoal-soft);
+    color: var(--ink-2);
   }
 </style>

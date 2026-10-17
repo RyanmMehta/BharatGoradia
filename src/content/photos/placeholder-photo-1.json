@@ -1,11 +1,11 @@
 {
-  "title": "Placeholder photograph 1",
-  "caption": "Placeholder caption: names of the people pictured, the event, and Bharat's confirmed role.",
-  "alt": "Placeholder image 1",
+  "title": "Sample photo 1",
+  "caption": "Short caption: the occasion and Bharat's part in it.",
+  "alt": "Abstract sample artwork standing in for an event photograph",
   "people": [
-    "Artist name to be confirmed"
+    "Artist name"
   ],
-  "event": "Event name to be confirmed",
+  "event": "Diwali celebration",
   "bharatRole": "",
   "date": "",
   "image": "../../assets/photos/placeholder-photo-1/image.svg",

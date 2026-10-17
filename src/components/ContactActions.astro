@@ -2,68 +2,48 @@
 import { isPrototype, settings, unconfirmed } from '../lib/site';
 
 interface Props {
-  /** "large" stacked actions for the contact page and homepage; "compact" list for the footer. */
-  variant?: 'large' | 'compact';
+  /** "large" on paper, "red" inside the sindoor contact band. */
+  variant?: 'large' | 'red';
   /** Context for analytics, e.g. "contact-page", "home", "footer". */
   location: string;
 }
 const { variant = 'large', location } = Astro.props;
-const showTag = (key: string) => isPrototype && unconfirmed(key);
+const sample = (key: string) => isPrototype && unconfirmed(key);
 const phone = settings.phone.show && settings.phone.tel ? settings.phone : null;
+const secondary = 'button button-outline';
 ---
 
-<ul class:list={['contact-actions', `contact-${variant}`]} data-contact-actions>
-  <li class="contact-item">
-    <span class="contact-label">
-      Email {showTag('email') && <span class="placeholder-tag">Placeholder</span>}
-    </span>
-    <span class="contact-value" data-email-text>{settings.email}</span>
-    <span class="contact-buttons">
-      <a
-        class="button"
-        href={`mailto:${settings.email}`}
-        data-track="contact_email_click"
-        data-track-id={location}>Email Bharat</a
-      >
-      <button type="button" class="button button-secondary" data-copy-email hidden>Copy email address</button>
+<ul class:list={['contact', `contact-${variant}`]} data-contact-actions>
+  <li class="item item-email">
+    <span class="label">Email {sample('email') && <span class="sample-text">· Sample address</span>}</span>
+    <span class="value" data-email-text>{settings.email}</span>
+    <span class="actions">
+      <a class="button" href={`mailto:${settings.email}`} data-track="contact_email_click" data-track-id={location}>Email Bharat</a>
+      <button type="button" class={secondary} data-copy-email hidden>Copy address</button>
     </span>
     <span class="copy-status" role="status" data-copy-status></span>
   </li>
-  <li class="contact-item">
-    <span class="contact-label">
-      Instagram {showTag('instagram') && <span class="placeholder-tag">Placeholder</span>}
-    </span>
-    <span class="contact-value">{settings.instagram.handle}</span>
-    <span class="contact-buttons">
-      <a
-        class="button button-secondary"
-        href={settings.instagram.url}
-        data-track="social_click"
-        data-track-id={`instagram:${location}`}>Open Instagram</a
-      >
+  <li class="item">
+    <span class="label">Instagram {sample('instagram') && <span class="sample-text">· Sample</span>}</span>
+    <span class="value">{settings.instagram.handle}</span>
+    <span class="actions">
+      <a class={secondary} href={settings.instagram.url} data-track="social_click" data-track-id={`instagram:${location}`}>Open Instagram</a>
     </span>
   </li>
-  <li class="contact-item">
-    <span class="contact-label">
-      Facebook {showTag('facebook') && <span class="placeholder-tag">Placeholder</span>}
-    </span>
-    <span class="contact-value">{settings.facebook.name}</span>
-    <span class="contact-buttons">
-      <a
-        class="button button-secondary"
-        href={settings.facebook.url}
-        data-track="social_click"
-        data-track-id={`facebook:${location}`}>Open Facebook</a
-      >
+  <li class="item">
+    <span class="label">Facebook {sample('facebook') && <span class="sample-text">· Sample</span>}</span>
+    <span class="value">{settings.facebook.name}</span>
+    <span class="actions">
+      <a class={secondary} href={settings.facebook.url} data-track="social_click" data-track-id={`facebook:${location}`}>Open Facebook</a>
     </span>
   </li>
   {
     phone && (
-      <li class="contact-item">
-        <span class="contact-label">Telephone</span>
-        <span class="contact-value">{phone.display}</span>
-        <span class="contact-buttons">
-          <a class="button button-secondary" href={`tel:${phone.tel}`} data-track="phone_click" data-track-id={location}>
+      <li class="item">
+        <span class="label">Telephone</span>
+        <span class="value">{phone.display}</span>
+        <span class="actions">
+          <a class={secondary} href={`tel:${phone.tel}`} data-track="phone_click" data-track-id={location}>
             Call Bharat
           </a>
         </span>
@@ -100,99 +80,94 @@ const phone = settings.phone.show && settings.phone.tel ? settings.phone : null;
 </script>
 
 <style>
-  .contact-actions {
-    display: grid;
-    gap: 1rem;
+  .contact {
     margin: 0;
     padding: 0;
     list-style: none;
   }
-
-  .contact-large .contact-item {
+  .item {
     display: grid;
-    gap: 0.35rem 1.5rem;
-    padding: clamp(1.25rem, 1rem + 1vw, 1.75rem);
-    background: #fff;
-    border: 1px solid var(--line);
-    border-left: 4px solid var(--gold);
-    border-radius: var(--radius);
+    gap: 0.2rem 2rem;
+    padding: 1.6rem 0;
+    border-top: 1px solid var(--rule);
   }
-
-  .contact-label {
-    font-size: var(--text-support);
-    font-weight: 600;
-    color: var(--charcoal-soft);
+  .item:last-child {
+    border-bottom: 1px solid var(--rule);
   }
-
-  .contact-value {
-    font-size: clamp(1.375rem, 1.2rem + 0.8vw, 1.75rem);
-    font-weight: 600;
-    color: var(--charcoal);
+  .label {
+    font-size: var(--text-label);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--sindoor);
+  }
+  .sample-text {
+    color: var(--ink-2);
+    letter-spacing: 0.04em;
+    text-transform: none;
+    font-weight: 400;
+  }
+  .value {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2.5rem);
+    line-height: 1.15;
     overflow-wrap: anywhere;
     user-select: all;
     -webkit-user-select: all;
   }
-
-  .contact-buttons {
+  .actions {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
-    margin-top: 0.5rem;
+    margin-top: 0.75rem;
   }
-
   .copy-status:empty {
     display: none;
   }
-
   .copy-status {
-    font-size: var(--text-support);
-    font-weight: 600;
-    color: var(--burgundy);
+    font-weight: 700;
+    color: var(--sindoor);
   }
-
-  @media (min-width: 48rem) {
-    .contact-large .contact-item {
+  @media (min-width: 52rem) {
+    .contact-large .item,
+    .contact-red .item {
       grid-template-columns: 1fr auto;
       align-items: center;
     }
-    .contact-large .contact-label,
-    .contact-large .contact-value {
+    .contact-large .label,
+    .contact-large .value,
+    .contact-red .label,
+    .contact-red .value {
       grid-column: 1;
     }
-    .contact-large .contact-buttons {
+    .contact-large .actions,
+    .contact-red .actions {
       grid-column: 2;
       grid-row: 1 / span 2;
       margin: 0;
       justify-content: flex-end;
     }
-    .contact-large .copy-status {
+    .contact-large .copy-status,
+    .contact-red .copy-status {
       grid-column: 1 / -1;
     }
   }
 
-  /* Compact footer variant on the dark footer */
-  .contact-compact {
-    gap: 1.25rem;
+  /* Inside the sindoor contact band */
+  .contact-red .item {
+    border-color: rgb(247 241 230 / 0.25);
   }
-  .contact-compact .contact-item {
-    display: grid;
-    gap: 0.15rem;
+  .contact-red .label {
+    color: var(--marigold-soft);
   }
-  .contact-compact .contact-label {
-    color: var(--on-night-soft);
+  .contact-red .sample-text {
+    color: var(--marigold-soft);
   }
-  .contact-compact .contact-value {
-    font-size: var(--text-body);
-    color: var(--on-night);
+  .contact-red .copy-status {
+    color: var(--marigold-soft);
   }
-  .contact-compact .contact-buttons {
-    margin-top: 0.35rem;
+  .contact-red .item-email .value {
+    font-size: clamp(1.75rem, 1.2rem + 2.4vw, 3.5rem);
   }
-  .contact-compact .button {
-    padding: 0.6rem 1.1rem;
-    font-size: var(--text-support);
-  }
-  .contact-compact .copy-status {
-    color: var(--gold-light);
-  }
+
 </style>

@@ -1,6 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1000" viewBox="0 0 1500 1000">
-<rect width="1500" height="1000" fill="#E9E1D2"/>
-<circle cx="750" cy="320" r="110" fill="#D3C6B0"/>
-<path d="M530 640 a220 180 0 0 1 440 0 z" fill="#D3C6B0"/>
-<text x="750" y="760" text-anchor="middle" font-family="system-ui, sans-serif" font-size="50" fill="#5b4e3c">Placeholder photo 3</text>
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d1210"/><stop offset="1" stop-color="#5c2a18"/></linearGradient>
+<linearGradient id="beam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff2d6" stop-opacity=".6"/><stop offset="1" stop-color="#fff6e3" stop-opacity="0"/></linearGradient>
+<radialGradient id="glow" cx=".5" cy="1" r=".75"><stop offset="0" stop-color="#e9a23b" stop-opacity=".55"/><stop offset="1" stop-color="#e9a23b" stop-opacity="0"/></radialGradient>
+<filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter>
+</defs>
+<rect width="1500" height="1000" fill="url(#bg)"/>
+<polygon points="346.3056702638537,0 391.3056702638537,0 662.3257699351877,1000 75.28557059251966,1000" fill="url(#beam)" opacity="0.22"/><polygon points="753.9561386261863,0 798.9561386261863,0 1175.1136508759175,1000 377.79862637645516,1000" fill="url(#beam)" opacity="0.21"/><polygon points="1225.579224785594,0 1270.579224785594,0 1682.1040019670522,1000 814.054447604136,1000" fill="url(#beam)" opacity="0.27"/>
+<rect width="1500" height="1000" fill="url(#glow)"/>
+<circle cx="1471" cy="656" r="16" fill="#e9a23b" opacity="0.18"/><circle cx="817" cy="675" r="45" fill="#e9a23b" opacity="0.28"/><circle cx="908" cy="711" r="15" fill="#e9a23b" opacity="0.23"/><circle cx="178" cy="469" r="38" fill="#e9a23b" opacity="0.22"/><circle cx="880" cy="838" r="29" fill="#e9a23b" opacity="0.21"/><circle cx="875" cy="798" r="44" fill="#e9a23b" opacity="0.17"/><circle cx="1419" cy="995" r="47" fill="#e9a23b" opacity="0.26"/><circle cx="35" cy="565" r="21" fill="#e9a23b" opacity="0.16"/><circle cx="566" cy="513" r="30" fill="#e9a23b" opacity="0.23"/><circle cx="1108" cy="511" r="28" fill="#e9a23b" opacity="0.19"/><circle cx="1377" cy="616" r="21" fill="#e9a23b" opacity="0.20"/><circle cx="612" cy="957" r="32" fill="#e9a23b" opacity="0.37"/><circle cx="1037" cy="486" r="37" fill="#e9a23b" opacity="0.14"/><circle cx="1016" cy="681" r="34" fill="#e9a23b" opacity="0.32"/>
+<rect width="1500" height="1000" filter="url(#grain)" opacity=".07"/>
 </svg>

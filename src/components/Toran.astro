@@ -1,0 +1,24 @@
+---
+// Marigold garland (toran), the decorative border hung over doorways at Indian celebrations.
+// Purely decorative: hidden from assistive technology.
+interface Props {
+  tone?: 'paper' | 'night';
+  class?: string;
+}
+const { tone = 'paper', class: className } = Astro.props;
+---
+
+<div class:list={['toran', `toran-${tone}`, className]} aria-hidden="true"></div>
+
+<style>
+  .toran {
+    height: 30px;
+    background-repeat: repeat-x;
+    background-position: center top;
+    background-size: 56px 30px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='30' viewBox='0 0 56 30'%3E%3Cpath d='M0 4 Q14 13 28 13 T56 4' fill='none' stroke='%237a0e13' stroke-width='1.5'/%3E%3Cpath d='M28 18 V23' stroke='%237a0e13' stroke-width='1.2'/%3E%3Ccircle cx='28' cy='12' r='6.5' fill='%23e9a23b'/%3E%3Ccircle cx='28' cy='12' r='6.5' fill='none' stroke='%23c97f1c' stroke-width='1' stroke-dasharray='2 1.6'/%3E%3Ccircle cx='28' cy='12' r='2.4' fill='%23a3171d'/%3E%3Ccircle cx='28' cy='25.5' r='2.6' fill='%23a3171d'/%3E%3Ccircle cx='0' cy='4' r='3.2' fill='%23a3171d'/%3E%3Ccircle cx='56' cy='4' r='3.2' fill='%23a3171d'/%3E%3C/svg%3E");
+  }
+  .toran-night {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='30' viewBox='0 0 56 30'%3E%3Cpath d='M0 4 Q14 13 28 13 T56 4' fill='none' stroke='%23d9cdbd' stroke-opacity='.5' stroke-width='1.5'/%3E%3Cpath d='M28 18 V23' stroke='%23d9cdbd' stroke-opacity='.5' stroke-width='1.2'/%3E%3Ccircle cx='28' cy='12' r='6.5' fill='%23e9a23b'/%3E%3Ccircle cx='28' cy='12' r='2.4' fill='%23a3171d'/%3E%3Ccircle cx='28' cy='25.5' r='2.6' fill='%23e9a23b'/%3E%3Ccircle cx='0' cy='4' r='3.2' fill='%23c4262c'/%3E%3Ccircle cx='56' cy='4' r='3.2' fill='%23c4262c'/%3E%3C/svg%3E");
+  }
+</style>

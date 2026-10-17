@@ -1,11 +1,11 @@
 {
-  "title": "Placeholder photograph 3",
-  "caption": "Placeholder caption: names of the people pictured, the event, and Bharat's confirmed role.",
-  "alt": "Placeholder image 3",
+  "title": "Sample photo 3",
+  "caption": "Short caption: the occasion and Bharat's part in it.",
+  "alt": "Abstract sample artwork standing in for an event photograph",
   "people": [
-    "Artist name to be confirmed"
+    "Artist name"
   ],
-  "event": "Event name to be confirmed",
+  "event": "Charity gala",
   "bharatRole": "",
   "date": "",
   "image": "../../assets/photos/placeholder-photo-3/image.svg",

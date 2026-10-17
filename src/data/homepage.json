@@ -1,7 +1,7 @@
 {
   "hero": {
     "image": "/src/assets/hero/hero/image.svg",
-    "alt": "Placeholder for a portrait of Bharat Goradia",
+    "alt": "Sample artwork standing in for a portrait of Bharat Goradia",
     "focalPoint": "50% 25%",
     "placeholder": true
   },

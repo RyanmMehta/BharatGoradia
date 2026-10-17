@@ -4,22 +4,23 @@ import type { CollectionEntry } from 'astro:content';
 
 interface Props {
   entry: CollectionEntry<'testimonials'>;
+  featured?: boolean;
 }
-const { entry } = Astro.props;
+const { entry, featured = false } = Astro.props;
 const { data } = entry;
 const attribution = [data.role, data.organization].filter(Boolean).join(', ');
 ---
 
-<figure class:list={['testimonial', data.kind === 'greeting' && 'is-greeting']}>
-  <p class="testimonial-kind">
-    {data.placeholder && <span class="placeholder-tag">Placeholder</span>}
+<figure class:list={['quote', featured && 'is-featured', data.kind === 'greeting' && 'is-greeting']}>
+  <p class="quote-kind">
     {data.kind === 'greeting' ? 'Greeting' : 'Testimonial'}
+    {data.placeholder && <span class="sample-text">· Sample</span>}
   </p>
   <blockquote>
     <p>{data.quote}</p>
   </blockquote>
   <figcaption>
-    {data.photo && <Image src={data.photo} alt="" width={64} height={64} class="speaker-photo" loading="lazy" />}
+    {data.photo && <Image src={data.photo} alt="" width={72} height={72} class="speaker-photo" loading="lazy" />}
     <span>
       <span class="speaker">{data.speaker}</span>
       {attribution && <span class="speaker-role">{attribution}</span>}
@@ -28,41 +29,64 @@ const attribution = [data.role, data.organization].filter(Boolean).join(', ');
 </figure>
 
 <style>
-  .testimonial {
-    margin: 0;
-    padding: clamp(1.5rem, 1rem + 1.5vw, 2.25rem);
-    background: #fff;
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
+  .quote {
+    position: relative;
     display: flex;
     flex-direction: column;
+    height: 100%;
+    margin: 0;
+    padding-top: 1.75rem;
+    border-top: 3px solid var(--ink);
   }
-  .testimonial-kind {
-    font-size: var(--text-support);
-    font-weight: 600;
-    color: var(--burgundy);
-    margin-bottom: 0.75rem;
+  .quote-kind {
+    margin: 0 0 1rem;
+    font-size: var(--text-label);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--sindoor);
   }
-  .is-greeting {
-    background: var(--ivory);
-    border-style: dashed;
+  .sample-text {
+    margin-left: 0.35em;
+    color: var(--ink-2);
+    letter-spacing: 0.06em;
   }
   blockquote {
-    margin: 0 0 1.25rem;
-    font-family: var(--font-display);
-    font-size: clamp(1.25rem, 1.15rem + 0.4vw, 1.4375rem);
-    line-height: 1.5;
     position: relative;
-    padding-left: 1.25rem;
-    border-left: 3px solid var(--gold);
+    margin: 0 0 1.5rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.375rem, 1.25rem + 0.5vw, 1.625rem);
+    line-height: 1.35;
+  }
+  blockquote::before {
+    content: '“';
+    display: block;
+    height: 0.55em;
+    margin-bottom: 0.15em;
+    font-size: 3.2em;
+    line-height: 1;
+    color: var(--marigold);
   }
   blockquote p {
     margin: 0;
   }
+  .is-featured {
+    border-top-color: var(--sindoor);
+  }
+  .is-featured blockquote {
+    font-size: clamp(1.75rem, 1.3rem + 1.8vw, 2.875rem);
+    line-height: 1.2;
+  }
+  .is-featured blockquote::before {
+    color: var(--sindoor);
+  }
+  .is-greeting {
+    border-top-style: dashed;
+  }
   figcaption {
     display: flex;
     align-items: center;
-    gap: 0.9rem;
+    gap: 1rem;
     margin-top: auto;
   }
   .speaker {
@@ -72,7 +96,7 @@ const attribution = [data.role, data.organization].filter(Boolean).join(', ');
   .speaker-role {
     display: block;
     font-size: var(--text-support);
-    color: var(--charcoal-soft);
+    color: var(--ink-2);
   }
   .speaker-photo {
     border-radius: 50%;

@@ -1,47 +1,58 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
 import PhotoCard from '../components/PhotoCard.astro';
 import VideoCard from '../components/VideoCard.astro';
 import { publicCollection } from '../lib/site';
 
 const PAGE_SIZE = 12;
 const [photos, videos] = await Promise.all([publicCollection('photos'), publicCollection('videos')]);
-
-// One curated reading order across photos and videos: editor order first, then newest dated items.
-// Undated items are not given a fake date; they simply sort after dated items with the same order.
-const items = [...photos, ...videos].sort(
-  (a, b) => a.data.order - b.data.order || (b.data.date || '').localeCompare(a.data.date || ''),
-);
 ---
 
 <BaseLayout title="Gallery & Videos" description="Photographs and videos from events and appearances with Bharat Goradia.">
-  <section class="section gallery-top">
-    <div class="container">
-      <p class="eyebrow">Gallery & Videos</p>
-      <h1>Photographs and videos</h1>
-      <p class="lead">Captions name the people pictured and the occasion. Videos play here when you press Play.</p>
+  <PageHeader
+    credit="Gallery & Videos"
+    title="Photographs and videos"
+    lead="Captions name the people pictured and the occasion. Videos play here when you press Play."
+  />
 
+  {
+    videos.length > 0 && (
+      <section class="section on-night" aria-labelledby="videos-title">
+        <div class="wrap">
+          <h2 id="videos-title" class="block-title">Videos</h2>
+          <ul class="video-grid">
+            {videos.map((entry) => (
+              <li>
+                <VideoCard entry={entry} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section" aria-labelledby="photos-title">
+    <div class="wrap">
+      <h2 id="photos-title" class="block-title">Photographs</h2>
       {
-        items.length === 0 ? (
-          <p>New photographs and videos will appear here soon.</p>
+        photos.length === 0 ? (
+          <p>New photographs will appear here soon.</p>
         ) : (
           <>
-            <ul class="gallery grid grid-3" data-gallery data-page-size={PAGE_SIZE}>
-              {items.map((entry, i) => (
+            <ul class="photo-grid" data-gallery data-page-size={PAGE_SIZE}>
+              {photos.map((entry, i) => (
                 <li class:list={['gallery-item', i >= PAGE_SIZE && 'gallery-extra']} data-gallery-item tabindex="-1">
-                  {entry.collection === 'videos' ? (
-                    <VideoCard entry={entry} headingLevel="h2" />
-                  ) : (
-                    <PhotoCard entry={entry} headingLevel="h2" />
-                  )}
+                  <PhotoCard entry={entry} />
                 </li>
               ))}
             </ul>
             <p class="gallery-status" role="status" data-gallery-status />
-            {items.length > PAGE_SIZE && (
+            {photos.length > PAGE_SIZE && (
               <p class="load-more-wrap">
-                <button type="button" class="button button-secondary" data-load-more hidden>
-                  Show more photos and videos
+                <button type="button" class="button button-outline" data-load-more hidden>
+                  Show more photographs
                 </button>
               </p>
             )}
@@ -67,7 +78,7 @@ const items = [...photos, ...videos].sort(
       const batch = hidden().slice(0, size);
       batch.forEach((el) => el.classList.add('is-shown'));
       const shown = all.length - hidden().length;
-      status.textContent = `Showing ${shown} of ${all.length} photos and videos.`;
+      status.textContent = `Showing ${shown} of ${all.length} photographs.`;
       button.hidden = hidden().length === 0;
       batch[0]?.focus();
     });
@@ -75,35 +86,39 @@ const items = [...photos, ...videos].sort(
 </script>
 
 <style>
-  .gallery-top {
-    padding-top: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+  .block-title {
+    font-size: var(--display-m);
+    margin-bottom: 2rem;
   }
-  .lead {
-    font-size: clamp(1.25rem, 1.15rem + 0.4vw, 1.4375rem);
-    color: var(--charcoal-soft);
-    margin-bottom: 2.5rem;
-  }
-  .gallery {
-    list-style: none;
+  .photo-grid,
+  .video-grid {
+    display: grid;
+    gap: 3rem 2rem;
     margin: 0;
     padding: 0;
+    list-style: none;
   }
-  .gallery-item {
-    display: flex;
-    flex-direction: column;
+  @media (min-width: 40rem) {
+    .photo-grid,
+    .video-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
-  .gallery-item > :global(*) {
-    flex: 1;
+  @media (min-width: 64rem) {
+    .photo-grid,
+    .video-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
   }
   .gallery-item:focus {
     outline: none;
   }
   .gallery-item:focus-visible {
-    outline: var(--focus);
+    outline: 3px solid var(--sindoor);
     outline-offset: 6px;
   }
-  /* Hidden only once the script below has taken charge, so a script failure never strands items. */
-  .gallery.is-enhanced .gallery-extra:not(.is-shown) {
+  /* Hidden only once the script has taken charge, so a script failure never strands items. */
+  .photo-grid.is-enhanced .gallery-extra:not(.is-shown) {
     display: none;
   }
   .gallery-status:empty {
@@ -111,21 +126,11 @@ const items = [...photos, ...videos].sort(
   }
   .gallery-status {
     margin-top: 1.5rem;
-    font-weight: 600;
+    font-weight: 700;
   }
   .load-more-wrap {
-    margin-top: 2rem;
+    margin-top: 2.5rem;
     text-align: center;
     max-width: none;
-  }
-  /* Video cards keep their dark styling on the light gallery page. */
-  .gallery :global(.video-card) {
-    color: var(--on-night);
-  }
-  .gallery :global(.video-card a) {
-    color: var(--gold-light);
-  }
-  .gallery :global(.video-card :focus-visible) {
-    outline-color: var(--gold-light);
   }
 </style>

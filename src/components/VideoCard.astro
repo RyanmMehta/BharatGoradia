@@ -5,8 +5,9 @@ import type { CollectionEntry } from 'astro:content';
 interface Props {
   entry: CollectionEntry<'videos'>;
   headingLevel?: 'h2' | 'h3' | 'h4';
+  sizes?: string;
 }
-const { entry, headingLevel = 'h3' } = Astro.props;
+const { entry, headingLevel = 'h3', sizes = '(min-width: 64rem) 26rem, (min-width: 40rem) 45vw, 100vw' } = Astro.props;
 const { data } = entry;
 const video = data;
 const Heading = headingLevel;
@@ -55,24 +56,28 @@ const playLabel = `Play video: ${data.title}, ${spokenDuration(video.duration)}`
             src={data.poster}
             alt=""
             widths={[480, 800, 1200]}
-            sizes="(min-width: 64rem) 22rem, (min-width: 40rem) 45vw, 100vw"
+            sizes={sizes}
             loading="lazy"
           />
-          <span class="play-badge" aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="28" height="28"><path d="M8 5v14l11-7z" fill="currentColor" /></svg>
-            Play
+          <span class="play" aria-hidden="true">
+            <span class="play-disc"><svg viewBox="0 0 24 24" width="30" height="30"><path d="M8 5v14l11-7z" fill="currentColor" /></svg></span>
+            <span class="play-text">Play</span>
           </span>
+          {data.placeholder && <span class="sample-chip">Sample</span>}
         </a>
       ) : (
         <div class="video-facade is-unavailable">
-          <Image src={data.poster} alt="" widths={[480, 800]} sizes="(min-width: 40rem) 45vw, 100vw" loading="lazy" />
-          <span class="unavailable-note">Video link to be added</span>
+          <Image src={data.poster} alt="" widths={[480, 800, 1200]} sizes={sizes} loading="lazy" />
+          <span class="play is-muted" aria-hidden="true">
+            <span class="play-disc"><svg viewBox="0 0 24 24" width="30" height="30"><path d="M8 5v14l11-7z" fill="currentColor" /></svg></span>
+          </span>
+          <span class="unavailable-note">Video coming soon</span>
+          {data.placeholder && <span class="sample-chip">Sample</span>}
         </div>
       )
     }
   </div>
   <div class="video-body">
-    {data.placeholder && <span class="placeholder-tag">Placeholder</span>}
     <p class="video-meta">
       <span>{typeLabel}</span> · <span><span aria-hidden="true">{video.duration}</span><span class="visually-hidden">{spokenDuration(video.duration)}</span></span>
     </p>
@@ -92,17 +97,18 @@ const playLabel = `Play video: ${data.title}, ${spokenDuration(video.duration)}`
   .video-card {
     display: flex;
     flex-direction: column;
-    background: var(--night-raised);
-    border-radius: var(--radius);
-    overflow: hidden;
-    border: 1px solid #333;
+    height: 100%;
+    color: var(--on-night);
   }
   .video-stage {
     position: relative;
     aspect-ratio: 16 / 9;
-    background: #0d0d0d;
+    background: #0b0807;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 0 0 1px var(--rule-night);
   }
-  /* Vertical footage keeps its own shape inside a neutral frame instead of being cropped to landscape. */
+  /* Vertical footage keeps its own 9:16 shape inside the frame instead of being cropped. */
   .video-stage.video-portrait > :global(*) {
     position: absolute;
     inset: 0;
@@ -122,26 +128,48 @@ const playLabel = `Play video: ${data.title}, ${spokenDuration(video.duration)}`
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 600ms cubic-bezier(0.2, 0.7, 0.2, 1), opacity 200ms ease;
   }
-  .play-badge {
+  .video-facade:hover :global(img) {
+    transform: scale(1.03);
+    opacity: 0.85;
+  }
+  .play {
     position: absolute;
-    left: 1rem;
-    bottom: 1rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    min-height: var(--target);
-    padding: 0.5rem 1.1rem 0.5rem 0.8rem;
-    border-radius: 999px;
-    background: var(--gold-light);
-    color: var(--night);
-    font-weight: 700;
-    box-shadow: 0 2px 10px rgb(0 0 0 / 0.35);
-    transition: background-color 150ms ease;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: grid;
+    justify-items: center;
+    gap: 0.5rem;
   }
-  .video-facade:hover .play-badge,
-  .video-facade:focus-visible .play-badge {
-    background: #fff;
+  .play-disc {
+    display: grid;
+    place-items: center;
+    width: 84px;
+    height: 84px;
+    padding-left: 4px;
+    border-radius: 50%;
+    background: var(--marigold);
+    color: var(--night);
+    box-shadow: 0 6px 24px rgb(0 0 0 / 0.45), 0 0 0 8px rgb(233 162 59 / 0.22);
+    transition: transform 180ms ease, background-color 180ms ease;
+  }
+  .play-text {
+    padding: 0.1rem 0.7rem;
+    border-radius: 3px;
+    background: rgb(11 8 7 / 0.7);
+    font-weight: 700;
+    font-size: var(--text-support);
+  }
+  .video-facade:hover .play-disc,
+  .video-facade:focus-visible .play-disc {
+    transform: scale(1.07);
+    background: var(--paper);
+  }
+  .play.is-muted .play-disc {
+    opacity: 0.55;
+    box-shadow: none;
   }
   .unavailable-note {
     position: absolute;
@@ -149,9 +177,9 @@ const playLabel = `Play video: ${data.title}, ${spokenDuration(video.duration)}`
     bottom: 1rem;
     transform: translateX(-50%);
     white-space: nowrap;
-    padding: 0.4rem 0.8rem;
+    padding: 0.3rem 0.8rem;
     background: rgb(0 0 0 / 0.75);
-    border-radius: 6px;
+    border-radius: 4px;
   }
   .video-stage :global(iframe),
   .video-stage :global(video) {
@@ -161,38 +189,42 @@ const playLabel = `Play video: ${data.title}, ${spokenDuration(video.duration)}`
     background: #000;
   }
   .video-body {
-    padding: 1.25rem 1.25rem 1.5rem;
     display: flex;
     flex-direction: column;
     flex: 1;
-  }
-  .video-body > .placeholder-tag {
-    align-self: flex-start;
+    padding-top: 1.1rem;
   }
   .video-meta {
-    font-size: var(--text-support);
-    color: var(--gold-light);
-    font-weight: 600;
     margin: 0 0 0.35rem;
+    font-size: var(--text-label);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--marigold);
   }
   .video-title {
-    color: var(--on-night);
     margin-bottom: 0.4rem;
+    color: var(--on-night);
   }
   .video-desc {
-    color: var(--on-night-soft);
-    font-size: var(--text-support);
+    color: var(--on-night-2);
+    margin-bottom: 0.75rem;
   }
   .video-status:empty {
     display: none;
   }
   .video-status {
     padding: 0.75rem 1rem;
-    border-left: 4px solid var(--gold-light);
-    background: #2e2a2a;
+    border-left: 4px solid var(--marigold);
+    background: var(--night-2);
     font-size: var(--text-support);
   }
   .text-link-arrow {
+    align-self: flex-start;
     margin-top: auto;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-weight: 700;
   }
 </style>

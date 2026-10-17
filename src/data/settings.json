@@ -2,12 +2,22 @@
   "personName": "Bharat Goradia",
   "businessName": "V International",
   "descriptor": "Bollywood Artist Promotion & Celebrity Events",
-  "introduction": "Bharat Goradia works with event organisers, cultural associations and brands to bring Bollywood artists to celebrations and community events.",
-  "biography": "Draft biography, awaiting owner approval. Bharat works with organisers to plan celebrity appearances, live entertainment and cultural celebrations. This paragraph will be replaced with 100–150 words of approved, factual copy about his background and the kind of events he supports.",
+  "introduction": "Bharat Goradia connects event organisers, cultural associations and brands with Bollywood artists for celebrations, festivals and community events.",
+  "biography": "Bharat works with organisers from the first conversation onwards: understanding the occasion, suggesting artists who suit it, and agreeing the arrangements together. This short biography will be replaced with Bharat's own approved story.",
   "email": "enquiries@example.com",
-  "instagram": { "handle": "@handle-to-be-confirmed", "url": "https://www.instagram.com/" },
-  "facebook": { "name": "Page name to be confirmed", "url": "https://www.facebook.com/" },
-  "phone": { "show": false, "display": "", "tel": "" },
+  "instagram": {
+    "handle": "@handle-to-be-confirmed",
+    "url": "https://www.instagram.com/"
+  },
+  "facebook": {
+    "name": "Page name to be confirmed",
+    "url": "https://www.facebook.com/"
+  },
+  "phone": {
+    "show": false,
+    "display": "",
+    "tel": ""
+  },
   "confirmed": {
     "names": false,
     "descriptor": false,

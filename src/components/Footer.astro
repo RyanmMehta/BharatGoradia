@@ -1,19 +1,39 @@
 ---
-import ContactActions from './ContactActions.astro';
+import Toran from './Toran.astro';
 import { navItems, settings } from '../lib/site';
 const year = new Date().getFullYear();
 ---
 
-<footer class="site-footer section-dark">
-  <div class="container footer-grid">
-    <div>
+<footer class="site-footer on-night">
+  <Toran tone="night" />
+  <div class="wrap footer-grid">
+    <div class="footer-id">
       <p class="footer-name">{settings.personName}</p>
-      {settings.businessName && <p class="footer-sub">{settings.businessName}</p>}
-      <p class="footer-sub">{settings.descriptor}</p>
+      {settings.businessName && <p class="credit">{settings.businessName}</p>}
+      <p class="footer-desc">{settings.descriptor}</p>
     </div>
     <div>
       <h2 class="footer-heading">Contact Bharat</h2>
-      <ContactActions variant="compact" location="footer" />
+      <ul class="footer-contact">
+        <li>
+          <span class="fc-label">Email</span>
+          <a href={`mailto:${settings.email}`} data-track="contact_email_click" data-track-id="footer">{settings.email}</a>
+        </li>
+        <li>
+          <span class="fc-label">Instagram</span>
+          <a href={settings.instagram.url} data-track="social_click" data-track-id="instagram:footer">{settings.instagram.handle}</a>
+        </li>
+        <li>
+          <span class="fc-label">Facebook</span>
+          <a href={settings.facebook.url} data-track="social_click" data-track-id="facebook:footer">{settings.facebook.name}</a>
+        </li>
+        {settings.phone.show && settings.phone.tel && (
+          <li>
+            <span class="fc-label">Telephone</span>
+            <a href={`tel:${settings.phone.tel}`} data-track="phone_click" data-track-id="footer">{settings.phone.display}</a>
+          </li>
+        )}
+      </ul>
     </div>
     <nav aria-label="Footer">
       <h2 class="footer-heading">Pages</h2>
@@ -24,7 +44,7 @@ const year = new Date().getFullYear();
       </ul>
     </nav>
   </div>
-  <div class="container footer-base">
+  <div class="wrap footer-base">
     {settings.footerNote && <p>{settings.footerNote}</p>}
     <p>© {year} {settings.personName}</p>
   </div>
@@ -32,52 +52,85 @@ const year = new Date().getFullYear();
 
 <style>
   .site-footer {
-    padding-block: clamp(3rem, 2rem + 3vw, 4.5rem) 2rem;
+    padding-bottom: 2rem;
   }
   .footer-grid {
     display: grid;
-    gap: 2.5rem;
+    gap: 3rem;
+    padding-top: clamp(3.5rem, 2.5rem + 3vw, 5.5rem);
   }
-  @media (min-width: 56rem) {
+  @media (min-width: 60rem) {
     .footer-grid {
-      grid-template-columns: 1fr 1.3fr 0.8fr;
+      grid-template-columns: 1.1fr 1.3fr 0.7fr;
+      gap: 4rem;
     }
   }
   .footer-name {
+    margin: 0 0 0.75rem;
     font-family: var(--font-display);
-    font-size: 1.75rem;
-    font-weight: 700;
-    margin-bottom: 0.25rem;
+    font-size: clamp(2.25rem, 1.8rem + 1.6vw, 3.25rem);
+    line-height: 1;
   }
-  .footer-sub {
-    color: var(--on-night-soft);
-    margin: 0;
-    font-size: var(--text-support);
+  .footer-desc {
+    color: var(--on-night-2);
   }
   .footer-heading {
+    margin-bottom: 0.75rem;
     font-family: var(--font-body);
-    font-size: var(--text-support);
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    color: var(--gold-light);
-    margin-bottom: 1rem;
+    font-size: var(--text-label);
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--marigold);
   }
-  .footer-links {
-    list-style: none;
+  .footer-contact {
+    display: grid;
+    gap: 1rem;
     margin: 0;
     padding: 0;
+    list-style: none;
+  }
+  .footer-contact li {
+    display: grid;
+  }
+  .fc-label {
+    font-size: var(--text-support);
+    color: var(--on-night-2);
+  }
+  .footer-contact a {
+    display: inline-block;
+    padding-block: 0.2rem;
+    font-family: var(--font-display);
+    font-size: var(--display-s);
+    color: var(--on-night);
+    text-decoration-color: var(--marigold);
+    overflow-wrap: anywhere;
+  }
+  .footer-contact a:hover {
+    color: var(--marigold);
+  }
+  .footer-links {
+    margin: 0;
+    padding: 0;
+    list-style: none;
   }
   .footer-links a {
     display: inline-flex;
     align-items: center;
-    min-height: var(--target);
+    min-height: 48px;
     color: var(--on-night);
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .footer-links a:hover {
+    color: var(--marigold);
+    text-decoration: underline;
   }
   .footer-base {
-    margin-top: 2.5rem;
+    margin-top: 3.5rem;
     padding-top: 1.5rem;
-    border-top: 1px solid #3a3636;
-    color: var(--on-night-soft);
+    border-top: 1px solid var(--rule-night);
+    color: var(--on-night-2);
     font-size: var(--text-support);
   }
   .footer-base p {

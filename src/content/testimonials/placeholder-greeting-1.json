@@ -1,7 +1,7 @@
 {
   "kind": "greeting",
-  "quote": "Placeholder for a short, approved greeting from an artist. Greetings are labelled separately from testimonials.",
-  "speaker": "Artist name to be confirmed",
+  "quote": "A short, approved greeting from an artist will appear here.",
+  "speaker": "Artist name",
   "role": "",
   "organization": "",
   "approval": {

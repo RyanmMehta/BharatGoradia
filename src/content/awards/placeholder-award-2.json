@@ -1,10 +1,10 @@
 {
   "kind": "award",
-  "title": "Award title to be confirmed (2)",
-  "issuer": "Issuing organisation to be confirmed",
+  "title": "Award title",
+  "issuer": "Awarding organisation",
   "location": "",
   "date": "",
-  "description": "One sentence of owner-approved context explaining what this recognition was for.",
+  "description": "One sentence explaining what this recognition was for and why it matters.",
   "imageAlt": "",
   "evidence": {
     "sources": [],

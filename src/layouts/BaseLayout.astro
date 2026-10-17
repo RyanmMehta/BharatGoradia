@@ -1,9 +1,10 @@
 ---
-import '@fontsource-variable/source-sans-3/wght.css';
-import '@fontsource-variable/source-serif-4/wght.css';
+import '@fontsource/gloock/latin-400.css';
+import '@fontsource-variable/atkinson-hyperlegible-next/wght.css';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import Toran from '../components/Toran.astro';
 import { isPrototype, settings } from '../lib/site';
 
 interface Props {
@@ -30,7 +31,7 @@ const ogImage = new URL('/og-default.png', Astro.site);
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     {isPrototype && <meta name="robots" content="noindex, nofollow" />}
-    <meta name="theme-color" content="#faf7f0" />
+    <meta name="theme-color" content="#f7f1e6" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <meta property="og:type" content="website" />
@@ -66,14 +67,14 @@ const ogImage = new URL('/og-default.png', Astro.site);
     <a class="skip-link" href="#main">Skip to main content</a>
     {
       isPrototype && (
-        <aside class="prototype-banner" aria-label="Prototype notice">
-          <div class="container">
-            <strong>Prototype preview.</strong> Items marked <span class="placeholder-tag">Placeholder</span> are
-            stand-ins awaiting approved content. This page is hidden from search engines.
+        <aside class="preview-bar" aria-label="Preview notice">
+          <div class="wrap">
+            <strong>Preview.</strong> Photos, videos and wording are samples awaiting approval. Hidden from search engines.
           </div>
         </aside>
       )
     }
+    <Toran />
     <Header />
     <main id="main" tabindex="-1">
       <slot />
@@ -95,7 +96,7 @@ const ogImage = new URL('/og-default.png', Astro.site);
     top: -10rem;
     z-index: 100;
     padding: 0.75rem 1.25rem;
-    background: var(--charcoal);
+    background: var(--ink);
     color: #fff;
     font-weight: 600;
     border-radius: 6px;
@@ -106,11 +107,13 @@ const ogImage = new URL('/og-default.png', Astro.site);
   main:focus {
     outline: none;
   }
-  .prototype-banner {
-    background: var(--placeholder-bg);
-    color: var(--placeholder-ink);
-    border-bottom: 1px solid #e7d48a;
-    padding-block: 0.6rem;
-    font-size: var(--text-support);
+  .preview-bar {
+    background: var(--night);
+    color: var(--on-night-2);
+    padding-block: 0.55rem;
+    font-size: var(--text-label);
+  }
+  .preview-bar strong {
+    color: var(--marigold);
   }
 </style>

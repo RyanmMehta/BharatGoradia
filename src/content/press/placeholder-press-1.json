@@ -1,9 +1,9 @@
 {
-  "publication": "Publication to be confirmed",
-  "title": "Article title to be confirmed",
+  "publication": "Publication name",
+  "title": "Article headline",
   "date": "",
   "url": "https://example.com/",
-  "summary": "Placeholder for a selected press item with an outbound link.",
+  "summary": "One sentence on what the article covered.",
   "order": 10,
   "status": "published",
   "placeholder": true

@@ -1,117 +1,204 @@
 ---
 import { Image } from 'astro:assets';
-import { heroImage, homepage, isPrototype, settings, unconfirmed } from '../lib/site';
+import { heroImage, homepage, isPrototype, publicCollection, settings } from '../lib/site';
+
 const image = heroImage();
-const showTag = (k: string) => isPrototype && unconfirmed(k);
+const services = await publicCollection('services');
+// Split the name over two lines like a film title card ("Bharat / Goradia").
+const [first, ...rest] = settings.personName.split(' ');
 ---
 
 <section class="hero" aria-labelledby="hero-title">
-  <div class="container hero-grid">
-    <div class="hero-text enter">
-      {settings.businessName && <p class="eyebrow">{settings.businessName}</p>}
-      <h1 id="hero-title">{settings.personName}</h1>
-      <p class="hero-descriptor">
-        {settings.descriptor}
-        {showTag('descriptor') && <span class="placeholder-tag">Draft wording</span>}
-      </p>
-      <p class="hero-intro">
-        {settings.introduction}
-        {showTag('introduction') && <span class="placeholder-tag">Draft wording</span>}
-      </p>
-      <div class="hero-actions">
-        <a class="button" href="/contact" data-track="contact_cta_click" data-track-id="hero">Contact Bharat</a>
-        {homepage.introVideo && <a class="button button-secondary" href="#videos">Watch an introduction</a>}
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      {settings.businessName && <p class="credit enter">{settings.businessName} presents</p>}
+      <h1 id="hero-title" class="hero-name enter enter-2">
+        <span>{first}</span>
+        {rest.length > 0 && <span>{rest.join(' ')}</span>}
+      </h1>
+      <p class="hero-descriptor enter enter-2">{settings.descriptor}</p>
+      <p class="hero-intro enter enter-3">{settings.introduction}</p>
+      <div class="hero-actions enter enter-3">
+        <a class="button" href="/contact" data-track="contact_cta_click" data-track-id="hero">
+          Contact Bharat <span class="arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="button button-outline" href={homepage.introVideo ? '#videos' : '#work'}>
+          {homepage.introVideo ? 'Watch an introduction' : 'See his work'}
+        </a>
       </div>
     </div>
+
     {
       image && (
-        <div class="hero-photo enter enter-delay">
-          <Image
-            src={image}
-            alt={homepage.hero.alt}
-            widths={[480, 720, 960, 1200]}
-            sizes="(min-width: 56rem) 34rem, 100vw"
-            loading="eager"
-            fetchpriority="high"
-            style={`object-position: ${homepage.hero.focalPoint}`}
-          />
-          {homepage.hero.placeholder && isPrototype && <span class="placeholder-tag hero-tag">Placeholder</span>}
+        <div class="hero-portrait enter enter-2">
+          <svg class="arch-outline" viewBox="0 0 100 125" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0 125V48C0 22 30 9 50 0c20 9 50 22 50 48v77z" />
+          </svg>
+          <div class="arch">
+            <Image
+              src={image}
+              alt={homepage.hero.alt}
+              widths={[480, 720, 960, 1200]}
+              sizes="(min-width: 60rem) 30rem, 90vw"
+              loading="eager"
+              fetchpriority="high"
+              style={`object-position: ${homepage.hero.focalPoint}`}
+            />
+            {homepage.hero.placeholder && isPrototype && <span class="sample-chip">Sample portrait</span>}
+          </div>
         </div>
       )
     }
   </div>
+
+  {
+    services.length > 0 && (
+      <div class="wrap">
+        <ul class="hero-services" aria-label="What Bharat does">
+          {services.map((s, i) => (
+            <li>
+              <span class="num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <span class="label">{s.data.title}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
 </section>
 
 <style>
   .hero {
-    padding-block: clamp(1.5rem, 1rem + 3vw, 4.5rem) clamp(3rem, 2rem + 4vw, 6rem);
+    padding-block: clamp(2.5rem, 1.5rem + 4vw, 5.5rem) clamp(3rem, 2rem + 4vw, 6rem);
+    overflow: hidden;
   }
   .hero-grid {
     display: grid;
-    gap: clamp(2rem, 1rem + 3vw, 4rem);
+    gap: clamp(2.5rem, 1rem + 4vw, 5rem);
     align-items: center;
   }
-  @media (min-width: 56rem) {
+  @media (min-width: 60rem) {
     .hero-grid {
-      grid-template-columns: 1.1fr 0.9fr;
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.85fr);
     }
   }
-  .hero-text h1 {
-    margin-bottom: 0.3em;
+
+  .hero-name {
+    display: grid;
+    margin: 0 0 1.5rem;
+    font-size: var(--display-xl);
+    line-height: 0.92;
+    letter-spacing: -0.025em;
+    color: var(--ink);
   }
+  .hero-name span:last-child {
+    color: var(--sindoor);
+  }
+
   .hero-descriptor {
-    font-family: var(--font-display);
-    font-size: clamp(1.5rem, 1.25rem + 1vw, 2.125rem);
+    position: relative;
+    margin: 0 0 1.25rem;
+    padding-left: 1.25rem;
+    border-left: 4px solid var(--marigold);
+    font-size: clamp(1.5rem, 1.2rem + 1.1vw, 2.125rem);
+    font-weight: 700;
     line-height: 1.25;
-    color: var(--burgundy);
-    font-weight: 600;
-    margin-bottom: 0.75em;
+    max-width: 22em;
   }
   .hero-intro {
-    font-size: clamp(1.25rem, 1.15rem + 0.4vw, 1.4375rem);
-    color: var(--charcoal-soft);
-    max-width: 34em;
+    font-size: var(--text-lead);
+    line-height: 1.5;
+    color: var(--ink-2);
+    max-width: 30em;
   }
   .hero-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
-    margin-top: 1.75rem;
+    margin-top: 2rem;
   }
   .hero-actions .button {
-    font-size: clamp(1.25rem, 1.2rem + 0.2vw, 1.375rem);
-    padding-inline: 2rem;
+    font-size: var(--text-lead);
+    padding: 1rem 1.9rem;
   }
-  .hero-photo {
+
+  /* Arch-framed portrait with an offset marigold outline */
+  .hero-portrait {
+    position: relative;
+    width: min(100%, 30rem);
+    justify-self: center;
+    padding: 0 0 1.5rem 1.5rem;
+  }
+  .arch-outline {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: calc(100% - 1.5rem);
+    height: calc(100% - 1.5rem);
+    overflow: visible;
+  }
+  .arch-outline path {
+    fill: none;
+    stroke: var(--marigold);
+    stroke-width: 2.2;
+    vector-effect: non-scaling-stroke;
+  }
+  .arch {
     position: relative;
     aspect-ratio: 4 / 5;
-    max-height: 80vh;
-    border-radius: var(--radius);
-    overflow: hidden;
-    box-shadow: var(--shadow);
-    background: var(--ivory-deep);
+    background: var(--night-2);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 125' preserveAspectRatio='none'%3E%3Cpath d='M0 125V48C0 22 30 9 50 0c20 9 50 22 50 48v77z'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 125' preserveAspectRatio='none'%3E%3Cpath d='M0 125V48C0 22 30 9 50 0c20 9 50 22 50 48v77z'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
   }
-  .hero-photo::after {
-    content: '';
-    position: absolute;
-    inset: 0.75rem;
-    border: 1px solid rgb(169 132 69 / 0.55);
-    border-radius: calc(var(--radius) - 4px);
-    pointer-events: none;
-  }
-  .hero-photo :global(img) {
+  .arch :global(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
-  .hero-tag {
-    position: absolute;
-    top: 1.25rem;
-    left: 1.25rem;
+  .arch .sample-chip {
+    top: auto;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
   }
-  @media (max-width: 55.99rem) {
-    .hero-photo {
-      max-width: 30rem;
+
+  /* The three services as a credits row: tells visitors what he does on the first screen. */
+  .hero-services {
+    display: grid;
+    margin: clamp(3rem, 2rem + 3vw, 5rem) 0 0;
+    padding: 0;
+    list-style: none;
+    border-top: 2px solid var(--ink);
+  }
+  .hero-services li {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 1.1rem 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .hero-services .num {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    color: var(--sindoor);
+    min-width: 2.2ch;
+  }
+  .hero-services .label {
+    font-family: var(--font-display);
+    font-size: var(--display-s);
+    line-height: 1.2;
+  }
+  @media (min-width: 48rem) {
+    .hero-services {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .hero-services li {
+      padding: 1.4rem 1.5rem 0.4rem 0;
+      border-bottom: 0;
+    }
+    .hero-services li + li {
+      padding-left: 1.5rem;
+      border-left: 1px solid var(--rule);
     }
   }
 </style>

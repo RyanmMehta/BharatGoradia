@@ -11,7 +11,7 @@ placeholder content. Items that depend on owner decisions or real content are ma
 | Editor | Keystatic, git-backed | Structured forms with plain-language labels. GitHub sign-in in production, so no custom password system. Every edit is a commit, which gives revision history and restore |
 | Enquiry service | One Node server route + SQLite (`node:sqlite`) | Durable storage with no extra service and no native dependencies |
 | Email notifications | Provider interface, with Resend implemented | Swappable. `NOTIFY_PROVIDER=log` for development |
-| Fonts | Source Sans 3 and Source Serif 4, self-hosted | No third-party font requests |
+| Fonts | Atkinson Hyperlegible Next (reading text, designed for low-vision readers) and Gloock (headings), self-hosted | Legibility for older readers and a distinctive poster-style display face. No third-party font requests |
 | Analytics | Provider-neutral `track()` dispatcher | Works with Plausible or a tag manager once one is chosen. Sends identifiers only |
 
 Measured in the current prototype: homepage first-load JavaScript is about 3 KB compressed, well under the

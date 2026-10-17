@@ -5,10 +5,13 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
 ---
 
 <header class="site-header">
-  <div class="container header-inner">
-    <a class="brand" href="/" aria-label={`${settings.personName}, home`}>
-      <span class="brand-name">{settings.personName}</span>
-      {settings.businessName && <span class="brand-sub">{settings.businessName}</span>}
+  <div class="wrap header-inner">
+    <a class="brand" href="/" aria-label={`${settings.personName}, home page`}>
+      <span class="brand-mark" aria-hidden="true">BG</span>
+      <span class="brand-text">
+        <span class="brand-name">{settings.personName}</span>
+        {settings.businessName && <span class="brand-sub">{settings.businessName}</span>}
+      </span>
     </a>
     <nav aria-label="Main">
       <ul class="nav-list">
@@ -21,10 +24,8 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
             </li>
           ))
         }
-        <li class="nav-contact">
-          <a class="button" href="/contact" aria-current={isCurrent('/contact') ? 'page' : undefined}>
-            Contact Bharat
-          </a>
+        <li class="nav-cta">
+          <a class="button" href="/contact" aria-current={isCurrent('/contact') ? 'page' : undefined}>Contact Bharat</a>
         </li>
       </ul>
     </nav>
@@ -33,111 +34,139 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
 
 <style>
   .site-header {
-    background: var(--ivory);
-    border-bottom: 1px solid var(--line);
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule);
   }
-
-  /* Sticky only where there is room for it, so it never covers headings or focused controls on small screens. */
-  @media (min-width: 64rem) and (min-height: 40rem) {
+  @media (min-width: 64rem) and (min-height: 42rem) {
     .site-header {
       position: sticky;
       top: 0;
       z-index: 50;
-      background: rgb(250 247 240 / 0.97);
-      transition: box-shadow 150ms ease;
+      background: rgb(247 241 230 / 0.96);
+      backdrop-filter: saturate(1.2) blur(6px);
     }
   }
-
   .header-inner {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 0.5rem 2rem;
-    padding-block: 0.75rem;
+    gap: 0.75rem 2rem;
+    padding-block: 0.9rem;
   }
-
   .brand {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.85rem;
     min-height: var(--target);
-    color: var(--charcoal);
+    color: var(--ink);
     text-decoration: none;
-    line-height: 1.15;
   }
-
+  /* Monogram set inside a pointed (Mughal) arch */
+  .brand-mark {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 56px;
+    padding-top: 10px;
+    background: var(--sindoor);
+    color: var(--paper);
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    letter-spacing: 0.02em;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 125' preserveAspectRatio='none'%3E%3Cpath d='M0 125V48C0 22 30 9 50 0c20 9 50 22 50 48v77z'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 125' preserveAspectRatio='none'%3E%3Cpath d='M0 125V48C0 22 30 9 50 0c20 9 50 22 50 48v77z'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+  }
+  .brand-text {
+    display: grid;
+    line-height: 1.1;
+  }
   .brand-name {
     font-family: var(--font-display);
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-size: 1.6rem;
   }
-
   .brand-sub {
-    font-size: var(--text-small);
-    color: var(--charcoal-soft);
-    letter-spacing: 0.02em;
+    font-size: var(--text-label);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-2);
   }
-
-  /* Every destination stays visible as text at all sizes: no hidden menu to discover. */
   .nav-list {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.25rem 0.5rem;
+    gap: 0.25rem 0.35rem;
     margin: 0;
     padding: 0;
     list-style: none;
   }
-
   .nav-link {
+    position: relative;
     display: inline-flex;
     align-items: center;
     min-height: var(--target);
-    padding: 0 0.75rem;
-    color: var(--charcoal);
+    padding: 0 0.85rem;
+    color: var(--ink);
     font-size: var(--text-support);
-    font-weight: 600;
+    font-weight: 700;
     text-decoration: none;
-    border-bottom: 3px solid transparent;
   }
-
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0.85rem;
+    right: 0.85rem;
+    bottom: 0.55rem;
+    height: 3px;
+    background: var(--marigold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 180ms ease;
+  }
   .nav-link:hover {
-    color: var(--burgundy);
-    border-bottom-color: var(--gold);
+    color: var(--sindoor);
   }
-
+  .nav-link:hover::after {
+    transform: scaleX(1);
+  }
   .nav-link[aria-current='page'] {
-    color: var(--burgundy);
-    border-bottom-color: var(--burgundy);
+    color: var(--sindoor);
   }
-
-  .nav-contact {
-    margin-left: 0.5rem;
+  .nav-link[aria-current='page']::after {
+    transform: scaleX(1);
+    background: var(--sindoor);
   }
-
-  .nav-contact .button[aria-current='page'] {
-    box-shadow: 0 0 0 3px var(--ivory), 0 0 0 5px var(--gold);
+  .nav-cta {
+    margin-left: 0.75rem;
   }
-
+  .nav-cta .button {
+    font-size: var(--text-support);
+    padding-inline: 1.3rem;
+  }
   @media (max-width: 47.99rem) {
-    .header-inner {
-      padding-block: 0.5rem 0.25rem;
-    }
     nav {
       width: 100%;
     }
     .nav-list {
-      margin-inline: -0.75rem;
+      margin-inline: -0.6rem;
+      gap: 0;
     }
-    /* Contact stays a full-width primary action directly under the name on phones. */
-    .nav-contact {
+    .nav-link {
+      padding-inline: 0.6rem;
+    }
+    .nav-link::after {
+      left: 0.6rem;
+      right: 0.6rem;
+    }
+    .nav-cta {
       order: -1;
       width: 100%;
-      margin: 0 0.75rem 0.25rem;
+      margin: 0 0.85rem 0.35rem;
     }
-    .nav-contact .button {
+    .nav-cta .button {
       width: 100%;
+      font-size: var(--text-body);
     }
   }
 </style>

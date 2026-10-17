@@ -1,17 +1,18 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
 import { isPrototype, settings } from '../lib/site';
 const retentionDays = 90;
 ---
 
 <BaseLayout title="Privacy" description="How this website handles enquiries, videos and visitor information.">
+  <PageHeader credit="Privacy" title="How your information is handled" />
   <section class="section">
-    <div class="container prose">
-      <h1>Privacy</h1>
+    <div class="wrap"><div class="prose">
       {
         isPrototype && (
           <p>
-            <span class="placeholder-tag">Draft wording</span> This text describes how the site is currently built. It needs owner and
+            <strong>Draft wording.</strong> This text describes how the site is currently built. It needs owner and
             legal review before launch, and must be updated if the email or analytics providers change.
           </p>
         )
@@ -48,7 +49,7 @@ const retentionDays = 90;
       <p>
         To ask about your information or request that an enquiry be deleted, email <a href={`mailto:${settings.email}`}>{settings.email}</a>.
       </p>
-    </div>
+    </div></div>
   </section>
 </BaseLayout>
 
@@ -57,7 +58,7 @@ const retentionDays = 90;
     max-width: 46rem;
   }
   h2 {
-    font-size: var(--h3);
+    font-size: var(--display-m);
     margin-top: 2.25rem;
   }
 </style>

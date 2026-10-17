@@ -1,48 +1,70 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
 import ContactActions from '../components/ContactActions.astro';
 import EnquiryForm from '../components/EnquiryForm.astro';
 ---
 
 <BaseLayout title="Contact Bharat" description="Planning an event? Email Bharat Goradia, message him on Instagram or Facebook, or send a short enquiry.">
-  <section class="section contact-top">
-    <div class="container narrow">
-      <p class="eyebrow">Contact</p>
-      <h1>Planning an event? Get in touch with Bharat.</h1>
-      <p class="lead">Email is the most direct way to reach him. You can also message him on Instagram or Facebook.</p>
+  <PageHeader
+    credit="Contact"
+    title="Planning an event? Get in touch with Bharat."
+    lead="Email is the quickest way to reach him. You can also message him on Instagram or Facebook, or send a short message below."
+  />
+
+  <section class="section contact-direct" aria-label="Ways to contact Bharat">
+    <div class="wrap">
       <ContactActions location="contact-page" />
     </div>
   </section>
 
-  <section class="section section-tint" aria-labelledby="form-title">
-    <div class="container narrow">
-      <h2 id="form-title">Or send a short message</h2>
-      <p class="lead">
-        Bharat will reply by email. You do not need dates, budgets or artist names yet: just tell him what you are planning.
-      </p>
-      <EnquiryForm />
-      <p class="privacy-note">
-        Your details are used only to reply to your enquiry. <a href="/privacy">How your information is handled</a>.
-      </p>
+  <section class="section band" aria-labelledby="form-title">
+    <div class="wrap form-grid">
+      <div class="form-intro">
+        <p class="credit">Enquiry form</p>
+        <h2 id="form-title">Or send a short message</h2>
+        <p class="lead">You do not need dates, budgets or artist names yet. Just tell Bharat what you are planning and he will reply by email.</p>
+        <p class="privacy-note">
+          Your details are used only to reply to your enquiry. <a href="/privacy">How your information is handled</a>.
+        </p>
+      </div>
+      <div class="form-panel">
+        <EnquiryForm />
+      </div>
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  .narrow {
-    max-width: 52rem;
-  }
-  .contact-top {
+  .contact-direct {
     padding-top: clamp(2rem, 1.5rem + 2vw, 3.5rem);
   }
-  .lead {
-    font-size: clamp(1.25rem, 1.15rem + 0.4vw, 1.4375rem);
-    color: var(--charcoal-soft);
-    margin-bottom: 2rem;
+  .form-grid {
+    display: grid;
+    gap: 2.5rem 5rem;
+  }
+  @media (min-width: 64rem) {
+    .form-grid {
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+      align-items: start;
+    }
+    .form-intro {
+      position: sticky;
+      top: 8rem;
+    }
+  }
+  .form-intro h2 {
+    font-size: var(--display-m);
+  }
+  .form-panel {
+    padding: clamp(1.5rem, 1rem + 2.5vw, 3rem);
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-top: 4px solid var(--sindoor);
+    border-radius: var(--radius);
   }
   .privacy-note {
-    margin-top: 2rem;
     font-size: var(--text-support);
-    color: var(--charcoal-soft);
+    color: var(--ink-2);
   }
 </style>

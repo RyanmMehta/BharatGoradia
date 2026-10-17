@@ -136,7 +136,7 @@ const describedBy = (f: keyof EnquiryInput, hint?: boolean) =>
     max-width: 44rem;
   }
   .required-note {
-    color: var(--charcoal-soft);
+    color: var(--ink-2);
     font-size: var(--text-support);
   }
   .field {
@@ -149,12 +149,12 @@ const describedBy = (f: keyof EnquiryInput, hint?: boolean) =>
   }
   .optional {
     font-weight: 400;
-    color: var(--charcoal-soft);
+    color: var(--ink-2);
   }
   .field-hint {
     margin: 0 0 0.5rem;
     font-size: var(--text-support);
-    color: var(--charcoal-soft);
+    color: var(--ink-2);
   }
   .field-error {
     margin: 0 0 0.5rem;
@@ -173,10 +173,10 @@ const describedBy = (f: keyof EnquiryInput, hint?: boolean) =>
     min-height: 3.25rem;
     padding: 0.75rem 0.9rem;
     font: inherit;
-    color: var(--charcoal);
-    background: #fff;
-    border: 2px solid #7a7067;
-    border-radius: 8px;
+    color: var(--ink);
+    background: var(--card);
+    border: 2px solid var(--ink-2);
+    border-radius: var(--radius);
   }
   textarea {
     resize: vertical;
@@ -184,9 +184,9 @@ const describedBy = (f: keyof EnquiryInput, hint?: boolean) =>
   }
   input:focus-visible,
   textarea:focus-visible {
-    outline: var(--focus);
+    outline: 3px solid var(--sindoor);
     outline-offset: 2px;
-    border-color: var(--burgundy);
+    border-color: var(--sindoor);
   }
   .has-error input,
   .has-error textarea {
@@ -200,7 +200,7 @@ const describedBy = (f: keyof EnquiryInput, hint?: boolean) =>
   .char-count {
     margin: 0.4rem 0 0;
     font-size: var(--text-support);
-    color: var(--charcoal-soft);
+    color: var(--ink-2);
   }
   .char-count:empty {
     display: none;
@@ -228,7 +228,7 @@ const describedBy = (f: keyof EnquiryInput, hint?: boolean) =>
     padding: 1.25rem 1.5rem;
     border: 3px solid #9b1c1c;
     border-radius: var(--radius);
-    background: #fff;
+    background: var(--card);
   }
   .error-summary h3 {
     font-family: var(--font-body);
@@ -245,16 +245,16 @@ const describedBy = (f: keyof EnquiryInput, hint?: boolean) =>
   }
   .success {
     padding: 1.75rem;
-    border: 2px solid var(--burgundy);
+    border: 2px solid var(--sindoor);
     border-left-width: 6px;
     border-radius: var(--radius);
-    background: #fff;
+    background: var(--card);
   }
   .success:focus {
-    outline: var(--focus);
+    outline: 3px solid var(--sindoor);
     outline-offset: 3px;
   }
   .success h3 {
-    color: var(--burgundy);
+    color: var(--sindoor);
   }
 </style>

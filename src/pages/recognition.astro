@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
 import AwardCard from '../components/AwardCard.astro';
 import { formatPartialDate, publicCollection } from '../lib/site';
 
@@ -7,16 +8,14 @@ const [awards, press] = await Promise.all([publicCollection('awards'), publicCol
 ---
 
 <BaseLayout title="Recognition" description="Awards, honours and selected press coverage for Bharat Goradia.">
-  <section class="section recognition-top" aria-labelledby="awards-title">
-    <div class="container narrow">
-      <p class="eyebrow">Recognition</p>
-      <h1>Recognition</h1>
-      <p class="lead">Awards and honours Bharat has received, followed by selected press coverage.</p>
+  <PageHeader credit="Recognition" title="Awards, honours and press" lead="Recognition Bharat has received, followed by selected press coverage." />
 
-      <h2 id="awards-title">Awards and honours</h2>
+  <section class="section" aria-labelledby="awards-title">
+    <div class="wrap">
+      <h2 id="awards-title" class="block-title">Awards and honours</h2>
       {
         awards.length ? (
-          <div class="award-list">
+          <div class="honours">
             {awards.map((entry) => (
               <AwardCard entry={entry} detailed headingLevel="h3" />
             ))}
@@ -30,16 +29,20 @@ const [awards, press] = await Promise.all([publicCollection('awards'), publicCol
 
   {
     press.length > 0 && (
-      <section class="section section-tint" aria-labelledby="press-title">
-        <div class="container narrow">
-          <h2 id="press-title">Selected press</h2>
+      <section class="section band" aria-labelledby="press-title">
+        <div class="wrap">
+          <h2 id="press-title" class="block-title">Selected press</h2>
           <ul class="press-list">
             {press.map(({ data }) => (
               <li class="press-item">
-                {data.placeholder && <span class="placeholder-tag">Placeholder</span>}
-                <p class="press-meta">{[data.publication, formatPartialDate(data.date)].filter(Boolean).join(' · ')}</p>
+                <p class="press-meta">
+                  {[data.publication, formatPartialDate(data.date)].filter(Boolean).join(' · ')}
+                  {data.placeholder && <span class="sample-text"> · Sample</span>}
+                </p>
                 <h3>
-                  <a href={data.url} data-track="press_click">{data.title}</a>
+                  <a href={data.url} data-track="press_click">
+                    {data.title}
+                  </a>
                 </h3>
                 {data.summary && <p>{data.summary}</p>}
               </li>
@@ -52,39 +55,46 @@ const [awards, press] = await Promise.all([publicCollection('awards'), publicCol
 </BaseLayout>
 
 <style>
-  .narrow {
-    max-width: 60rem;
+  .block-title {
+    font-size: var(--display-m);
+    margin-bottom: 1.5rem;
   }
-  .recognition-top {
-    padding-top: clamp(2rem, 1.5rem + 2vw, 3.5rem);
-  }
-  .lead {
-    font-size: clamp(1.25rem, 1.15rem + 0.4vw, 1.4375rem);
-    color: var(--charcoal-soft);
-    margin-bottom: 2.5rem;
-  }
-  .award-list {
-    display: grid;
-    gap: 1.75rem;
+  .honours {
+    border-bottom: 1px solid var(--rule);
   }
   .press-list {
-    list-style: none;
+    display: grid;
     margin: 0;
     padding: 0;
-    display: grid;
-    gap: 1.25rem;
+    list-style: none;
+    border-top: 2px solid var(--ink);
   }
   .press-item {
-    padding: 1.25rem 1.5rem;
-    background: #fff;
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
+    padding: 1.75rem 0;
+    border-bottom: 1px solid var(--rule);
   }
   .press-meta {
-    margin: 0 0 0.25rem;
-    font-size: var(--text-support);
-    color: var(--charcoal-soft);
-    font-weight: 600;
+    margin: 0 0 0.4rem;
+    font-size: var(--text-label);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--sindoor);
+  }
+  .sample-text {
+    margin-left: 0.2em;
+    color: var(--ink-2);
+    letter-spacing: 0.04em;
+  }
+  .press-item h3 {
+    font-size: var(--display-m);
+    margin-bottom: 0.4rem;
+  }
+  .press-item h3 a {
+    color: var(--ink);
+  }
+  .press-item h3 a:hover {
+    color: var(--sindoor);
   }
   .press-item p:last-child {
     margin-bottom: 0;

@@ -1,0 +1,35 @@
+---
+interface Props {
+  credit: string;
+  title: string;
+  lead?: string;
+}
+const { credit, title, lead } = Astro.props;
+---
+
+<header class="page-header">
+  <div class="wrap">
+    <p class="credit enter">{credit}</p>
+    <h1 class="enter enter-2">{title}</h1>
+    {lead && <p class="lead enter enter-3">{lead}</p>}
+    <slot />
+  </div>
+</header>
+
+<style>
+  .page-header {
+    padding-block: clamp(3rem, 2rem + 4vw, 6rem) clamp(2.5rem, 1.5rem + 3vw, 4.5rem);
+    border-bottom: 2px solid var(--ink);
+  }
+  h1 {
+    font-size: var(--display-xl);
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+    margin-bottom: 1.5rem;
+    max-width: 14ch;
+  }
+  .lead {
+    max-width: 36em;
+    margin: 0;
+  }
+</style>
