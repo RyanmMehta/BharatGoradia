@@ -4,6 +4,7 @@
 //  - Typed text is never cleared on error, timeout or failure.
 //  - Success is shown only after the server confirms the enquiry was stored.
 import { track } from './analytics';
+import { showerPetals } from './petals';
 
 const TIMEOUT_MS = 15_000;
 const FIELDS = ['name', 'email', 'phone', 'message'] as const;
@@ -152,6 +153,7 @@ export function initEnquiryForm(): void {
           form.hidden = true;
           success.hidden = false;
           success.focus();
+          showerPetals();
           track('form_accepted');
           return;
         }

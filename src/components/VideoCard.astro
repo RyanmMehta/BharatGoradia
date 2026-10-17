@@ -105,7 +105,7 @@ const playLabel = `Play video: ${data.title}, ${spokenDuration(video.duration)}`
   .video-stage {
     position: relative;
     aspect-ratio: 16 / 9;
-    background: #0b0807;
+    background: var(--black);
     border-radius: var(--radius);
     overflow: hidden;
     box-shadow: 0 0 0 1px var(--rule-night);
@@ -169,6 +169,21 @@ const playLabel = `Play video: ${data.title}, ${spokenDuration(video.duration)}`
     transform: scale(1.07);
     background: var(--paper);
   }
+  /* A soft marigold ring pulses outward while the video is hovered or focused */
+  @keyframes ring-pulse {
+    from {
+      box-shadow: 0 6px 24px rgb(0 0 0 / 0.45), 0 0 0 0 rgb(233 162 59 / 0.6);
+    }
+    to {
+      box-shadow: 0 6px 24px rgb(0 0 0 / 0.45), 0 0 0 22px rgb(233 162 59 / 0);
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .video-facade:hover .play-disc,
+    .video-facade:focus-visible .play-disc {
+      animation: ring-pulse 1.4s ease-out infinite;
+    }
+  }
   .play.is-muted .play-disc {
     opacity: 0.55;
     box-shadow: none;
@@ -188,7 +203,7 @@ const playLabel = `Play video: ${data.title}, ${spokenDuration(video.duration)}`
     width: 100%;
     height: 100%;
     border: 0;
-    background: #000;
+    background: var(--black);
   }
   .video-body {
     display: flex;

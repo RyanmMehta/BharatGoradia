@@ -4,7 +4,7 @@ export function initReveal(): void {
   const w = window as unknown as { __revealReady?: boolean };
   w.__revealReady = true;
   if (!document.documentElement.classList.contains('motion-ok')) return;
-  const items = document.querySelectorAll<HTMLElement>('.reveal:not(.is-visible)');
+  const items = document.querySelectorAll<HTMLElement>('.reveal:not(.is-visible), .draw-in:not(.is-visible)');
   const io = new IntersectionObserver(
     (entries) => {
       for (const entry of entries) {

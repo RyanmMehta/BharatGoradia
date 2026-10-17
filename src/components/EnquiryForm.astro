@@ -159,7 +159,7 @@ const describedBy = (f: keyof EnquiryInput, hint?: boolean) =>
   .field-error {
     margin: 0 0 0.5rem;
     font-weight: 700;
-    color: #9b1c1c;
+    color: var(--error);
   }
   .field-error:empty {
     display: none;
@@ -190,12 +190,12 @@ const describedBy = (f: keyof EnquiryInput, hint?: boolean) =>
   }
   .has-error input,
   .has-error textarea {
-    border-color: #9b1c1c;
+    border-color: var(--error);
     border-width: 3px;
   }
   .has-error {
     padding-left: 1rem;
-    border-left: 4px solid #9b1c1c;
+    border-left: 4px solid var(--error);
   }
   .char-count {
     margin: 0.4rem 0 0;
@@ -226,21 +226,21 @@ const describedBy = (f: keyof EnquiryInput, hint?: boolean) =>
   .error-summary {
     margin-bottom: 2rem;
     padding: 1.25rem 1.5rem;
-    border: 3px solid #9b1c1c;
+    border: 3px solid var(--error);
     border-radius: var(--radius);
     background: var(--card);
   }
   .error-summary h3 {
     font-family: var(--font-body);
     font-size: 1.375rem;
-    color: #9b1c1c;
+    color: var(--error);
   }
   .error-summary ul {
     margin: 0;
     padding-left: 1.25rem;
   }
   .error-summary a {
-    color: #9b1c1c;
+    color: var(--error);
     font-weight: 600;
   }
   .success {

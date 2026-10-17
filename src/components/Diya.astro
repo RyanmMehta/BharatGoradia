@@ -62,6 +62,11 @@ const id = `diya-${Math.random().toString(36).slice(2, 8)}`;
   }
   .diya svg {
     overflow: visible;
+    transition: filter 260ms ease;
+  }
+  /* The flame brightens while a nearby contact button is hovered or focused */
+  :global(.diya-host:has(.button:hover, .button:focus-visible)) .diya svg {
+    filter: brightness(1.15) saturate(1.1) drop-shadow(0 0 14px rgb(255 190 90 / 0.75));
   }
   .diya-flame,
   .diya-inner,

@@ -31,7 +31,7 @@ if (!result.ok) Astro.response.status = result.status;
     <div class="wrap narrow">
       {
         result.ok ? (
-          <div class="success-page">
+          <div class="success-page" data-celebrate>
             <h1>Thank you. Your enquiry has been received.</h1>
             <p class="lead">Bharat will reply to the email address you gave.</p>
             {result.id !== 'received' && <p>Your reference: <strong>{result.id}</strong></p>}
@@ -54,6 +54,11 @@ if (!result.ok) Astro.response.status = result.status;
     </div>
   </section>
 </BaseLayout>
+
+<script>
+  import { showerPetals } from '../../scripts/petals';
+  if (document.querySelector('[data-celebrate]')) showerPetals();
+</script>
 
 <style>
   .narrow {

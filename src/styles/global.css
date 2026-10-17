@@ -27,6 +27,11 @@
   --marigold-soft: #f3d3a1; /* text on sindoor-deep (7.7:1) */
   --rule: #d8c8ae;
   --rule-night: #3d2d27;
+  --night-glow: #33150f; /* warm light pooling in dark sections */
+  --sindoor-glow: #8f1218; /* highlight in the red contact band */
+  --black: #0b0807; /* behind video players */
+  --white: #fff;
+  --error: #9b1c1c; /* form errors; always paired with an "Error:" text label */
 
   /* Type */
   --font-display: 'Gloock', 'Iowan Old Style', Georgia, serif;
@@ -264,7 +269,7 @@ a:hover {
   border: 2px solid var(--sindoor);
   border-radius: var(--radius);
   background: var(--sindoor);
-  color: #fff;
+  color: var(--white);
   font: inherit;
   font-size: var(--text-body);
   font-weight: 700;
@@ -281,7 +286,7 @@ a:hover {
 .button:hover {
   background: var(--sindoor-deep);
   border-color: var(--sindoor-deep);
-  color: #fff;
+  color: var(--white);
 }
 
 .button:active {
@@ -366,7 +371,7 @@ a:hover {
   padding: 0.2rem 0.6rem;
   border-radius: 3px;
   background: rgb(22 15 13 / 0.78);
-  color: #fff;
+  color: var(--white);
   font-size: 0.875rem;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -390,6 +395,20 @@ a:hover {
 }
 
 /* ---------- Motion (PRD §12) ---------- */
+
+/* Soft cross-fade between pages (cross-document View Transitions). The header and the
+   festival lights keep their place instead of fading. Off for reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 260ms;
+  animation-timing-function: ease;
+}
 
 @keyframes rise-in {
   from {

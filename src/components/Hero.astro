@@ -9,13 +9,13 @@ const services = await publicCollection('services');
 const [first, ...rest] = settings.personName.split(' ');
 ---
 
-<section class="hero" aria-labelledby="hero-title">
+<section class="hero diya-host" aria-labelledby="hero-title">
   <div class="wrap hero-grid">
     <div class="hero-copy">
       {settings.businessName && <p class="credit enter">{settings.businessName} presents</p>}
-      <h1 id="hero-title" class="hero-name enter enter-2">
-        <span>{first}</span>
-        {rest.length > 0 && <span>{rest.join(' ')}</span>}
+      <h1 id="hero-title" class="hero-name">
+        <span class="line"><span class="line-inner">{first}</span></span>
+        {rest.length > 0 && <span class="line"><span class="line-inner">{rest.join(' ')}</span></span>}
       </h1>
       <p class="hero-descriptor enter enter-2">{settings.descriptor}</p>
       <p class="hero-intro enter enter-3">{settings.introduction}</p>
@@ -93,8 +93,30 @@ const [first, ...rest] = settings.personName.split(' ');
     letter-spacing: -0.025em;
     color: var(--ink);
   }
-  .hero-name span:last-child {
+  .hero-name .line:last-child {
     color: var(--sindoor);
+  }
+  /* Title-card reveal: each line rises from behind a mask, once, on load (pure CSS). */
+  .hero-name .line {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.14em;
+    margin-bottom: -0.14em;
+  }
+  .hero-name .line-inner {
+    display: block;
+    animation: title-rise 450ms cubic-bezier(0.2, 0.75, 0.15, 1) both;
+  }
+  .hero-name .line + .line .line-inner {
+    animation-delay: 110ms;
+  }
+  @keyframes title-rise {
+    from {
+      transform: translateY(105%);
+    }
+    to {
+      transform: none;
+    }
   }
 
   .hero-descriptor {

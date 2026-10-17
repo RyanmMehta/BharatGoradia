@@ -3,6 +3,8 @@
 // glow and gently twinkle. Decorative only, hidden from assistive technology.
 // Motion rules (PRD §12, WCAG 2.2.2): slow twinkle (no flashing), a visible Pause control,
 // static glow for prefers-reduced-motion and when JavaScript is unavailable.
+// On the first page of a visit the bulbs "switch on" one by one, left to right (about 1.5s),
+// then settle into the twinkle. See scripts/lights.ts and the head script in BaseLayout.
 const UNITS = 72; // 72 × 64px covers screens up to 4600px wide
 const rand = (i: number) => {
   const x = Math.sin(i * 12.9898 + 78.233) * 43758.5453;
@@ -41,7 +43,7 @@ const units = Array.from({ length: UNITS }, (_, i) => ({
     ></path>
     {
       units.map((u) => (
-        <g>
+        <g class="unit" data-x={u.x}>
           {/* hanging marigold at the low point of each loop */}
           <line class="thread" x1={u.x + 32} y1="30" x2={u.x + 32} y2="37"></line>
           <circle cx={u.x + 32} cy="24" r="7.5" fill="url(#marigold)"></circle>
@@ -55,7 +57,7 @@ const units = Array.from({ length: UNITS }, (_, i) => ({
             cy="9"
             r="18"
             fill={u.warm ? 'url(#halo-warm)' : 'url(#halo-rose)'}
-            style={`animation-delay:-${u.delay}s;animation-duration:${u.duration}s`}
+            style={`--tw-delay:-${u.delay}s;--tw-dur:${u.duration}s`}
           ></circle>
           <circle class="bulb" cx={u.x} cy="9" r="4" fill={u.warm ? '#fff1c9' : '#ffd8c2'}></circle>
         </g>
@@ -113,11 +115,48 @@ const units = Array.from({ length: UNITS }, (_, i) => ({
       opacity: 0.7;
     }
   }
+  /* Switch-on: brief bright pop, then settle to the twinkle's starting glow */
+  @keyframes halo-on {
+    0% {
+      opacity: 0;
+    }
+    55% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.3;
+    }
+  }
+  @keyframes bulb-on {
+    0% {
+      opacity: 0.12;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
   @media (prefers-reduced-motion: no-preference) {
     :global(.js) .halo {
-      animation: twinkle-halo 3s ease-in-out infinite;
+      animation: twinkle-halo var(--tw-dur, 3s) ease-in-out var(--tw-delay, 0s) infinite;
     }
-    :global(.decor-paused) .halo {
+    /* Before the delays are measured, the bulbs wait unlit */
+    :global(.lights-intro:not(.lights-ready)) .halo {
+      animation: none;
+      opacity: 0;
+    }
+    :global(.lights-intro:not(.lights-ready)) .bulb {
+      opacity: 0.12;
+    }
+    :global(.lights-intro.lights-ready) .halo {
+      animation:
+        halo-on 0.45s ease-out var(--on, 0s) both,
+        twinkle-halo var(--tw-dur, 3s) ease-in-out calc(var(--on, 0s) + 0.45s) infinite;
+    }
+    :global(.lights-intro.lights-ready) .bulb {
+      animation: bulb-on 0.3s ease-out var(--on, 0s) both;
+    }
+    :global(.decor-paused) .halo,
+    :global(.decor-paused) .bulb {
       animation-play-state: paused;
     }
   }

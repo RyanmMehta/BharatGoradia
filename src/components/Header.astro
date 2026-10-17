@@ -36,6 +36,7 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
   .site-header {
     background: var(--paper);
     border-bottom: 1px solid var(--rule);
+    view-transition-name: site-header;
   }
   @media (min-width: 64rem) and (min-height: 42rem) {
     .site-header {

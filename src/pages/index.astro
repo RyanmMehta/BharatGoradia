@@ -49,8 +49,8 @@ const structuredData = {
             <h2 id="recognition-title">Honoured for his work</h2>
           </div>
           <ul class="honour-grid">
-            {awards.map(({ data }) => (
-              <li class="honour-panel">
+            {awards.map(({ data }, i) => (
+              <li class="honour-panel draw-in" style={`--i:${i}`}>
                 <svg class="panel-arch" viewBox="0 0 100 125" preserveAspectRatio="none" aria-hidden="true">
                   <path d="M0 125V48C0 22 30 9 50 0c20 9 50 22 50 48v77z" />
                 </svg>
@@ -136,7 +136,7 @@ const structuredData = {
   }
 
   <section class="section on-red contact-band" aria-labelledby="contact-title">
-    <div class="wrap contact-inner">
+    <div class="wrap contact-inner diya-host">
       <Diya size={64} />
       <h2 id="contact-title">Planning an event?<br />Speak to Bharat.</h2>
       <a class="contact-email" href={`mailto:${settings.email}`} data-track="contact_email_click" data-track-id="home">
@@ -170,7 +170,7 @@ const structuredData = {
     position: relative;
     overflow: hidden;
     background:
-      radial-gradient(60% 80% at 50% 0%, #3a1611 0%, transparent 70%),
+      radial-gradient(60% 80% at 50% 0%, var(--night-glow) 0%, transparent 70%),
       var(--night);
   }
   .spot-head {
@@ -243,6 +243,24 @@ const structuredData = {
     font-size: var(--text-label);
     color: var(--marigold);
   }
+  /* Arch draws itself: the outline traces up both sides to the point, then the text appears.
+     Hidden states apply only while the reveal script is active (.motion-ok), so nothing is
+     stranded if scripts fail or motion is reduced. */
+  :global(.motion-ok) .draw-in .panel-arch {
+    transition: clip-path 1100ms cubic-bezier(0.45, 0.05, 0.25, 1) calc(var(--i, 0) * 180ms);
+  }
+  :global(.motion-ok) .draw-in:not(.is-visible) .panel-arch {
+    clip-path: inset(100% 0 0 0);
+  }
+  :global(.motion-ok) .draw-in .panel-body {
+    transition:
+      opacity 500ms ease calc(var(--i, 0) * 180ms + 750ms),
+      transform 500ms ease calc(var(--i, 0) * 180ms + 750ms);
+  }
+  :global(.motion-ok) .draw-in:not(.is-visible) .panel-body {
+    opacity: 0;
+    transform: translateY(10px);
+  }
   .spotlight .more {
     display: flex;
     width: fit-content;
@@ -284,10 +302,29 @@ const structuredData = {
     }
   }
 
+  /* Slow, barely noticeable zoom on the feature photo. Continuous, so it obeys the
+     Pause control and is off for reduced motion. */
+  @keyframes slow-zoom {
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(1.07);
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .mosaic :global(.tile-feature .photo img) {
+      animation: slow-zoom 22s ease-in-out infinite alternate;
+    }
+    :global(.decor-paused) .mosaic :global(.tile-feature .photo img) {
+      animation-play-state: paused;
+    }
+  }
+
   /* ---- Screening room ---- */
   .screening {
     background:
-      radial-gradient(120% 70% at 50% 0%, #2c1612 0%, transparent 60%),
+      radial-gradient(120% 70% at 50% 0%, var(--night-glow) 0%, transparent 60%),
       var(--night);
   }
   .screen-grid {
@@ -321,7 +358,7 @@ const structuredData = {
   /* ---- Contact band ---- */
   .contact-band {
     background:
-      radial-gradient(90% 120% at 50% 0%, #8f1218 0%, transparent 60%),
+      radial-gradient(90% 120% at 50% 0%, var(--sindoor-glow) 0%, transparent 60%),
       var(--sindoor-deep);
   }
   .contact-inner {
@@ -342,7 +379,7 @@ const structuredData = {
     overflow-wrap: anywhere;
   }
   .contact-email:hover {
-    color: #fff;
+    color: var(--white);
   }
   .contact-sample {
     margin: 0.4rem 0 0;
