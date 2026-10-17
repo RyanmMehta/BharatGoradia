@@ -6,134 +6,110 @@ const year = new Date().getFullYear();
 
 <footer class="site-footer on-night">
   <Toran tone="night" />
-  <div class="wrap footer-grid">
+  <div class="wrap footer-main">
     <div class="footer-id">
       <p class="footer-name">{settings.personName}</p>
       {settings.businessName && <p class="credit">{settings.businessName}</p>}
-      <p class="footer-desc">{settings.descriptor}</p>
     </div>
-    <div>
-      <h2 class="footer-heading">Contact Bharat</h2>
-      <ul class="footer-contact">
-        <li>
-          <span class="fc-label">Email</span>
-          <a href={`mailto:${settings.email}`} data-track="contact_email_click" data-track-id="footer">{settings.email}</a>
-        </li>
-        <li>
-          <span class="fc-label">Instagram</span>
-          <a href={settings.instagram.url} data-track="social_click" data-track-id="instagram:footer">{settings.instagram.handle}</a>
-        </li>
-        <li>
-          <span class="fc-label">Facebook</span>
-          <a href={settings.facebook.url} data-track="social_click" data-track-id="facebook:footer">{settings.facebook.name}</a>
-        </li>
-        {settings.phone.show && settings.phone.tel && (
+    <ul class="footer-contact" aria-label="Contact Bharat">
+      <li>
+        <a href={`mailto:${settings.email}`} data-track="contact_email_click" data-track-id="footer">{settings.email}</a>
+      </li>
+      <li>
+        <a href={settings.instagram.url} data-track="social_click" data-track-id="instagram:footer">Instagram</a>
+      </li>
+      <li>
+        <a href={settings.facebook.url} data-track="social_click" data-track-id="facebook:footer">Facebook</a>
+      </li>
+      {
+        settings.phone.show && settings.phone.tel && (
           <li>
-            <span class="fc-label">Telephone</span>
-            <a href={`tel:${settings.phone.tel}`} data-track="phone_click" data-track-id="footer">{settings.phone.display}</a>
+            <a href={`tel:${settings.phone.tel}`} data-track="phone_click" data-track-id="footer">
+              {settings.phone.display}
+            </a>
           </li>
-        )}
-      </ul>
-    </div>
+        )
+      }
+    </ul>
+  </div>
+  <div class="wrap footer-base">
     <nav aria-label="Footer">
-      <h2 class="footer-heading">Pages</h2>
       <ul class="footer-links">
         {navItems.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
-        <li><a href="/contact">Contact Bharat</a></li>
+        <li><a href="/contact">Contact</a></li>
         <li><a href="/privacy">Privacy</a></li>
       </ul>
     </nav>
-  </div>
-  <div class="wrap footer-base">
-    {settings.footerNote && <p>{settings.footerNote}</p>}
-    <p>© {year} {settings.personName}</p>
+    <p>© {year} {settings.personName}{settings.footerNote && ` · ${settings.footerNote}`}</p>
   </div>
 </footer>
 
 <style>
   .site-footer {
+    padding-bottom: 1.5rem;
+  }
+  .footer-main {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem 3rem;
+    padding-top: clamp(2.75rem, 2rem + 2vw, 4rem);
     padding-bottom: 2rem;
   }
-  .footer-grid {
-    display: grid;
-    gap: 3rem;
-    padding-top: clamp(3.5rem, 2.5rem + 3vw, 5.5rem);
-  }
-  @media (min-width: 60rem) {
-    .footer-grid {
-      grid-template-columns: 1.1fr 1.3fr 0.7fr;
-      gap: 4rem;
-    }
-  }
   .footer-name {
-    margin: 0 0 0.75rem;
+    margin: 0 0 0.5rem;
     font-family: var(--font-display);
-    font-size: clamp(2.25rem, 1.8rem + 1.6vw, 3.25rem);
+    font-size: clamp(2rem, 1.6rem + 1.2vw, 2.75rem);
     line-height: 1;
   }
-  .footer-desc {
-    color: var(--on-night-2);
-  }
-  .footer-heading {
-    margin-bottom: 0.75rem;
-    font-family: var(--font-body);
-    font-size: var(--text-label);
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--marigold);
-  }
-  .footer-contact {
-    display: grid;
-    gap: 1rem;
+  .footer-id .credit {
     margin: 0;
-    padding: 0;
-    list-style: none;
   }
-  .footer-contact li {
-    display: grid;
-  }
-  .fc-label {
-    font-size: var(--text-support);
-    color: var(--on-night-2);
-  }
-  .footer-contact a {
-    display: inline-block;
-    padding-block: 0.2rem;
-    font-family: var(--font-display);
-    font-size: var(--display-s);
-    color: var(--on-night);
-    text-decoration-color: var(--marigold);
-    overflow-wrap: anywhere;
-  }
-  .footer-contact a:hover {
-    color: var(--marigold);
-  }
+  .footer-contact,
   .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.75rem;
     margin: 0;
     padding: 0;
     list-style: none;
   }
+  .footer-contact a,
   .footer-links a {
     display: inline-flex;
     align-items: center;
     min-height: 48px;
-    color: var(--on-night);
     font-weight: 700;
+    color: var(--on-night);
+    text-decoration-color: var(--marigold);
+    overflow-wrap: anywhere;
+  }
+  .footer-contact a:hover,
+  .footer-links a:hover {
+    color: var(--marigold);
+  }
+  .footer-links a {
+    font-size: var(--text-support);
+    font-weight: 400;
+    color: var(--on-night-2);
     text-decoration: none;
   }
   .footer-links a:hover {
-    color: var(--marigold);
     text-decoration: underline;
   }
   .footer-base {
-    margin-top: 3.5rem;
-    padding-top: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 2rem;
+    padding-top: 1rem;
     border-top: 1px solid var(--rule-night);
     color: var(--on-night-2);
     font-size: var(--text-support);
   }
   .footer-base p {
-    margin: 0 0 0.25rem;
+    margin: 0;
   }
 </style>

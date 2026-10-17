@@ -43,7 +43,7 @@
 
   /* Space and shape */
   --gutter: clamp(1rem, 0.4rem + 3vw, 3rem);
-  --section: clamp(4rem, 2.8rem + 6vw, 9rem);
+  --section: clamp(3.5rem, 2.5rem + 4.5vw, 7rem);
   --max: 82rem;
   --measure: 62ch;
   --radius: 6px;

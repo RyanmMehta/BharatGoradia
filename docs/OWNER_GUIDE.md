@@ -34,7 +34,7 @@ Removing an item from the home page does not delete it. It stays in the gallery.
 
 ## Other text you can edit
 
-Under *Page set-up* you can also change **Services**, **Who Bharat works with** and **Common questions**
+Under *Page set-up* you can also change **Services** and **Common questions**
 (shown on the contact page). Use the item menu to add, remove or reorder entries.
 
 ## Hiding something

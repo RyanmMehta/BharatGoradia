@@ -59,7 +59,7 @@ export default config({
     brand: { name: 'Bharat Goradia website' },
     navigation: {
       'Routine updates': ['photos', 'videos', 'awards', 'testimonials', 'settings'],
-      'Page set-up': ['homepage', 'services', 'audiences', 'faq', 'press'],
+      'Page set-up': ['homepage', 'services', 'faq', 'press'],
     },
   },
   singletons: {
@@ -113,20 +113,6 @@ export default config({
           { label: 'Search engines' },
         ),
         footerNote: fields.text({ label: 'Footer note (optional)' }),
-      },
-    }),
-    audiences: singleton({
-      label: 'Who Bharat works with',
-      path: 'src/data/audiences',
-      format: { data: 'json' },
-      schema: {
-        items: fields.array(
-          fields.object({
-            title: fields.text({ label: 'Who', validation: { isRequired: true } }),
-            text: fields.text({ label: 'One sentence', multiline: true, validation: { isRequired: true } }),
-          }),
-          { label: 'Groups', itemLabel: (p) => p.fields.title.value || 'Group' },
-        ),
       },
     }),
     faq: singleton({

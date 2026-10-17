@@ -6,8 +6,10 @@ interface Props {
   entry: CollectionEntry<'videos'>;
   headingLevel?: 'h2' | 'h3' | 'h4';
   sizes?: string;
+  /** Hide the description (used for the smaller homepage videos). */
+  compact?: boolean;
 }
-const { entry, headingLevel = 'h3', sizes = '(min-width: 64rem) 26rem, (min-width: 40rem) 45vw, 100vw' } = Astro.props;
+const { entry, headingLevel = 'h3', compact = false, sizes = '(min-width: 64rem) 26rem, (min-width: 40rem) 45vw, 100vw' } = Astro.props;
 const { data } = entry;
 const video = data;
 const Heading = headingLevel;
@@ -82,7 +84,7 @@ const playLabel = `Play video: ${data.title}, ${spokenDuration(video.duration)}`
       <span>{typeLabel}</span> · <span><span aria-hidden="true">{video.duration}</span><span class="visually-hidden">{spokenDuration(video.duration)}</span></span>
     </p>
     <Heading class="video-title">{data.title}</Heading>
-    <p class="video-desc">{data.description}</p>
+    {!compact && <p class="video-desc">{data.description}</p>}
     <p class="video-status" role="status" data-video-status></p>
     {sourceUrl && <a class="text-link-arrow" href={sourceUrl} data-track="video_source_click" data-track-id={entry.id}>{sourceLabel}</a>}
   </div>

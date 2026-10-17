@@ -10,9 +10,12 @@ interface Props {
   ratio?: 'auto' | 'landscape' | 'portrait' | 'square' | 'fill';
   sizes?: string;
   class?: string;
+  /** Short caption: names and occasion only. */
+  compact?: boolean;
 }
 const {
   entry,
+  compact = false,
   headingLevel = 'h3',
   ratio = 'landscape',
   sizes = '(min-width: 64rem) 30rem, (min-width: 40rem) 45vw, 100vw',
@@ -39,10 +42,10 @@ const style = ratio === 'auto' ? `aspect-ratio: ${data.image.width} / ${data.ima
   </div>
   <figcaption>
     {data.people.length > 0 && <Heading class="people">{data.people.join(', ')}</Heading>}
-    <p class="caption">{data.caption}</p>
+    {!compact && <p class="caption">{data.caption}</p>}
     {meta && <p class="meta">{meta}</p>}
-    {data.bharatRole && <p class="meta">Bharat's role: {data.bharatRole}</p>}
-    {data.attribution && <p class="meta">Photo: {data.attribution}</p>}
+    {!compact && data.bharatRole && <p class="meta">Bharat's role: {data.bharatRole}</p>}
+    {!compact && data.attribution && <p class="meta">Photo: {data.attribution}</p>}
   </figcaption>
 </figure>
 
