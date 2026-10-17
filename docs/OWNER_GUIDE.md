@@ -32,6 +32,11 @@ Open **Homepage selections** under *Page set-up*. Each list (photos, videos, awa
 appears on the home page, in order. Use the item menu to move an item up or down, add one, or remove one.
 Removing an item from the home page does not delete it. It stays in the gallery.
 
+## Other text you can edit
+
+Under *Page set-up* you can also change **Services**, **Who Bharat works with** and **Common questions**
+(shown on the contact page). Use the item menu to add, remove or reorder entries.
+
 ## Hiding something
 
 Open the item and set **Visibility** to *Draft* or *Archived*. It disappears from the website but is not deleted.

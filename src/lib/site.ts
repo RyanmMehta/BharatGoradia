@@ -3,6 +3,8 @@ import type { ImageMetadata } from 'astro';
 import { z } from 'astro/zod';
 import settingsJson from '../data/settings.json';
 import homepageJson from '../data/homepage.json';
+import audiencesJson from '../data/audiences.json';
+import faqJson from '../data/faq.json';
 
 export type SiteMode = 'prototype' | 'launch';
 
@@ -42,6 +44,14 @@ const homepageSchema = z.object({
 });
 
 export const settings = settingsSchema.parse(settingsJson);
+
+export const audiences = z
+  .object({ items: z.array(z.object({ title: z.string().min(1), text: z.string().min(1) })).default([]) })
+  .parse(audiencesJson).items;
+
+export const faq = z
+  .object({ items: z.array(z.object({ question: z.string().min(1), answer: z.string().min(1) })).default([]) })
+  .parse(faqJson).items;
 export const homepage = homepageSchema.parse(homepageJson);
 
 /** True when an owner has not yet confirmed this settings field (shown as a placeholder in prototypes). */

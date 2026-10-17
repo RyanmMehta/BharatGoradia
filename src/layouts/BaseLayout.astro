@@ -4,7 +4,7 @@ import '@fontsource-variable/atkinson-hyperlegible-next/wght.css';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import Toran from '../components/Toran.astro';
+import FestivalLights from '../components/FestivalLights.astro';
 import { isPrototype, settings } from '../lib/site';
 
 interface Props {
@@ -52,6 +52,9 @@ const ogImage = new URL('/og-default.png', Astro.site);
       (function () {
         var root = document.documentElement;
         root.classList.add('js');
+        try {
+          if (localStorage.getItem('decor-paused') === '1') root.classList.add('decor-paused');
+        } catch (e) {}
         var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
         var saveData = navigator.connection && navigator.connection.saveData;
         if ('IntersectionObserver' in window && !reduce && !saveData) {
@@ -74,7 +77,13 @@ const ogImage = new URL('/og-default.png', Astro.site);
         </aside>
       )
     }
-    <Toran />
+    <div class="lights-bar">
+      <FestivalLights />
+      <button type="button" class="motion-toggle" data-motion-toggle hidden>
+        <span class="mt-icon" aria-hidden="true"></span>
+        <span data-motion-label>Pause animation</span>
+      </button>
+    </div>
     <Header />
     <main id="main" tabindex="-1">
       <slot />
@@ -83,8 +92,10 @@ const ogImage = new URL('/og-default.png', Astro.site);
     <script>
       import { initClickTracking } from '../scripts/analytics';
       import { initReveal } from '../scripts/reveal';
+      import { initMotionToggle } from '../scripts/motion-toggle';
       initClickTracking();
       initReveal();
+      initMotionToggle();
     </script>
   </body>
 </html>
@@ -106,6 +117,56 @@ const ogImage = new URL('/og-default.png', Astro.site);
   }
   main:focus {
     outline: none;
+  }
+  .lights-bar {
+    position: relative;
+  }
+  .motion-toggle {
+    position: absolute;
+    top: 50%;
+    right: max(0.5rem, calc((100% - var(--max)) / 2));
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 36px;
+    padding: 0.3rem 0.85rem;
+    border: 1px solid rgb(243 211 161 / 0.45);
+    border-radius: 999px;
+    background: rgb(18 12 10 / 0.88);
+    color: var(--marigold-soft);
+    font: inherit;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .motion-toggle:hover {
+    background: var(--night-2);
+    border-color: var(--marigold);
+    color: #fff;
+  }
+  .motion-toggle:focus-visible {
+    outline: 3px solid var(--marigold);
+    outline-offset: 2px;
+  }
+  .mt-icon {
+    width: 10px;
+    height: 12px;
+    border-left: 3px solid currentColor;
+    border-right: 3px solid currentColor;
+  }
+  .motion-toggle[data-paused="true"] .mt-icon {
+    width: 0;
+    height: 0;
+    border-right: 0;
+    border-left: 10px solid currentColor;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .motion-toggle {
+      display: none;
+    }
   }
   .preview-bar {
     background: var(--night);

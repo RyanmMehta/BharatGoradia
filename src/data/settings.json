@@ -19,8 +19,8 @@
     "tel": ""
   },
   "confirmed": {
-    "names": false,
-    "descriptor": false,
+    "names": true,
+    "descriptor": true,
     "introduction": false,
     "biography": false,
     "email": false,

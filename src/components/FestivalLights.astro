@@ -1,0 +1,124 @@
+---
+// A string of festival lights across the top of every page: marigolds and warm bulbs that
+// glow and gently twinkle. Decorative only, hidden from assistive technology.
+// Motion rules (PRD §12, WCAG 2.2.2): slow twinkle (no flashing), a visible Pause control,
+// static glow for prefers-reduced-motion and when JavaScript is unavailable.
+const UNITS = 72; // 72 × 64px covers screens up to 4600px wide
+const rand = (i: number) => {
+  const x = Math.sin(i * 12.9898 + 78.233) * 43758.5453;
+  return x - Math.floor(x);
+};
+const units = Array.from({ length: UNITS }, (_, i) => ({
+  x: i * 64,
+  delay: (rand(i) * 4).toFixed(2),
+  duration: (2.6 + rand(i + 99) * 1.8).toFixed(2),
+  warm: rand(i + 7) > 0.5,
+}));
+---
+
+<div class="lights" aria-hidden="true">
+  <svg class="lights-svg" width={UNITS * 64} height="48" viewBox={`0 0 ${UNITS * 64} 48`} focusable="false">
+    <defs>
+      <radialGradient id="halo-warm">
+        <stop offset="0" stop-color="#ffe7a8" stop-opacity="0.95"></stop>
+        <stop offset="0.35" stop-color="#ffc35a" stop-opacity="0.45"></stop>
+        <stop offset="1" stop-color="#ffb347" stop-opacity="0"></stop>
+      </radialGradient>
+      <radialGradient id="halo-rose">
+        <stop offset="0" stop-color="#ffd2b0" stop-opacity="0.95"></stop>
+        <stop offset="0.35" stop-color="#ff8a5c" stop-opacity="0.45"></stop>
+        <stop offset="1" stop-color="#ff6a3d" stop-opacity="0"></stop>
+      </radialGradient>
+      <radialGradient id="marigold" cx="0.4" cy="0.35">
+        <stop offset="0" stop-color="#ffd27a"></stop>
+        <stop offset="0.6" stop-color="#e9a23b"></stop>
+        <stop offset="1" stop-color="#c47713"></stop>
+      </radialGradient>
+    </defs>
+    <path
+      class="wire"
+      d={units.map((u) => `M${u.x} 8 Q${u.x + 16} 24 ${u.x + 32} 24 T${u.x + 64} 8`).join(' ')}
+    ></path>
+    {
+      units.map((u) => (
+        <g>
+          {/* hanging marigold at the low point of each loop */}
+          <line class="thread" x1={u.x + 32} y1="30" x2={u.x + 32} y2="37"></line>
+          <circle cx={u.x + 32} cy="24" r="7.5" fill="url(#marigold)"></circle>
+          <circle cx={u.x + 32} cy="24" r="7.5" class="petals"></circle>
+          <circle cx={u.x + 32} cy="24" r="2.6" fill="#a3171d"></circle>
+          <circle cx={u.x + 32} cy="39.5" r="2.6" fill="#c4262c"></circle>
+          {/* glowing bulb at the top of each loop */}
+          <circle
+            class="halo"
+            cx={u.x}
+            cy="9"
+            r="18"
+            fill={u.warm ? 'url(#halo-warm)' : 'url(#halo-rose)'}
+            style={`animation-delay:-${u.delay}s;animation-duration:${u.duration}s`}
+          ></circle>
+          <circle class="bulb" cx={u.x} cy="9" r="4" fill={u.warm ? '#fff1c9' : '#ffd8c2'}></circle>
+        </g>
+      ))
+    }
+  </svg>
+</div>
+
+<style>
+  .lights {
+    position: relative;
+    height: 48px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #120c0a 0%, #1d1310 100%);
+    box-shadow: inset 0 -1px 0 rgb(233 162 59 / 0.18);
+  }
+  .lights-svg {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+    max-width: none;
+  }
+  .wire {
+    fill: none;
+    stroke: #7d5d3c;
+    stroke-width: 1.4;
+  }
+  .thread {
+    stroke: #7d5d3c;
+    stroke-width: 1.1;
+  }
+  .petals {
+    fill: none;
+    stroke: #b86c10;
+    stroke-width: 1;
+    stroke-dasharray: 2.2 1.6;
+  }
+  /* Static glow: the default, and what reduced-motion / no-JS visitors see */
+  .halo {
+    opacity: 0.75;
+  }
+  .bulb {
+    opacity: 1;
+  }
+  @keyframes twinkle-halo {
+    0%,
+    100% {
+      opacity: 0.3;
+    }
+    45% {
+      opacity: 1;
+    }
+    70% {
+      opacity: 0.7;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .halo {
+      animation: twinkle-halo 3s ease-in-out infinite;
+    }
+    :global(.decor-paused) .halo {
+      animation-play-state: paused;
+    }
+  }
+</style>

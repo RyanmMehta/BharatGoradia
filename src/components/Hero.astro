@@ -1,5 +1,6 @@
 ---
 import { Image } from 'astro:assets';
+import Diya from './Diya.astro';
 import { heroImage, homepage, isPrototype, publicCollection, settings } from '../lib/site';
 
 const image = heroImage();
@@ -46,6 +47,7 @@ const [first, ...rest] = settings.personName.split(' ');
             />
             {homepage.hero.placeholder && isPrototype && <span class="sample-chip">Sample portrait</span>}
           </div>
+          <Diya size={112} class="hero-diya" />
         </div>
       )
     }
@@ -154,6 +156,18 @@ const [first, ...rest] = settings.personName.split(' ');
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+  /* A lamp at the foot of the arch, like a diya placed at a doorway */
+  .hero-portrait :global(.hero-diya) {
+    position: absolute;
+    left: -0.25rem;
+    bottom: -1.6rem;
+    z-index: 2;
+  }
+  @media (min-width: 60rem) {
+    .hero-portrait :global(.hero-diya) {
+      left: -2.25rem;
+    }
   }
   .arch .sample-chip {
     top: auto;

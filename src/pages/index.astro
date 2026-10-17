@@ -6,7 +6,8 @@ import VideoCard from '../components/VideoCard.astro';
 import AwardCard from '../components/AwardCard.astro';
 import TestimonialCard from '../components/TestimonialCard.astro';
 import ContactActions from '../components/ContactActions.astro';
-import { homepage, publicCollection, selected, settings, unconfirmed } from '../lib/site';
+import Diya from '../components/Diya.astro';
+import { audiences, homepage, publicCollection, selected, settings, unconfirmed } from '../lib/site';
 
 const [photos, videos, awards, testimonials, services] = await Promise.all([
   selected('photos', homepage.artistPhotos),
@@ -146,6 +147,28 @@ const tileClass = (i: number) => (i === 0 ? 'tile-feature' : i < 3 ? 'tile-side'
   </section>
 
   {
+    audiences.length > 0 && (
+      <section class="section on-night audiences" aria-labelledby="audiences-title">
+        <div class="wrap">
+          <div class="section-head split">
+            <p class="credit">Who he works with</p>
+            <h2 id="audiences-title">Bringing the stars to your occasion</h2>
+            <p class="lead">Whether it is a family celebration, a community festival or a company event, the conversation starts the same way: tell Bharat what you are planning.</p>
+          </div>
+          <ul class="audience-list">
+            {audiences.map((a) => (
+              <li>
+                <h3>{a.title}</h3>
+                <p>{a.text}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  {
     awards.length > 0 && (
       <section class="section band" aria-labelledby="recognition-title">
         <div class="wrap">
@@ -193,7 +216,7 @@ const tileClass = (i: number) => (i === 0 ? 'tile-feature' : i < 3 ? 'tile-side'
   <section class="section on-red contact-band" aria-labelledby="contact-title">
     <div class="wrap contact-grid">
       <div class="contact-head">
-        <p class="credit">Get in touch</p>
+        <p class="credit contact-credit"><Diya size={44} /> Get in touch</p>
         <h2 id="contact-title">Planning an event? Speak to Bharat.</h2>
         <p class="lead">Email is the quickest way to reach him. You can also send a message on Instagram or Facebook.</p>
         <a class="more" href="/contact">Or use the short enquiry form <span class="arrow" aria-hidden="true">→</span></a>
@@ -393,6 +416,54 @@ const tileClass = (i: number) => (i === 0 ? 'tile-feature' : i < 3 ? 'tile-side'
     }
   }
 
+  /* ---- Who he works with ---- */
+  .audiences {
+    background:
+      radial-gradient(70% 90% at 0% 100%, #3a1410 0%, transparent 60%),
+      var(--night);
+  }
+  .audience-list {
+    display: grid;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--rule-night);
+  }
+  .audience-list li {
+    padding: 2rem 0;
+    border-bottom: 1px solid var(--rule-night);
+  }
+  .audience-list h3 {
+    color: var(--marigold);
+    font-size: var(--display-m);
+    margin-bottom: 0.5rem;
+  }
+  .audience-list p {
+    margin: 0;
+    color: var(--on-night-2);
+  }
+  @media (min-width: 48rem) {
+    .audience-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 3rem;
+    }
+  }
+  @media (min-width: 72rem) {
+    .audience-list {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      border-bottom: 1px solid var(--rule-night);
+    }
+    .audience-list li {
+      padding: 2rem 2rem 2.25rem 0;
+      border-bottom: 0;
+    }
+    .audience-list li + li {
+      padding-left: 2rem;
+      border-left: 1px solid var(--rule-night);
+    }
+  }
+
   /* ---- Recognition ---- */
   .honours {
     border-bottom: 1px solid var(--rule);
@@ -441,6 +512,11 @@ const tileClass = (i: number) => (i === 0 ? 'tile-feature' : i < 3 ? 'tile-side'
       margin: 0;
       grid-row: 2 / span 2;
     }
+  }
+  .contact-credit {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.75rem;
   }
   .contact-band h2 {
     color: var(--paper);

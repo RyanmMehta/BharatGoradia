@@ -1,0 +1,143 @@
+---
+// A clay diya (oil lamp) with a softly flickering flame. Decorative only.
+// The flame animation follows the same rules as the festival lights: gentle (no flashing),
+// paused by the "Pause animation" control, and still for prefers-reduced-motion / no JavaScript.
+interface Props {
+  size?: number;
+  class?: string;
+}
+const { size = 96, class: className } = Astro.props;
+const id = `diya-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<span class:list={['diya', className]} style={`--diya-size:${size}px`} aria-hidden="true">
+  <svg viewBox="0 0 120 132" width={size} height={Math.round((size * 132) / 120)} focusable="false">
+    <defs>
+      <radialGradient id={`${id}-glow`} cx="0.5" cy="0.5" r="0.5">
+        <stop offset="0" stop-color="#ffd877" stop-opacity="0.75"></stop>
+        <stop offset="0.45" stop-color="#ffb347" stop-opacity="0.28"></stop>
+        <stop offset="1" stop-color="#ff9d2e" stop-opacity="0"></stop>
+      </radialGradient>
+      <linearGradient id={`${id}-flame`} x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#ffe9a8"></stop>
+        <stop offset="0.55" stop-color="#ffb23e"></stop>
+        <stop offset="1" stop-color="#e5591c"></stop>
+      </linearGradient>
+      <linearGradient id={`${id}-clay`} x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#c9622a"></stop>
+        <stop offset="1" stop-color="#7a2a10"></stop>
+      </linearGradient>
+    </defs>
+
+    <circle class="diya-glow" cx="60" cy="58" r="52" fill={`url(#${id}-glow)`}></circle>
+
+    <g class="diya-flame">
+      <path d="M60 18C65 31 76 46 74 61C72.5 73 66 80 60 80C54 80 47.5 73 46 61C44 46 55 31 60 18Z" fill={`url(#${id}-flame)`}></path>
+      <path class="diya-inner" d="M60 40C62.5 48 68 56 67 65C66 72 63 76 60 76C57 76 54 72 53 65C52 56 57.5 48 60 40Z" fill="#fff4cf"></path>
+      <ellipse cx="60" cy="73" rx="3.6" ry="5.2" fill="#ffffff" fill-opacity="0.9"></ellipse>
+    </g>
+    <rect x="58.8" y="76" width="2.4" height="8" rx="1" fill="#3a2418"></rect>
+
+    <!-- lamp -->
+    <path d="M10 84C14 106 36 119 60 119C84 119 106 106 110 84Z" fill={`url(#${id}-clay)`}></path>
+    <ellipse cx="60" cy="84" rx="50" ry="8" fill="#a8461a"></ellipse>
+    <ellipse cx="60" cy="84.5" rx="42" ry="5.5" fill="#4a1d09"></ellipse>
+    <ellipse cx="52" cy="83.5" rx="14" ry="1.6" fill="#ffcf73" fill-opacity="0.35"></ellipse>
+    <path d="M20 95C34 108 86 108 100 95" fill="none" stroke="#e9a23b" stroke-width="2" stroke-linecap="round"></path>
+    <g fill="#f3d3a1">
+      <circle cx="34" cy="103" r="2"></circle>
+      <circle cx="47" cy="107.5" r="2"></circle>
+      <circle cx="60" cy="109" r="2"></circle>
+      <circle cx="73" cy="107.5" r="2"></circle>
+      <circle cx="86" cy="103" r="2"></circle>
+    </g>
+    <ellipse cx="60" cy="122" rx="20" ry="4" fill="#5c1f0c"></ellipse>
+  </svg>
+</span>
+
+<style>
+  .diya {
+    display: inline-block;
+    line-height: 0;
+  }
+  .diya svg {
+    overflow: visible;
+  }
+  .diya-flame,
+  .diya-inner,
+  .diya-glow {
+    transform-box: fill-box;
+  }
+  .diya-flame,
+  .diya-inner {
+    transform-origin: 50% 100%;
+  }
+  .diya-glow {
+    transform-origin: 50% 50%;
+    opacity: 0.9;
+  }
+  @keyframes flicker {
+    0%,
+    100% {
+      transform: scale(1, 1) skewX(0deg);
+    }
+    18% {
+      transform: scale(0.97, 1.05) skewX(1.6deg);
+    }
+    36% {
+      transform: scale(1.03, 0.96) skewX(-1.2deg);
+    }
+    54% {
+      transform: scale(0.98, 1.06) skewX(2.2deg);
+    }
+    72% {
+      transform: scale(1.02, 0.98) skewX(-1.8deg);
+    }
+    88% {
+      transform: scale(0.99, 1.03) skewX(0.8deg);
+    }
+  }
+  @keyframes flicker-inner {
+    0%,
+    100% {
+      transform: scale(1, 1);
+    }
+    30% {
+      transform: scale(0.94, 1.07);
+    }
+    65% {
+      transform: scale(1.04, 0.95);
+    }
+  }
+  @keyframes glow {
+    0%,
+    100% {
+      opacity: 0.8;
+      transform: scale(1);
+    }
+    40% {
+      opacity: 1;
+      transform: scale(1.06);
+    }
+    70% {
+      opacity: 0.88;
+      transform: scale(0.98);
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .diya-flame {
+      animation: flicker 1.7s ease-in-out infinite;
+    }
+    :global(.js) .diya-inner {
+      animation: flicker-inner 1.15s ease-in-out infinite;
+    }
+    :global(.js) .diya-glow {
+      animation: glow 2.6s ease-in-out infinite;
+    }
+    :global(.decor-paused) .diya-flame,
+    :global(.decor-paused) .diya-inner,
+    :global(.decor-paused) .diya-glow {
+      animation-play-state: paused;
+    }
+  }
+</style>

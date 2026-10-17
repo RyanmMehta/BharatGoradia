@@ -59,7 +59,7 @@ export default config({
     brand: { name: 'Bharat Goradia website' },
     navigation: {
       'Routine updates': ['photos', 'videos', 'awards', 'testimonials', 'settings'],
-      'Page set-up': ['homepage', 'services', 'press'],
+      'Page set-up': ['homepage', 'services', 'audiences', 'faq', 'press'],
     },
   },
   singletons: {
@@ -113,6 +113,34 @@ export default config({
           { label: 'Search engines' },
         ),
         footerNote: fields.text({ label: 'Footer note (optional)' }),
+      },
+    }),
+    audiences: singleton({
+      label: 'Who Bharat works with',
+      path: 'src/data/audiences',
+      format: { data: 'json' },
+      schema: {
+        items: fields.array(
+          fields.object({
+            title: fields.text({ label: 'Who', validation: { isRequired: true } }),
+            text: fields.text({ label: 'One sentence', multiline: true, validation: { isRequired: true } }),
+          }),
+          { label: 'Groups', itemLabel: (p) => p.fields.title.value || 'Group' },
+        ),
+      },
+    }),
+    faq: singleton({
+      label: 'Common questions',
+      path: 'src/data/faq',
+      format: { data: 'json' },
+      schema: {
+        items: fields.array(
+          fields.object({
+            question: fields.text({ label: 'Question', validation: { isRequired: true } }),
+            answer: fields.text({ label: 'Answer', multiline: true, validation: { isRequired: true } }),
+          }),
+          { label: 'Questions', itemLabel: (p) => p.fields.question.value || 'Question' },
+        ),
       },
     }),
     homepage: singleton({
