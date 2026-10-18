@@ -19,8 +19,12 @@ const sample = (key: string) => isPrototype && unconfirmed(key);
 
 const sameAs = [
   !unconfirmed('instagram') && settings.instagram.url,
+  !unconfirmed('youtube') && settings.youtube.url,
   !unconfirmed('facebook') && settings.facebook.url,
 ].filter(Boolean);
+const phone = settings.phone.show && settings.phone.tel ? settings.phone : null;
+const whatsapp = phone?.whatsapp ? `https://wa.me/${phone.tel.replace(/\D/g, '')}` : null;
+const showBio = settings.biography && !sample('biography');
 const structuredData = {
   '@context': 'https://schema.org',
   '@type': 'Person',
@@ -36,6 +40,30 @@ const structuredData = {
 
 <BaseLayout structuredData={structuredData}>
   <Hero />
+
+  {
+    (settings.slogan || showBio) && (
+      <section class="section about" aria-labelledby="about-title">
+        <div class="wrap about-inner">
+          <h2 id="about-title" class="visually-hidden">About Bharat</h2>
+          {settings.slogan && (
+            <figure class="slogan reveal">
+              <blockquote>
+                <p lang="gu-Latn">{settings.slogan}</p>
+              </blockquote>
+              <figcaption>“With Bharat Bhai here, Bollywood is in the USA!”</figcaption>
+            </figure>
+          )}
+          {showBio && <p class="about-text">{settings.biography}</p>}
+          <ul class="stats" role="list">
+            <li><span class="stat-num">35+</span> <span class="stat-label">years bringing Bollywood to the USA</span></li>
+            <li><span class="stat-num">1989</span> <span class="stat-label">V International founded in New York City</span></li>
+            <li><span class="stat-num">100s</span> <span class="stat-label">of sold-out concerts, drama tours and Navratri nights</span></li>
+          </ul>
+        </div>
+      </section>
+    )
+  }
 
   {
     awards.length > 0 && (
@@ -54,7 +82,7 @@ const structuredData = {
                 <div class="panel-body">
                   {data.date && <p class="panel-year">{data.date.slice(0, 4)}</p>}
                   <h3>{data.title}</h3>
-                  {data.issuer && <p class="panel-issuer">{data.issuer}</p>}
+                  {(data.issuer || data.location) && <p class="panel-issuer">{data.issuer || data.location}</p>}
                   {data.date.length > 4 && <p class="panel-date">{formatPartialDate(data.date)}</p>}
                   {data.placeholder && <p class="panel-sample">Sample</p>}
                 </div>
@@ -130,10 +158,16 @@ const structuredData = {
         {settings.email}
       </a>
       {sample('email') && <p class="contact-sample">Sample address</p>}
+      {phone && (
+        <a class="contact-phone" href={`tel:${phone.tel}`} data-track="phone_click" data-track-id="home">
+          {phone.display}
+        </a>
+      )}
       <div class="contact-buttons">
         <a class="button" href={`mailto:${settings.email}`} data-track="contact_email_click" data-track-id="home-button">Email Bharat</a>
+        {whatsapp && <a class="button button-outline" href={whatsapp} data-track="social_click" data-track-id="whatsapp:home">WhatsApp</a>}
         <a class="button button-outline" href={settings.instagram.url} data-track="social_click" data-track-id="instagram:home">Instagram</a>
-        <a class="button button-outline" href={settings.facebook.url} data-track="social_click" data-track-id="facebook:home">Facebook</a>
+        {settings.youtube.url && <a class="button button-outline" href={settings.youtube.url} data-track="social_click" data-track-id="youtube:home">YouTube</a>}
       </div>
     </div>
   </section>
@@ -150,6 +184,84 @@ const structuredData = {
   }
   .head-row h2 {
     margin: 0;
+  }
+
+  /* ---- About: his slogan, one paragraph, three numbers ---- */
+  .about {
+    background:
+      radial-gradient(50% 70% at 50% 0%, rgb(255 178 63 / 0.12), transparent 70%),
+      var(--bg-2);
+  }
+  .about-inner {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+  }
+  .slogan {
+    margin: 0 0 2rem;
+    max-width: 56rem;
+  }
+  .slogan blockquote {
+    margin: 0;
+  }
+  .slogan blockquote p {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 1.3rem + 3vw, 4rem);
+    line-height: 1.1;
+    text-wrap: balance;
+    color: var(--marigold);
+  }
+  @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+    .slogan blockquote p {
+      background: var(--flame);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+  .slogan figcaption {
+    margin-top: 1rem;
+    font-size: var(--text-lead);
+    font-style: italic;
+    color: var(--text-2);
+  }
+  .about-text {
+    max-width: 38em;
+    margin: 0 auto 2.75rem;
+    font-size: var(--text-lead);
+    line-height: 1.55;
+  }
+  .stats {
+    display: grid;
+    gap: 1.75rem;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  @media (min-width: 48rem) {
+    .stats {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 2.5rem;
+    }
+  }
+  .stats li {
+    display: grid;
+    justify-items: center;
+    gap: 0.35rem;
+    padding-top: 1.25rem;
+    border-top: 2px solid var(--gold-dim);
+  }
+  .stat-num {
+    font-family: var(--font-display);
+    font-size: var(--display-l);
+    line-height: 1;
+    color: var(--gold);
+  }
+  .stat-label {
+    max-width: 16em;
+    color: var(--text-2);
   }
 
   /* ---- Achievements spotlight ---- */
@@ -362,6 +474,16 @@ const structuredData = {
   }
   .contact-email:hover {
     color: var(--white);
+  }
+  .contact-phone {
+    margin-top: 0.5rem;
+    font-size: var(--text-lead);
+    font-weight: 700;
+    color: var(--text);
+    text-decoration-color: var(--marigold-soft);
+  }
+  .contact-phone:hover {
+    color: var(--marigold-soft);
   }
   .contact-sample {
     margin: 0.4rem 0 0;

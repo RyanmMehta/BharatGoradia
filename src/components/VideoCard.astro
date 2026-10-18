@@ -37,7 +37,12 @@ const sourceLabel =
   data.sourceLabel || (video.provider === 'youtube' ? 'Watch on YouTube' : video.provider === 'file' ? 'Open video file' : 'Watch at source');
 const playable = video.provider === 'youtube' ? Boolean(video.youtubeId) : video.provider === 'file' ? Boolean(video.fileUrl) : false;
 const facadeHref = sourceUrl;
-const playLabel = `Play video: ${data.title}, ${spokenDuration(video.duration)}`;
+const playLabel = video.duration ? `Play video: ${data.title}, ${spokenDuration(video.duration)}` : `Play video: ${data.title}`;
+// Without a cover image, a YouTube video shows YouTube's own thumbnail. The full-size one does not
+// exist for every video, so the small handler falls back to the standard size (YouTube answers a
+// missing thumbnail with a 120px grey placeholder rather than always with an error).
+const thumb = !data.poster && video.youtubeId ? `https://i.ytimg.com/vi/${video.youtubeId}` : undefined;
+const thumbFallback = "if(this.naturalWidth<=120&&this.src!==this.dataset.fallback)this.src=this.dataset.fallback";
 ---
 
 <article
@@ -54,13 +59,23 @@ const playLabel = `Play video: ${data.title}, ${spokenDuration(video.duration)}`
     {
       facadeHref ? (
         <a class="video-facade" href={facadeHref} data-video-facade={playable ? '' : undefined} aria-label={playLabel}>
-          <Image
-            src={data.poster}
-            alt=""
-            widths={[480, 800, 1200]}
-            sizes={sizes}
-            loading="lazy"
-          />
+          {data.poster ? (
+            <Image src={data.poster} alt="" widths={[480, 800, 1200]} sizes={sizes} loading="lazy" />
+          ) : (
+            thumb && (
+              <img
+                src={`${thumb}/maxresdefault.jpg`}
+                data-fallback={`${thumb}/hqdefault.jpg`}
+                alt=""
+                width="1280"
+                height="720"
+                loading="lazy"
+                decoding="async"
+                onload={thumbFallback}
+                onerror={`this.onerror=null;${thumbFallback.replace('this.naturalWidth<=120&&', '')}`}
+              />
+            )
+          )}
           <span class="play" aria-hidden="true">
             <span class="play-disc"><svg viewBox="0 0 24 24" width="30" height="30"><path d="M8 5v14l11-7z" fill="currentColor" /></svg></span>
             <span class="play-text">Play</span>
@@ -69,7 +84,7 @@ const playLabel = `Play video: ${data.title}, ${spokenDuration(video.duration)}`
         </a>
       ) : (
         <div class="video-facade is-unavailable">
-          <Image src={data.poster} alt="" widths={[480, 800, 1200]} sizes={sizes} loading="lazy" />
+          {data.poster && <Image src={data.poster} alt="" widths={[480, 800, 1200]} sizes={sizes} loading="lazy" />}
           <span class="play is-muted" aria-hidden="true">
             <span class="play-disc"><svg viewBox="0 0 24 24" width="30" height="30"><path d="M8 5v14l11-7z" fill="currentColor" /></svg></span>
           </span>
@@ -81,7 +96,13 @@ const playLabel = `Play video: ${data.title}, ${spokenDuration(video.duration)}`
   </div>
   <div class="video-body">
     <p class="video-meta">
-      <span>{typeLabel}</span> · <span><span aria-hidden="true">{video.duration}</span><span class="visually-hidden">{spokenDuration(video.duration)}</span></span>
+      <span>{typeLabel}</span>
+      {video.duration && (
+        <>
+          {' · '}
+          <span><span aria-hidden="true">{video.duration}</span><span class="visually-hidden">{spokenDuration(video.duration)}</span></span>
+        </>
+      )}
     </p>
     <Heading class="video-title">{data.title}</Heading>
     {!compact && <p class="video-desc">{data.description}</p>}

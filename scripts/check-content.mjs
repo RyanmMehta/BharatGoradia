@@ -22,14 +22,22 @@ const note = (msg) => notes.push(msg);
 
 // Site settings and contact destinations
 const settings = read('src/data/settings.json');
+// Facebook and YouTube are optional: an empty link hides them, so they need no confirmation.
+const hidden = (key) => ['facebook', 'youtube'].includes(key) && !settings[key]?.url;
+const phoneHidden = !settings.phone?.show;
 for (const [key, ok] of Object.entries(settings.confirmed ?? {}))
-  if (!ok) block(`Settings: "${key}" has not been confirmed by the owner.`);
+  if (!ok && !hidden(key) && !(key === 'phone' && phoneHidden)) block(`Settings: "${key}" has not been confirmed by the owner.`);
 if (/example\.(com|org)$/i.test(settings.email)) block('Settings: email address is still a placeholder.');
-for (const [label, url] of [
-  ['Instagram', settings.instagram?.url],
-  ['Facebook', settings.facebook?.url],
-])
-  if (!url || /^https?:\/\/(www\.)?(instagram|facebook)\.com\/?$/i.test(url)) block(`Settings: ${label} link is not a specific profile.`);
+const genericProfile = /^https?:\/\/(www\.)?(instagram|facebook|youtube)\.com\/?$/i;
+if (!settings.instagram?.url || genericProfile.test(settings.instagram.url)) block('Settings: Instagram link is not a specific profile.');
+for (const [key, label] of [
+  ['facebook', 'Facebook'],
+  ['youtube', 'YouTube'],
+]) {
+  const url = settings[key]?.url;
+  if (!url) note(`Settings: no ${label} link, so ${label} is not shown.`);
+  else if (genericProfile.test(url)) block(`Settings: ${label} link is not a specific page.`);
+}
 if (settings.phone?.show && !settings.phone?.tel) block('Settings: telephone is switched on but has no number.');
 
 // Collections

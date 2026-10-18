@@ -70,7 +70,12 @@ export default config({
       schema: {
         personName: fields.text({ label: 'Name', validation: { isRequired: true } }),
         businessName: fields.text({ label: 'Business name' }),
+        tagline: fields.text({ label: 'Title above the name, e.g. Mr. Bollywood in the USA' }),
         descriptor: fields.text({ label: 'What Bharat does (one line)', validation: { isRequired: true } }),
+        role: fields.text({ label: 'Role line under the description, e.g. President & Founder, V International Inc.' }),
+        slogan: fields.text({ label: 'Signature slogan (shown large on the homepage)' }),
+        philosophy: fields.text({ label: 'His philosophy (a short quote)', multiline: true }),
+        signature: fields.text({ label: 'Sign-off under the philosophy, e.g. Always Krishna Bhakta Bharat Goradia' }),
         introduction: fields.text({ label: 'Short introduction (one sentence)', multiline: true, validation: { isRequired: true } }),
         biography: fields.text({ label: 'Short biography (100–150 words)', multiline: true }),
         email: fields.text({ label: 'Email address', validation: { isRequired: true } }),
@@ -84,15 +89,23 @@ export default config({
         facebook: fields.object(
           {
             name: fields.text({ label: 'Facebook page name' }),
-            url: fields.url({ label: 'Facebook page link', validation: { isRequired: true } }),
+            url: fields.url({ label: 'Facebook page link (leave empty to hide Facebook)' }),
           },
           { label: 'Facebook' },
+        ),
+        youtube: fields.object(
+          {
+            handle: fields.text({ label: 'YouTube channel name or handle, e.g. @name' }),
+            url: fields.url({ label: 'YouTube channel link (leave empty to hide YouTube)' }),
+          },
+          { label: 'YouTube channel' },
         ),
         phone: fields.object(
           {
             show: fields.checkbox({ label: 'Show a telephone number on the website', defaultValue: false }),
             display: fields.text({ label: 'Number as it should appear' }),
-            tel: fields.text({ label: 'Number for dialling, e.g. +441234567890' }),
+            tel: fields.text({ label: 'Number for dialling, e.g. +19175551234' }),
+            whatsapp: fields.checkbox({ label: 'This number is on WhatsApp', defaultValue: false }),
           },
           { label: 'Telephone (optional)' },
         ),
@@ -105,6 +118,8 @@ export default config({
             email: fields.checkbox({ label: 'Email address confirmed as official' }),
             instagram: fields.checkbox({ label: 'Instagram account confirmed as official' }),
             facebook: fields.checkbox({ label: 'Facebook page confirmed as official' }),
+            youtube: fields.checkbox({ label: 'YouTube channel confirmed as official' }),
+            phone: fields.checkbox({ label: 'Telephone number confirmed for the website' }),
           },
           { label: 'Owner confirmation (needed before launch)' },
         ),
@@ -249,9 +264,14 @@ export default config({
           defaultValue: 'youtube',
         }),
         youtubeId: fields.text({
-          label: 'YouTube video ID',
-          description: 'The 11 characters after "v=" in the YouTube link, e.g. dQw4w9WgXcQ.',
-          validation: { pattern: { regex: /^([A-Za-z0-9_-]{11})?$/, message: 'A YouTube video ID is 11 characters' } },
+          label: 'YouTube link',
+          description: 'Paste the YouTube link (for example https://youtu.be/dQw4w9WgXcQ) or just the 11-character video ID.',
+          validation: {
+            pattern: {
+              regex: /^([A-Za-z0-9_-]{11}|https?:\/\/(www\.|m\.)?(youtube\.com|youtu\.be)\/\S+)?$/,
+              message: 'Paste a YouTube link, or the 11-character video ID',
+            },
+          },
         }),
         fileUrl: fields.text({ label: 'Video file address (for uploaded originals)' }),
         captionsUrl: fields.text({ label: 'Captions file address (.vtt)' }),
@@ -259,14 +279,14 @@ export default config({
         sourceLabel: fields.text({ label: 'Link text, e.g. "Watch on Instagram"' }),
         poster: fields.image({
           label: 'Cover image',
+          description: 'Optional for YouTube videos: the YouTube thumbnail is used when this is empty.',
           directory: 'src/assets/videos',
           publicPath: '../../assets/videos/',
-          validation: { isRequired: true },
         }),
         duration: fields.text({
-          label: 'Length',
+          label: 'Length (optional)',
           description: 'Minutes and seconds, e.g. 2:30',
-          validation: { pattern: { regex: /^(\d+:)?\d{1,2}:\d{2}$/, message: 'Use minutes:seconds, e.g. 2:30' } },
+          validation: { pattern: { regex: /^((\d+:)?\d{1,2}:\d{2})?$/, message: 'Use minutes:seconds, e.g. 2:30' } },
         }),
         orientation: fields.select({
           label: 'Shape',
@@ -375,7 +395,7 @@ export default config({
       },
     }),
     press: collection({
-      label: 'Press coverage',
+      label: 'Press and media',
       path: 'src/content/press/*',
       slugField: 'title',
       format: { data: 'json' },
@@ -383,7 +403,7 @@ export default config({
         title: fields.slug({ name: { label: 'Article title' } }),
         publication: fields.text({ label: 'Publication', validation: { isRequired: true } }),
         date: dateField(),
-        url: fields.url({ label: 'Link to the article', validation: { isRequired: true } }),
+        url: fields.url({ label: 'Link to the article (optional)' }),
         summary: fields.text({ label: 'One-sentence summary', multiline: true }),
         order: orderField,
         status: statusField,

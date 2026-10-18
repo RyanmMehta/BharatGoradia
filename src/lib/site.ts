@@ -24,13 +24,24 @@ const text = z.string().nullish().transform((v) => v ?? '');
 const settingsSchema = z.object({
   personName: z.string().min(1),
   businessName: text,
+  tagline: text,
   descriptor: z.string().min(1),
+  role: text,
+  slogan: text,
+  philosophy: text,
+  signature: text,
   introduction: z.string().min(1),
   biography: text,
   email: z.email(),
   instagram: z.object({ handle: text, url: z.url() }),
-  facebook: z.object({ name: text, url: z.url() }),
-  phone: z.object({ show: z.boolean().default(false), display: text, tel: text }).default({ show: false, display: '', tel: '' }),
+  // An empty link hides that channel everywhere.
+  facebook: z.object({ name: text, url: z.union([z.url(), z.literal('')]).nullish().transform((v) => v ?? '') }),
+  youtube: z
+    .object({ handle: text, url: z.union([z.url(), z.literal('')]).nullish().transform((v) => v ?? '') })
+    .default({ handle: '', url: '' }),
+  phone: z
+    .object({ show: z.boolean().default(false), display: text, tel: text, whatsapp: z.boolean().default(false) })
+    .default({ show: false, display: '', tel: '', whatsapp: false }),
   confirmed: z.record(z.string(), z.boolean()).default({}),
   seo: z.object({ description: text }).default({ description: '' }),
   footerNote: text,

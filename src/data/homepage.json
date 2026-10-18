@@ -5,7 +5,7 @@
     "focalPoint": "50% 14%",
     "placeholder": false
   },
-  "introVideo": "",
+  "introVideo": "bharat-goradia-introduction",
   "artistPhotos": [
     "placeholder-photo-1",
     "placeholder-photo-2",
@@ -15,13 +15,14 @@
     "placeholder-photo-6"
   ],
   "featuredVideos": [
-    "placeholder-video-interview",
-    "placeholder-video-event",
-    "placeholder-video-greeting"
+    "bharat-goradia-introduction",
+    "celebrities-on-bharat-goradia",
+    "with-ace-musicians-and-singers"
   ],
   "awards": [
-    "placeholder-award-1",
-    "placeholder-award-2"
+    "bharat-gaurav-award",
+    "international-promoter-honor",
+    "dadasaheb-phalke-icon-award"
   ],
   "testimonials": [
     "placeholder-testimonial-1",

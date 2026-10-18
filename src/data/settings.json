@@ -1,34 +1,46 @@
 {
   "personName": "Bharat Goradia",
-  "businessName": "V International",
+  "businessName": "V International Inc.",
+  "tagline": "Mr. Bollywood in the USA",
   "descriptor": "Bollywood Artist Promotion & Celebrity Events",
-  "introduction": "Bringing Bollywood artists to celebrations, festivals and community events.",
-  "biography": "Bharat works with organisers from the first conversation onwards: understanding the occasion, suggesting artists who suit it, and agreeing the arrangements together. This short biography will be replaced with Bharat's own approved story.",
-  "email": "enquiries@example.com",
+  "role": "President & Founder, V International Inc. · New York City · Est. 1989",
+  "slogan": "Bharat Bhai Chhe toh USA ma BOLLYWOOD CHHE!!!",
+  "philosophy": "Always be transparent, and there is no shortcut to success. Learn to respect criticism.",
+  "signature": "Always Krishna Bhakta, Bharat Goradia",
+  "introduction": "For over 35 years, Bharat Goradia has brought the biggest names in Bollywood to audiences across the USA.",
+  "biography": "For over 35 years, Bharat Goradia has been a cultural bridge between India and the USA. Through V International Inc., which he founded in New York City in 1989, he has brought Bollywood stars and shows to American audiences: hundreds of sold-out concerts, national drama tours and Navratri festivals.",
+  "email": "bharatgoradia@gmail.com",
   "instagram": {
-    "handle": "@handle-to-be-confirmed",
-    "url": "https://www.instagram.com/"
+    "handle": "@bharat_goradia",
+    "url": "https://www.instagram.com/bharat_goradia/"
   },
   "facebook": {
-    "name": "Page name to be confirmed",
-    "url": "https://www.facebook.com/"
+    "name": "",
+    "url": ""
+  },
+  "youtube": {
+    "handle": "@bharatgoradia6328",
+    "url": "https://www.youtube.com/@bharatgoradia6328"
   },
   "phone": {
-    "show": false,
-    "display": "",
-    "tel": ""
+    "show": true,
+    "display": "+1 (917) 355-4247",
+    "tel": "+19173554247",
+    "whatsapp": true
   },
   "confirmed": {
     "names": true,
     "descriptor": true,
-    "introduction": false,
-    "biography": false,
-    "email": false,
-    "instagram": false,
-    "facebook": false
+    "introduction": true,
+    "biography": true,
+    "email": true,
+    "instagram": true,
+    "facebook": false,
+    "youtube": true,
+    "phone": true
   },
   "seo": {
-    "description": "Bharat Goradia arranges Bollywood artist appearances, live entertainment and cultural events. See photographs, videos and recognition, and get in touch."
+    "description": "Bharat Goradia, Mr. Bollywood in the USA, has brought Bollywood stars, concerts, drama tours and Navratri festivals to American audiences for over 35 years through V International Inc., New York."
   },
   "footerNote": ""
 }

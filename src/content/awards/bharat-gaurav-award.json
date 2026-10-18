@@ -1,0 +1,21 @@
+{
+  "kind": "award",
+  "title": "Bharat Gaurav Award",
+  "issuer": "",
+  "location": "United Nations Headquarters, New York",
+  "date": "",
+  "description": "Known as \"The Pride of India\".",
+  "imageAlt": "",
+  "link": "",
+  "linkLabel": "",
+  "evidence": {
+    "sources": [
+      "Passion Vista International cover story"
+    ],
+    "notes": "Owner-supplied content kit (October 2026).",
+    "wordingApproved": true
+  },
+  "order": 10,
+  "status": "published",
+  "placeholder": false
+}

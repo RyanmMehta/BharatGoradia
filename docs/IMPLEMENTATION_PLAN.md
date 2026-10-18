@@ -49,11 +49,10 @@ Measured in the current prototype: homepage first-load JavaScript is about 3 KB 
 
 ## Before launch: owner decisions and content (PRD §2, §19)
 
-1. Confirm the name, business name, one-line description, introduction and biography. Tick the
-   confirmations in **Edit contact details**.
-2. Confirm the official email, Instagram and Facebook links. These are launch blockers.
-3. Provide approved photographs (6–8), three videos with captions, award evidence, and up to three testimonials
-   with written consent.
+1. Done (October 2026 content kit): name, tagline, role, biography, slogan, philosophy, email, phone/WhatsApp,
+   Instagram and YouTube; four YouTube videos; four awards and honours; four press and media items.
+2. Optional: add the official Facebook page link (Facebook is hidden until it is set) and links to the press articles.
+3. Provide approved photographs (6–8). Video lengths can be added in the editor; they are optional.
 4. Choose hosting, domain, email provider (and set `NOTIFY_TO` / `NOTIFY_BACKUP_TO`), and analytics provider.
 5. Create the Keystatic GitHub app for production editing (see `.env.example`). Add Bharat or a family
    editor as repository collaborators.

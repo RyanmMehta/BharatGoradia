@@ -2,13 +2,26 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHeader from '../components/PageHeader.astro';
 import AwardCard from '../components/AwardCard.astro';
-import { formatPartialDate, publicCollection } from '../lib/site';
+import { formatPartialDate, publicCollection, settings } from '../lib/site';
 
 const [awards, press] = await Promise.all([publicCollection('awards'), publicCollection('press')]);
 ---
 
-<BaseLayout title="Recognition" description="Awards, honours and selected press coverage for Bharat Goradia.">
+<BaseLayout title="Recognition" description="Awards, honours and press for Bharat Goradia, including the Bharat Gaurav Award and the Dadasaheb Phalke Icon Award Films 2020.">
   <PageHeader credit="Recognition" title="Awards and press" />
+
+  {
+    settings.philosophy && (
+      <section class="philosophy-band" aria-label="His philosophy">
+        <figure class="wrap philosophy">
+          <blockquote>
+            <p>“{settings.philosophy}”</p>
+          </blockquote>
+          {settings.signature && <figcaption>{settings.signature}</figcaption>}
+        </figure>
+      </section>
+    )
+  }
 
   <section class="section" aria-labelledby="awards-title">
     <div class="wrap">
@@ -31,7 +44,7 @@ const [awards, press] = await Promise.all([publicCollection('awards'), publicCol
     press.length > 0 && (
       <section class="section band" aria-labelledby="press-title">
         <div class="wrap">
-          <h2 id="press-title" class="block-title">Selected press</h2>
+          <h2 id="press-title" class="block-title">Press and media</h2>
           <ul class="press-list">
             {press.map(({ data }) => (
               <li class="press-item">
@@ -40,9 +53,13 @@ const [awards, press] = await Promise.all([publicCollection('awards'), publicCol
                   {data.placeholder && <span class="sample-text"> · Sample</span>}
                 </p>
                 <h3>
-                  <a href={data.url} data-track="press_click">
-                    {data.title}
-                  </a>
+                  {data.url ? (
+                    <a href={data.url} data-track="press_click">
+                      {data.title}
+                    </a>
+                  ) : (
+                    data.title
+                  )}
                 </h3>
                 {data.summary && <p>{data.summary}</p>}
               </li>
@@ -55,6 +72,29 @@ const [awards, press] = await Promise.all([publicCollection('awards'), publicCol
 </BaseLayout>
 
 <style>
+  .philosophy-band {
+    padding-block: clamp(2.5rem, 1.5rem + 3vw, 4rem) 0;
+  }
+  .philosophy {
+    margin-block: 0;
+    padding-left: 1.5rem;
+    border-left: 4px solid var(--marigold);
+  }
+  .philosophy blockquote {
+    margin: 0;
+  }
+  .philosophy blockquote p {
+    max-width: 30ch;
+    margin: 0 0 0.75rem;
+    font-family: var(--font-display);
+    font-size: var(--display-m);
+    line-height: 1.25;
+    color: var(--text);
+  }
+  .philosophy figcaption {
+    font-weight: 700;
+    color: var(--marigold);
+  }
   .block-title {
     font-size: var(--display-m);
     margin-bottom: 1.5rem;

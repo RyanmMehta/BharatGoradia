@@ -55,8 +55,4 @@ const out = (path, opts) => {
 
 for (let i = 1; i <= 6; i++)
   out(`src/assets/photos/placeholder-photo-${i}/image.svg`, { w: 1500, h: i === 2 ? 1875 : 1000, seed: i + 10, palette: i });
-out('src/assets/videos/placeholder-video-interview/poster.svg', { w: 1600, h: 900, seed: 31, palette: 1 });
-out('src/assets/videos/placeholder-video-event/poster.svg', { w: 1600, h: 900, seed: 32, palette: 3 });
-out('src/assets/videos/placeholder-video-greeting/poster.svg', { w: 900, h: 1600, seed: 33, palette: 4 });
-out('src/assets/awards/placeholder-award-1/image.svg', { w: 1500, h: 1000, seed: 41, palette: 5 });
 console.log('Sample artwork written.');

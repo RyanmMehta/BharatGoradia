@@ -15,7 +15,7 @@ interface Props {
 }
 
 const { title, description = settings.seo.description || settings.introduction, structuredData } = Astro.props;
-const fullTitle = title ? `${title} | ${settings.personName}` : `${settings.personName} | ${settings.descriptor}`;
+const fullTitle = title ? `${title} | ${settings.personName}` : `${settings.personName} | ${settings.tagline || settings.descriptor}`;
 // Pages are built as files (gallery.html), so normalise to the clean public path.
 const cleanPath = Astro.url.pathname.replace(/(\/index)?\.html$/, '') || '/';
 const canonical = new URL(cleanPath, Astro.site);
@@ -80,7 +80,7 @@ const ogImage = new URL('/og-default.png', Astro.site);
       isPrototype && (
         <aside class="preview-bar" aria-label="Preview notice">
           <div class="wrap">
-            <strong>Preview</strong> · sample photos and text{buildId && ` · version ${buildId}`}
+            <strong>Preview</strong> · sample photos{buildId && ` · version ${buildId}`}
           </div>
         </aside>
       )

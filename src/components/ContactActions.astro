@@ -10,6 +10,7 @@ interface Props {
 const { variant = 'large', location } = Astro.props;
 const sample = (key: string) => isPrototype && unconfirmed(key);
 const phone = settings.phone.show && settings.phone.tel ? settings.phone : null;
+const whatsapp = phone?.whatsapp ? `https://wa.me/${phone.tel.replace(/\D/g, '')}` : null;
 const secondary = 'button button-outline';
 ---
 
@@ -23,6 +24,24 @@ const secondary = 'button button-outline';
     </span>
     <span class="copy-status" role="status" data-copy-status></span>
   </li>
+  {
+    phone && (
+      <li class="item">
+        <span class="label">Telephone{whatsapp && ' & WhatsApp'} {sample('phone') && <span class="sample-text">· Sample</span>}</span>
+        <span class="value">{phone.display}</span>
+        <span class="actions">
+          <a class={secondary} href={`tel:${phone.tel}`} data-track="phone_click" data-track-id={location}>
+            Call Bharat
+          </a>
+          {whatsapp && (
+            <a class={secondary} href={whatsapp} data-track="social_click" data-track-id={`whatsapp:${location}`}>
+              WhatsApp
+            </a>
+          )}
+        </span>
+      </li>
+    )
+  }
   <li class="item">
     <span class="label">Instagram {sample('instagram') && <span class="sample-text">· Sample</span>}</span>
     <span class="value">{settings.instagram.handle}</span>
@@ -30,22 +49,24 @@ const secondary = 'button button-outline';
       <a class={secondary} href={settings.instagram.url} data-track="social_click" data-track-id={`instagram:${location}`}>Open Instagram</a>
     </span>
   </li>
-  <li class="item">
-    <span class="label">Facebook {sample('facebook') && <span class="sample-text">· Sample</span>}</span>
-    <span class="value">{settings.facebook.name}</span>
-    <span class="actions">
-      <a class={secondary} href={settings.facebook.url} data-track="social_click" data-track-id={`facebook:${location}`}>Open Facebook</a>
-    </span>
-  </li>
   {
-    phone && (
+    settings.youtube.url && (
       <li class="item">
-        <span class="label">Telephone</span>
-        <span class="value">{phone.display}</span>
+        <span class="label">YouTube {sample('youtube') && <span class="sample-text">· Sample</span>}</span>
+        <span class="value">{settings.youtube.handle || 'YouTube channel'}</span>
         <span class="actions">
-          <a class={secondary} href={`tel:${phone.tel}`} data-track="phone_click" data-track-id={location}>
-            Call Bharat
-          </a>
+          <a class={secondary} href={settings.youtube.url} data-track="social_click" data-track-id={`youtube:${location}`}>Open YouTube</a>
+        </span>
+      </li>
+    )
+  }
+  {
+    settings.facebook.url && (
+      <li class="item">
+        <span class="label">Facebook {sample('facebook') && <span class="sample-text">· Sample</span>}</span>
+        <span class="value">{settings.facebook.name || 'Facebook page'}</span>
+        <span class="actions">
+          <a class={secondary} href={settings.facebook.url} data-track="social_click" data-track-id={`facebook:${location}`}>Open Facebook</a>
         </span>
       </li>
     )

@@ -11,12 +11,17 @@ const [first, ...rest] = settings.personName.split(' ');
 <section class="hero diya-host" aria-labelledby="hero-title">
   <div class="wrap hero-grid">
     <div class="hero-copy">
-      {settings.businessName && <p class="credit enter">{settings.businessName} presents</p>}
+      {settings.tagline ? (
+        <p class="credit enter">{settings.tagline}</p>
+      ) : (
+        settings.businessName && <p class="credit enter">{settings.businessName} presents</p>
+      )}
       <h1 id="hero-title" class="hero-name">
         <span class="line"><span class="line-inner">{first}</span></span>
         {rest.length > 0 && <span class="line"><span class="line-inner">{rest.join(' ')}</span></span>}
       </h1>
       <p class="hero-descriptor enter enter-2">{settings.descriptor}</p>
+      {settings.role && <p class="hero-role enter enter-2">{settings.role}</p>}
       <a class="more hero-more enter enter-3" href={homepage.introVideo ? '#videos' : '#work'}>
         {homepage.introVideo ? 'Watch an introduction' : 'See his work'} <span class="arrow" aria-hidden="true">↓</span>
       </a>
@@ -122,6 +127,12 @@ const [first, ...rest] = settings.personName.split(' ');
     font-weight: 700;
     line-height: 1.25;
     max-width: 22em;
+  }
+  .hero-role {
+    margin: 0;
+    color: var(--text-2);
+    font-size: var(--text-lead);
+    max-width: 30em;
   }
   .hero-more {
     margin-top: 1.5rem;

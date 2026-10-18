@@ -28,6 +28,12 @@ const optionalUrl = z
   .union([z.url(), z.literal('')])
   .nullish()
   .transform((v) => v || undefined);
+// https://www.youtube.com/watch?v=ID, https://youtu.be/ID, /shorts/ID, /embed/ID, /live/ID or a bare ID.
+function youtubeIdFrom(value: string) {
+  const v = value.trim();
+  const match = v.match(/(?:[?&]v=|youtu\.be\/|\/(?:shorts|embed|live)\/)([A-Za-z0-9_-]{11})/);
+  return match ? match[1] : v;
+}
 const rights = z.enum(['approved', 'pending', 'not-approved']).default('pending');
 const order = z.number().nullish().transform((v) => v ?? 100);
 
@@ -68,16 +74,22 @@ const videos = defineCollection({
         people: z.array(z.string()).default([]),
         event: optionalText,
         date: partialDate,
-        poster: image(),
+        // Optional for YouTube: the card falls back to YouTube's own thumbnail.
+        poster: image().nullish(),
         provider: z.enum(['youtube', 'file', 'link']),
+        // The editor accepts a full YouTube link or a bare ID; only the ID is kept.
         youtubeId: z
           .string()
-          .regex(/^([A-Za-z0-9_-]{11})?$/, 'YouTube video IDs are 11 characters')
           .nullish()
-          .transform((v) => v || undefined),
+          .transform((v) => (v ? youtubeIdFrom(v) : undefined))
+          .refine((v) => v === undefined || /^[A-Za-z0-9_-]{11}$/.test(v), 'Paste a YouTube link or an 11-character video ID'),
         fileUrl: optionalText,
         captionsUrl: optionalText,
-        duration: z.string().regex(/^(\d+:)?\d{1,2}:\d{2}$/, 'Use m:ss or h:mm:ss'),
+        duration: z
+          .string()
+          .regex(/^((\d+:)?\d{1,2}:\d{2})?$/, 'Use m:ss or h:mm:ss')
+          .nullish()
+          .transform((v) => v ?? ''),
         orientation: z.enum(['landscape', 'portrait']).default('landscape'),
         sourceUrl: optionalUrl,
         sourceLabel: optionalText,
@@ -91,6 +103,8 @@ const videos = defineCollection({
       .superRefine((v, ctx) => {
         if (v.provider === 'youtube' && !v.youtubeId)
           ctx.addIssue({ code: 'custom', path: ['youtubeId'], message: 'A YouTube video needs its video ID' });
+        if (v.provider !== 'youtube' && !v.poster)
+          ctx.addIssue({ code: 'custom', path: ['poster'], message: 'Add a cover image for videos that are not on YouTube' });
         if (v.provider === 'file' && !v.fileUrl)
           ctx.addIssue({ code: 'custom', path: ['fileUrl'], message: 'A video file needs its file URL' });
       }),
@@ -161,7 +175,7 @@ const press = defineCollection({
     publication: z.string().min(1),
     title: z.string().min(1),
     date: partialDate,
-    url: z.url(),
+    url: optionalUrl,
     summary: optionalText,
     order,
     status,
