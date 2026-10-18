@@ -9,7 +9,48 @@ wherever a host asks.
 
 Check each host's current pricing before you start. Plans and free allowances change often.
 
-## Vercel (currently in use: https://bharat-goradia.vercel.app, moving to https://bharatgoradia.org)
+## Cloudflare Workers (moving here: https://bharatgoradia.org)
+
+Everything in one place: the domain, DNS, the website and the enquiry database. Cloudflare builds the site from
+GitHub on every push, the same way Vercel does.
+
+What is already set up in the code:
+
+- `wrangler.jsonc`: the Worker (`bharat-goradia`), the D1 database for enquiries (`bharat-goradia-enquiries`,
+  already created, table included) and a cron trigger every 15 minutes that retries undelivered notification
+  emails and deletes enquiries older than 90 days.
+- `astro.config.mjs` switches to Cloudflare's adapter when Cloudflare builds it (`WORKERS_CI=1`). Pages are
+  static files; the contact form runs in the Worker and stores enquiries in D1, so they are kept permanently
+  (unlike Vercel's temporary storage).
+- To try the Cloudflare version locally: `DEPLOY_TARGET=cloudflare npm run build`, then
+  `npx wrangler dev --config dist/server/wrangler.json`.
+
+Steps in the Cloudflare dashboard:
+
+1. **Workers & Pages → Create → Import a repository.** Connect GitHub (this is the one time Cloudflare needs
+   GitHub access) and pick `RyanmMehta/BharatGoradia`.
+2. Settings on the next screen:
+   - Project name: `bharat-goradia` (must match `name` in `wrangler.jsonc`)
+   - Build command: `npm run build`
+   - Deploy command: `npx wrangler deploy`
+   - Under advanced settings, set the production branch to `claude/sleepy-cray-cohvcw`.
+3. Deploy, and check the site on the `bharat-goradia.<account>.workers.dev` address Cloudflare shows.
+4. Move the domain:
+   - In **Vercel → Settings → Domains**, remove `bharatgoradia.org` and `www.bharatgoradia.org`.
+   - In **Cloudflare → bharatgoradia.org → DNS → Records**, delete the A record (`216.198.79.1`) and the CNAME
+     (`…vercel-dns-017.com`) that pointed at Vercel.
+   - In **Workers & Pages → bharat-goradia → Settings → Domains & Routes → Add → Custom domain**, add
+     `bharatgoradia.org`, then `www.bharatgoradia.org`. Cloudflare creates the DNS records and the certificate.
+5. Email notifications (optional until real visitors use the form): under the Worker's
+   **Settings → Variables and Secrets**, add `NOTIFY_PROVIDER=resend`, `NOTIFY_FROM`, `NOTIFY_TO`,
+   `NOTIFY_BACKUP_TO`, and `RESEND_API_KEY` as a **Secret**. Without them, enquiries are still saved in D1 and
+   notifications are only written to the Worker's logs.
+6. Once the Cloudflare site is confirmed working, delete the Vercel project.
+
+To read enquiries: **Storage & Databases → D1 → bharat-goradia-enquiries → Console**, then run
+`SELECT created_at, name, email, phone, message, delivery_state FROM enquiries ORDER BY created_at DESC;`
+
+## Vercel (previous host: https://bharat-goradia.vercel.app)
 
 Vercel builds the site automatically. When it builds, the site switches to Vercel's adapter: pages are
 served as static files, and the contact form runs as a serverless function.

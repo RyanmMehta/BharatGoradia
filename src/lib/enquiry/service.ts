@@ -31,10 +31,15 @@ export const FORM_ERRORS = {
   badRequest: 'Sorry, something went wrong with the form. Please reload the page and try again.',
 };
 
+/**
+ * `background` keeps the notification running after the response is sent. On Cloudflare Workers this
+ * must be the request's waitUntil, or the work is cancelled; on a Node server it can be omitted.
+ */
 export async function submitEnquiry(
   raw: Record<string, unknown>,
   clientKey: string,
   deps: EnquiryDeps,
+  background: (task: Promise<unknown>) => void = () => {},
 ): Promise<EnquiryResult> {
   const now = deps.now?.() ?? new Date();
   const values = normalise(raw);
@@ -53,7 +58,7 @@ export async function submitEnquiry(
 
   let saved;
   try {
-    saved = deps.store.save(values, { requestId, now, retentionDays: deps.retentionDays, ack: deps.acknowledge });
+    saved = await deps.store.save(values, { requestId, now, retentionDays: deps.retentionDays, ack: deps.acknowledge });
   } catch (err) {
     console.error('[enquiry] storage failed', err);
     return { ok: false, status: 500, formError: FORM_ERRORS.unavailable, values };
@@ -61,7 +66,7 @@ export async function submitEnquiry(
 
   if (saved.created) {
     // Background delivery: success depends only on durable storage, never on email delivery.
-    void deliver(saved.enquiry.id, deps).catch((err) => console.error('[enquiry] delivery error', err));
+    background(deliver(saved.enquiry.id, deps).catch((err) => console.error('[enquiry] delivery error', err)));
   }
   return { ok: true, id: saved.enquiry.id, created: saved.created };
 }
@@ -78,18 +83,18 @@ function isDue(e: Enquiry, now: Date) {
 /** Attempt owner notification (and the one-time acknowledgement) for a stored enquiry. */
 export async function deliver(id: string, deps: EnquiryDeps): Promise<void> {
   const { store, notifier } = deps;
-  const e = store.get(id);
+  const e = await store.get(id);
   if (!e) return;
   const now = deps.now?.() ?? new Date();
 
   if (e.deliveryState !== 'delivered') {
     try {
       await notifier.notifyOwner(e);
-      store.update(id, { deliveryState: 'delivered', deliveryAttempts: e.deliveryAttempts + 1, lastAttemptAt: now.toISOString(), lastError: null });
+      await store.update(id, { deliveryState: 'delivered', deliveryAttempts: e.deliveryAttempts + 1, lastAttemptAt: now.toISOString(), lastError: null });
     } catch (err) {
       const attempts = e.deliveryAttempts + 1;
       const failed = attempts >= MAX_DELIVERY_ATTEMPTS;
-      store.update(id, {
+      await store.update(id, {
         deliveryState: failed ? 'failed' : 'pending',
         deliveryAttempts: attempts,
         lastAttemptAt: now.toISOString(),
@@ -100,9 +105,9 @@ export async function deliver(id: string, deps: EnquiryDeps): Promise<void> {
           await notifier.alert(
             'Website enquiry could not be delivered',
             `An enquiry (reference ${id}) was saved but the notification email has failed ${attempts} times.\n` +
-              'The enquiry is safe in the enquiry store. Run "npm run enquiries:retry -- --list" on the server to see it.',
+              'The enquiry is safe in the enquiry store. docs/DEPLOY.md explains how to read it.',
           );
-          store.update(id, { alerted: true });
+          await store.update(id, { alerted: true });
         } catch (alertErr) {
           console.error('[enquiry] alert failed', alertErr);
         }
@@ -111,13 +116,13 @@ export async function deliver(id: string, deps: EnquiryDeps): Promise<void> {
   }
 
   // Acknowledge once. A failed acknowledgement is recorded and never retried, so visitors are not sent repeats.
-  const latest = store.get(id);
+  const latest = await store.get(id);
   if (latest?.ackState === 'pending') {
     try {
       await notifier.acknowledge(latest);
-      store.update(id, { ackState: 'sent' });
+      await store.update(id, { ackState: 'sent' });
     } catch {
-      store.update(id, { ackState: 'failed' });
+      await store.update(id, { ackState: 'failed' });
     }
   }
 }
@@ -125,9 +130,9 @@ export async function deliver(id: string, deps: EnquiryDeps): Promise<void> {
 /** Retry due deliveries and purge expired enquiries. Run on a schedule (see scripts/enquiry-maintenance.mjs). */
 export async function runMaintenance(deps: EnquiryDeps): Promise<{ retried: number; purged: number; failed: number }> {
   const now = deps.now?.() ?? new Date();
-  const pending = deps.store.undelivered().filter((e) => e.deliveryState === 'pending' && isDue(e, now));
+  const pending = (await deps.store.undelivered()).filter((e) => e.deliveryState === 'pending' && isDue(e, now));
   for (const e of pending) await deliver(e.id, deps);
-  const purged = deps.store.purgeExpired(now);
-  const failed = deps.store.undelivered().filter((e) => e.deliveryState === 'failed').length;
+  const purged = await deps.store.purgeExpired(now);
+  const failed = (await deps.store.undelivered()).filter((e) => e.deliveryState === 'failed').length;
   return { retried: pending.length, purged, failed };
 }

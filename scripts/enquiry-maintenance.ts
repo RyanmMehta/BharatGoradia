@@ -11,21 +11,21 @@ const deps = createDepsFromEnv();
 const [flag, id] = process.argv.slice(2);
 
 if (flag === '--list') {
-  const rows = deps.store.undelivered();
+  const rows = await deps.store.undelivered();
   if (!rows.length) console.log('All enquiries have been delivered.');
   for (const e of rows)
     console.log(`${e.id}  received ${e.createdAt}  ${e.deliveryState}  attempts=${e.deliveryAttempts}  ${e.lastError ?? ''}`);
 } else if (flag === '--show' && id) {
-  const e = deps.store.get(id);
+  const e = await deps.store.get(id);
   if (!e) {
     console.error('No enquiry with that reference.');
     process.exit(1);
   }
   console.log(`Reference: ${e.id}\nReceived: ${e.createdAt}\nName: ${e.name}\nEmail: ${e.email}\nPhone: ${e.phone || '-'}\n\n${e.message}`);
 } else if (flag === '--resend' && id) {
-  deps.store.update(id, { deliveryState: 'pending', deliveryAttempts: 0, lastAttemptAt: null, alerted: false });
+  await deps.store.update(id, { deliveryState: 'pending', deliveryAttempts: 0, lastAttemptAt: null, alerted: false });
   await deliver(id, deps);
-  console.log(`Delivery state: ${deps.store.get(id)?.deliveryState ?? 'not found'}`);
+  console.log(`Delivery state: ${(await deps.store.get(id))?.deliveryState ?? 'not found'}`);
 } else {
   const result = await runMaintenance(deps);
   console.log(`Retried ${result.retried}, purged ${result.purged}, permanently failed ${result.failed}.`);

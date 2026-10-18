@@ -2,7 +2,8 @@
 import { createNotifier, type NotifyConfig } from './notify.ts';
 import { RateLimiter } from './rate-limit.ts';
 import { runMaintenance, type EnquiryDeps } from './service.ts';
-import { SqliteEnquiryStore } from './store.ts';
+import { SqliteEnquiryStore, type EnquiryStore } from './store.ts';
+import { D1EnquiryStore, type D1Like } from './d1-store.ts';
 
 const list = (v?: string) => (v ?? '').split(',').map((s) => s.trim()).filter(Boolean);
 // process.env at runtime; import.meta.env covers values Vite inlined from .env files during development.
@@ -23,9 +24,18 @@ export function notifyConfigFromEnv(): NotifyConfig {
 // connect a hosted database before real enquiries are expected (see docs/DEPLOY.md).
 const defaultDbPath = () => (env('VERCEL') ? '/tmp/enquiries.db' : './data/enquiries.db');
 
+// On Cloudflare, src/worker.ts hands over the D1 database binding before any request is handled.
+const d1 = () => (globalThis as { __enquiryD1?: D1Like }).__enquiryD1;
+export const onCloudflare = () => Boolean(d1());
+
+function createStore(): EnquiryStore {
+  const db = d1();
+  return db ? new D1EnquiryStore(db) : new SqliteEnquiryStore(env('ENQUIRY_DB_PATH') ?? defaultDbPath());
+}
+
 export function createDepsFromEnv(): EnquiryDeps {
   return {
-    store: new SqliteEnquiryStore(env('ENQUIRY_DB_PATH') ?? defaultDbPath()),
+    store: createStore(),
     notifier: createNotifier(notifyConfigFromEnv()),
     limiter: new RateLimiter(),
     retentionDays: Number(env('ENQUIRY_RETENTION_DAYS') ?? 90),
@@ -40,8 +50,8 @@ let lastMaintenance = 0;
 export function enquiryDeps(): EnquiryDeps {
   deps ??= createDepsFromEnv();
   // Opportunistic retry of earlier failed notifications, at most every five minutes.
-  // A scheduled `npm run enquiries:retry` covers quiet periods.
-  if (Date.now() - lastMaintenance > 5 * 60_000) {
+  // A scheduled `npm run enquiries:retry` covers quiet periods. On Cloudflare a cron trigger does this instead.
+  if (!onCloudflare() && Date.now() - lastMaintenance > 5 * 60_000) {
     lastMaintenance = Date.now();
     const d = deps;
     void runMaintenance(d).catch((err) => console.error('[enquiry] maintenance failed', err));
@@ -62,4 +72,10 @@ export function clientKey(request: Request, getClientAddress: () => string): str
   } catch {
     return 'unknown';
   }
+}
+
+/** Background work that outlives the response: the Workers request context's waitUntil, or a plain promise on Node. */
+export function background(locals: unknown): (task: Promise<unknown>) => void {
+  const ctx = (locals as { cfContext?: { waitUntil(p: Promise<unknown>): void } } | undefined)?.cfContext;
+  return ctx ? (task) => ctx.waitUntil(task) : () => {};
 }

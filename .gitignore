@@ -10,3 +10,5 @@ dist/
 .DS_Store
 coverage/
 .vercel/
+.wrangler/
+.dev.vars*

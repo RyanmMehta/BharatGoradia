@@ -1,0 +1,20 @@
+// Cloudflare Workers configuration (used when the site is built and deployed on Cloudflare).
+// See docs/DEPLOY.md. Vercel and Node builds ignore this file.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "bharat-goradia",
+  // Astro's request handler plus a cron trigger that retries enquiry notifications.
+  "main": "./src/worker.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "bharat-goradia-enquiries",
+      "database_id": "1dce067a-8d75-49e6-971f-49d4e7305577"
+    }
+  ],
+  // Retry undelivered enquiry emails and delete enquiries past the 90-day retention period.
+  "triggers": { "crons": ["*/15 * * * *"] },
+  "observability": { "enabled": true }
+}

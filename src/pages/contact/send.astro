@@ -3,7 +3,7 @@
 // or the success message once the enquiry is stored. The enhanced form uses /api/enquiry instead.
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import EnquiryForm from '../../components/EnquiryForm.astro';
-import { clientKey, enquiryDeps } from '../../lib/enquiry/runtime.ts';
+import { background, clientKey, enquiryDeps } from '../../lib/enquiry/runtime.ts';
 import { FORM_ERRORS, submitEnquiry, type EnquiryResult } from '../../lib/enquiry/service.ts';
 
 export const prerender = false;
@@ -17,7 +17,7 @@ try {
   const data = await Astro.request.formData();
   const raw: Record<string, unknown> = {};
   for (const [k, v] of data) if (typeof v === 'string') raw[k] = v;
-  result = await submitEnquiry(raw, clientKey(Astro.request, () => Astro.clientAddress), enquiryDeps());
+  result = await submitEnquiry(raw, clientKey(Astro.request, () => Astro.clientAddress), enquiryDeps(), background(Astro.locals));
 } catch (err) {
   console.error('[enquiry] unexpected failure', err);
   result = { ok: false, status: 500, formError: FORM_ERRORS.unavailable, values: { name: '', email: '', phone: '', message: '' } };

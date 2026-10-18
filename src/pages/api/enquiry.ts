@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { clientKey, enquiryDeps } from '../../lib/enquiry/runtime.ts';
+import { background, clientKey, enquiryDeps } from '../../lib/enquiry/runtime.ts';
 import { FORM_ERRORS, submitEnquiry } from '../../lib/enquiry/service.ts';
 
 export const prerender = false;
@@ -30,7 +30,7 @@ export const POST: APIRoute = async (context) => {
 
   let result;
   try {
-    result = await submitEnquiry(raw, clientKey(request, () => context.clientAddress), enquiryDeps());
+    result = await submitEnquiry(raw, clientKey(request, () => context.clientAddress), enquiryDeps(), background(context.locals));
   } catch (err) {
     console.error('[enquiry] unexpected failure', err);
     return json({ ok: false, formError: FORM_ERRORS.unavailable }, 500);

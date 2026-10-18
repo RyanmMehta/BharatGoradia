@@ -28,25 +28,30 @@ export interface SaveResult {
   enquiry: Enquiry;
 }
 
+export type EnquiryPatch = Partial<
+  Pick<Enquiry, 'deliveryState' | 'deliveryAttempts' | 'lastAttemptAt' | 'lastError' | 'ackState' | 'alerted'>
+>;
+
+// Store methods are async so the same service code runs on Node's SQLite and on Cloudflare D1.
 export interface EnquiryStore {
   /** Idempotent: the same requestId, or an identical message within the duplicate window, returns the existing record. */
-  save(input: EnquiryInput, opts: { requestId: string; now: Date; retentionDays: number; ack: boolean }): SaveResult;
-  get(id: string): Enquiry | undefined;
-  update(id: string, patch: Partial<Pick<Enquiry, 'deliveryState' | 'deliveryAttempts' | 'lastAttemptAt' | 'lastError' | 'ackState' | 'alerted'>>): void;
+  save(input: EnquiryInput, opts: { requestId: string; now: Date; retentionDays: number; ack: boolean }): Promise<SaveResult>;
+  get(id: string): Promise<Enquiry | undefined>;
+  update(id: string, patch: EnquiryPatch): Promise<void>;
   /** Enquiries whose notification has not yet been delivered. */
-  undelivered(): Enquiry[];
+  undelivered(): Promise<Enquiry[]>;
   /** Delete enquiries past their retention date. Returns the number removed. */
-  purgeExpired(now: Date): number;
+  purgeExpired(now: Date): Promise<number>;
 }
 
-const DUPLICATE_WINDOW_MS = 10 * 60 * 1000;
+export const DUPLICATE_WINDOW_MS = 10 * 60 * 1000;
 
 export const fingerprint = (i: EnquiryInput) =>
   createHash('sha256').update([i.name, i.email, i.phone, i.message].join('\u0000')).digest('hex');
 
 const retainUntil = (now: Date, days: number) => new Date(now.getTime() + days * 86_400_000).toISOString();
 
-function newRecord(input: EnquiryInput, opts: Parameters<EnquiryStore['save']>[1]): Enquiry {
+export function newRecord(input: EnquiryInput, opts: Parameters<EnquiryStore['save']>[1]): Enquiry {
   return {
     ...input,
     id: randomUUID(),
@@ -66,7 +71,7 @@ function newRecord(input: EnquiryInput, opts: Parameters<EnquiryStore['save']>[1
 export class MemoryEnquiryStore implements EnquiryStore {
   private rows = new Map<string, Enquiry & { fingerprint: string }>();
 
-  save(input: EnquiryInput, opts: Parameters<EnquiryStore['save']>[1]): SaveResult {
+  async save(input: EnquiryInput, opts: Parameters<EnquiryStore['save']>[1]): Promise<SaveResult> {
     const fp = fingerprint(input);
     for (const row of this.rows.values()) {
       const recent = opts.now.getTime() - Date.parse(row.createdAt) < DUPLICATE_WINDOW_MS;
@@ -77,18 +82,18 @@ export class MemoryEnquiryStore implements EnquiryStore {
     this.rows.set(enquiry.id, { ...enquiry, fingerprint: fp });
     return { created: true, enquiry };
   }
-  get(id: string) {
+  async get(id: string) {
     const r = this.rows.get(id);
     return r && strip(r);
   }
-  update(id: string, patch: Partial<Enquiry>) {
+  async update(id: string, patch: EnquiryPatch) {
     const r = this.rows.get(id);
     if (r) Object.assign(r, patch);
   }
-  undelivered() {
+  async undelivered() {
     return [...this.rows.values()].filter((r) => r.deliveryState !== 'delivered').map(strip);
   }
-  purgeExpired(now: Date) {
+  async purgeExpired(now: Date) {
     let n = 0;
     for (const [id, r] of this.rows) if (Date.parse(r.retainUntil) <= now.getTime()) (this.rows.delete(id), n++);
     return n;
@@ -99,6 +104,30 @@ function strip<T extends Enquiry>(r: T): Enquiry {
   const { fingerprint: _fp, ...rest } = r as T & { fingerprint?: string };
   return { ...rest };
 }
+
+/** Table definition shared by the SQLite and Cloudflare D1 stores. */
+export const SCHEMA = `
+CREATE TABLE IF NOT EXISTS enquiries (
+  id TEXT PRIMARY KEY,
+  request_id TEXT NOT NULL UNIQUE,
+  fingerprint TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  phone TEXT NOT NULL,
+  message TEXT NOT NULL,
+  delivery_state TEXT NOT NULL,
+  delivery_attempts INTEGER NOT NULL DEFAULT 0,
+  last_attempt_at TEXT,
+  last_error TEXT,
+  ack_state TEXT NOT NULL,
+  alerted INTEGER NOT NULL DEFAULT 0,
+  retain_until TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS enquiries_fingerprint ON enquiries (fingerprint, created_at);
+CREATE INDEX IF NOT EXISTS enquiries_delivery ON enquiries (delivery_state);
+CREATE INDEX IF NOT EXISTS enquiries_retention ON enquiries (retain_until);
+`;
 
 /** SQLite store using Node's built-in driver (no native dependencies). */
 export class SqliteEnquiryStore implements EnquiryStore {
@@ -112,30 +141,11 @@ export class SqliteEnquiryStore implements EnquiryStore {
     this.db.exec(`
       PRAGMA journal_mode = WAL;
       PRAGMA synchronous = FULL;
-      CREATE TABLE IF NOT EXISTS enquiries (
-        id TEXT PRIMARY KEY,
-        request_id TEXT NOT NULL UNIQUE,
-        fingerprint TEXT NOT NULL,
-        created_at TEXT NOT NULL,
-        name TEXT NOT NULL,
-        email TEXT NOT NULL,
-        phone TEXT NOT NULL,
-        message TEXT NOT NULL,
-        delivery_state TEXT NOT NULL,
-        delivery_attempts INTEGER NOT NULL DEFAULT 0,
-        last_attempt_at TEXT,
-        last_error TEXT,
-        ack_state TEXT NOT NULL,
-        alerted INTEGER NOT NULL DEFAULT 0,
-        retain_until TEXT NOT NULL
-      );
-      CREATE INDEX IF NOT EXISTS enquiries_fingerprint ON enquiries (fingerprint, created_at);
-      CREATE INDEX IF NOT EXISTS enquiries_delivery ON enquiries (delivery_state);
-      CREATE INDEX IF NOT EXISTS enquiries_retention ON enquiries (retain_until);
+      ${SCHEMA}
     `);
   }
 
-  save(input: EnquiryInput, opts: Parameters<EnquiryStore['save']>[1]): SaveResult {
+  async save(input: EnquiryInput, opts: Parameters<EnquiryStore['save']>[1]): Promise<SaveResult> {
     const fp = fingerprint(input);
     const since = new Date(opts.now.getTime() - DUPLICATE_WINDOW_MS).toISOString();
     const existing = this.db
@@ -161,41 +171,48 @@ export class SqliteEnquiryStore implements EnquiryStore {
     return { created: true, enquiry: e };
   }
 
-  get(id: string) {
+  async get(id: string) {
     const row = this.db.prepare('SELECT * FROM enquiries WHERE id = ?').get(id);
     return row ? fromRow(row) : undefined;
   }
 
-  update(id: string, patch: Parameters<EnquiryStore['update']>[1]) {
-    const cols: Record<string, string> = {
-      deliveryState: 'delivery_state',
-      deliveryAttempts: 'delivery_attempts',
-      lastAttemptAt: 'last_attempt_at',
-      lastError: 'last_error',
-      ackState: 'ack_state',
-      alerted: 'alerted',
-    };
-    const entries = Object.entries(patch).filter(([k]) => k in cols);
-    if (!entries.length) return;
-    const sql = `UPDATE enquiries SET ${entries.map(([k]) => `${cols[k]} = ?`).join(', ')} WHERE id = ?`;
-    const values = entries.map(([, v]) => (typeof v === 'boolean' ? Number(v) : (v as string | number | null)));
-    this.db.prepare(sql).run(...values, id);
+  async update(id: string, patch: EnquiryPatch) {
+    const update = updateStatement(patch);
+    if (update) this.db.prepare(update.sql).run(...update.values, id);
   }
 
-  undelivered() {
+  async undelivered() {
     return this.db
       .prepare("SELECT * FROM enquiries WHERE delivery_state != 'delivered' ORDER BY created_at")
       .all()
       .map(fromRow);
   }
 
-  purgeExpired(now: Date) {
+  async purgeExpired(now: Date) {
     const result = this.db.prepare('DELETE FROM enquiries WHERE retain_until <= ?').run(now.toISOString());
     return Number(result.changes);
   }
 }
 
-function fromRow(r: Record<string, unknown>): Enquiry {
+/** Builds `UPDATE … WHERE id = ?` for a patch; the caller appends the id. */
+export function updateStatement(patch: EnquiryPatch) {
+  const cols: Record<string, string> = {
+    deliveryState: 'delivery_state',
+    deliveryAttempts: 'delivery_attempts',
+    lastAttemptAt: 'last_attempt_at',
+    lastError: 'last_error',
+    ackState: 'ack_state',
+    alerted: 'alerted',
+  };
+  const entries = Object.entries(patch).filter(([k]) => k in cols);
+  if (!entries.length) return null;
+  return {
+    sql: `UPDATE enquiries SET ${entries.map(([k]) => `${cols[k]} = ?`).join(', ')} WHERE id = ?`,
+    values: entries.map(([, v]) => (typeof v === 'boolean' ? Number(v) : (v as string | number | null))),
+  };
+}
+
+export function fromRow(r: Record<string, unknown>): Enquiry {
   return {
     id: String(r.id),
     requestId: String(r.request_id),

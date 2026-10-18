@@ -17,6 +17,7 @@
     "enquiries:retry": "node --disable-warning=ExperimentalWarning scripts/enquiry-maintenance.ts"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^14.4.0",
     "@astrojs/node": "^11.1.8",
     "@astrojs/react": "^7.1.0",
     "@astrojs/sitemap": "^3.7.4",
@@ -27,7 +28,8 @@
     "@keystatic/core": "^0.6.9",
     "astro": "^7.4.0",
     "react": "^19.3.1",
-    "react-dom": "^19.3.1"
+    "react-dom": "^19.3.1",
+    "wrangler": "^4.151.1"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
