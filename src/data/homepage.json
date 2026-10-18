@@ -2,7 +2,7 @@
   "hero": {
     "image": "/src/assets/hero/hero/image.jpg",
     "alt": "Bharat Goradia singing into a microphone on stage, wearing a red jacket",
-    "focalPoint": "50% 18%",
+    "focalPoint": "50% 14%",
     "placeholder": false
   },
   "introVideo": "",

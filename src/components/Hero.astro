@@ -17,14 +17,9 @@ const [first, ...rest] = settings.personName.split(' ');
         {rest.length > 0 && <span class="line"><span class="line-inner">{rest.join(' ')}</span></span>}
       </h1>
       <p class="hero-descriptor enter enter-2">{settings.descriptor}</p>
-      <div class="hero-actions enter enter-3">
-        <a class="button" href="/contact" data-track="contact_cta_click" data-track-id="hero">
-          Contact Bharat <span class="arrow" aria-hidden="true">→</span>
-        </a>
-        <a class="button button-outline" href={homepage.introVideo ? '#videos' : '#work'}>
-          {homepage.introVideo ? 'Watch an introduction' : 'See his work'}
-        </a>
-      </div>
+      <a class="more hero-more enter enter-3" href={homepage.introVideo ? '#videos' : '#work'}>
+        {homepage.introVideo ? 'Watch an introduction' : 'See his work'} <span class="arrow" aria-hidden="true">↓</span>
+      </a>
     </div>
 
     {
@@ -128,15 +123,9 @@ const [first, ...rest] = settings.personName.split(' ');
     line-height: 1.25;
     max-width: 22em;
   }
-  .hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-top: 2rem;
-  }
-  .hero-actions .button {
+  .hero-more {
+    margin-top: 1.5rem;
     font-size: var(--text-lead);
-    padding: 1rem 1.9rem;
   }
 
   /* Arch-framed portrait with an offset marigold outline */
