@@ -9,7 +9,7 @@ wherever a host asks.
 
 Check each host's current pricing before you start. Plans and free allowances change often.
 
-## Vercel (currently in use: https://bharat-goradia.vercel.app)
+## Vercel (currently in use: https://bharat-goradia.vercel.app, moving to https://bharatgoradia.org)
 
 Vercel builds the site automatically. When it builds, the site switches to Vercel's adapter: pages are
 served as static files, and the contact form runs as a serverless function.
@@ -21,6 +21,25 @@ served as static files, and the contact form runs as a serverless function.
 - **Email notifications:** add `NOTIFY_PROVIDER=resend`, `RESEND_API_KEY`, `NOTIFY_FROM`, `NOTIFY_TO` and
   `NOTIFY_BACKUP_TO` under **Settings → Environment Variables**, then redeploy.
 - Keep `SITE_MODE` unset (prototype) until `npm run check:content` reports no launch blockers.
+
+### Custom domain: bharatgoradia.org (registered with Cloudflare)
+
+1. Vercel → the project → **Settings → Domains** → add `bharatgoradia.org`, then add `www.bharatgoradia.org`
+   and choose to redirect it to `bharatgoradia.org`.
+2. Vercel lists the DNS records it needs. In Cloudflare → `bharatgoradia.org` → **DNS → Records**, add exactly
+   those records, typically:
+   - `A` record, name `@`, value as shown by Vercel (for example `76.76.21.21`)
+   - `CNAME` record, name `www`, value as shown by Vercel (for example `cname.vercel-dns.com`)
+3. Set **Proxy status to "DNS only"** (grey cloud) on both records. Vercel issues the HTTPS certificate itself.
+   An orange cloud (Cloudflare proxy) can cause certificate errors or redirect loops.
+4. Wait until Vercel shows both domains as "Valid Configuration". This usually takes minutes, occasionally
+   up to a few hours.
+5. Optional: under **Settings → Domains**, redirect `bharat-goradia.vercel.app` to `bharatgoradia.org` so
+   there is only one public address.
+
+Canonical links and the sitemap use `VERCEL_PROJECT_PRODUCTION_URL`, which Vercel switches to the custom domain
+automatically once it is added, so no code change is needed. Setting `SITE_URL=https://bharatgoradia.org` under
+Environment Variables pins it explicitly.
 
 ## Option A: Railway (everything in the browser)
 
