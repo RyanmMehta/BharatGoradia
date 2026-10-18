@@ -11,6 +11,14 @@ export const siteMode: SiteMode =
   (import.meta.env.SITE_MODE ?? process.env.SITE_MODE) === 'launch' ? 'launch' : 'prototype';
 export const isPrototype = siteMode === 'prototype';
 
+/** Short commit id of this build, shown in the preview bar so it is obvious which version is live. */
+export const buildId = (
+  process.env.VERCEL_GIT_COMMIT_SHA ??
+  process.env.RAILWAY_GIT_COMMIT_SHA ??
+  process.env.SOURCE_COMMIT ??
+  ''
+).slice(0, 7);
+
 // The editor omits empty optional fields, so everything optional has a default.
 const text = z.string().nullish().transform((v) => v ?? '');
 const settingsSchema = z.object({

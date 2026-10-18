@@ -5,7 +5,7 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import FestivalLights from '../components/FestivalLights.astro';
-import { isPrototype, settings } from '../lib/site';
+import { buildId, isPrototype, settings } from '../lib/site';
 
 interface Props {
   title?: string;
@@ -85,7 +85,7 @@ const ogImage = new URL('/og-default.png', Astro.site);
       isPrototype && (
         <aside class="preview-bar" aria-label="Preview notice">
           <div class="wrap">
-            <strong>Preview</strong> · sample photos and text
+            <strong>Preview</strong> · sample photos and text{buildId && ` · version ${buildId}`}
           </div>
         </aside>
       )
