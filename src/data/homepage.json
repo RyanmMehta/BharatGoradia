@@ -1,9 +1,9 @@
 {
   "hero": {
-    "image": "/src/assets/hero/hero/image.svg",
-    "alt": "Sample artwork standing in for a portrait of Bharat Goradia",
-    "focalPoint": "50% 25%",
-    "placeholder": true
+    "image": "/src/assets/hero/hero/image.jpg",
+    "alt": "Bharat Goradia singing into a microphone on stage, wearing a red jacket",
+    "focalPoint": "50% 18%",
+    "placeholder": false
   },
   "introVideo": "",
   "artistPhotos": [

@@ -53,7 +53,6 @@ const out = (path, opts) => {
   writeFileSync(path, art(opts));
 };
 
-out('src/assets/hero/hero/image.svg', { w: 1200, h: 1500, seed: 1, palette: 2 });
 for (let i = 1; i <= 6; i++)
   out(`src/assets/photos/placeholder-photo-${i}/image.svg`, { w: 1500, h: i === 2 ? 1875 : 1000, seed: i + 10, palette: i });
 out('src/assets/videos/placeholder-video-interview/poster.svg', { w: 1600, h: 900, seed: 31, palette: 1 });

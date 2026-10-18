@@ -1,10 +1,9 @@
 ---
 import { Image } from 'astro:assets';
 import Diya from './Diya.astro';
-import { heroImage, homepage, isPrototype, publicCollection, settings } from '../lib/site';
+import { heroImage, homepage, isPrototype, settings } from '../lib/site';
 
 const image = heroImage();
-const services = await publicCollection('services');
 // Split the name over two lines like a film title card ("Bharat / Goradia").
 const [first, ...rest] = settings.personName.split(' ');
 ---
@@ -18,7 +17,6 @@ const [first, ...rest] = settings.personName.split(' ');
         {rest.length > 0 && <span class="line"><span class="line-inner">{rest.join(' ')}</span></span>}
       </h1>
       <p class="hero-descriptor enter enter-2">{settings.descriptor}</p>
-      <p class="hero-intro enter enter-3">{settings.introduction}</p>
       <div class="hero-actions enter enter-3">
         <a class="button" href="/contact" data-track="contact_cta_click" data-track-id="hero">
           Contact Bharat <span class="arrow" aria-hidden="true">→</span>
@@ -39,7 +37,7 @@ const [first, ...rest] = settings.personName.split(' ');
             <Image
               src={image}
               alt={homepage.hero.alt}
-              widths={[480, 720, 960, 1200]}
+              widths={[480, 534]}
               sizes="(min-width: 60rem) 30rem, 90vw"
               loading="eager"
               fetchpriority="high"
@@ -53,20 +51,6 @@ const [first, ...rest] = settings.personName.split(' ');
     }
   </div>
 
-  {
-    services.length > 0 && (
-      <div class="wrap">
-        <ul class="hero-services" aria-label="What Bharat does">
-          {services.map((s, i) => (
-            <li>
-              <span class="num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-              <span class="label">{s.data.title}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    )
-  }
 </section>
 
 <style>
@@ -144,12 +128,6 @@ const [first, ...rest] = settings.personName.split(' ');
     line-height: 1.25;
     max-width: 22em;
   }
-  .hero-intro {
-    font-size: var(--text-lead);
-    line-height: 1.5;
-    color: var(--text-2);
-    max-width: 30em;
-  }
   .hero-actions {
     display: flex;
     flex-wrap: wrap;
@@ -217,43 +195,4 @@ const [first, ...rest] = settings.personName.split(' ');
     transform: translateX(-50%);
   }
 
-  /* The three services as a credits row: tells visitors what he does on the first screen. */
-  .hero-services {
-    display: grid;
-    margin: clamp(3rem, 2rem + 3vw, 5rem) 0 0;
-    padding: 0;
-    list-style: none;
-    border-top: 1px solid var(--gold-dim);
-  }
-  .hero-services li {
-    display: flex;
-    align-items: baseline;
-    gap: 1rem;
-    padding: 1.1rem 0;
-    border-bottom: 1px solid var(--line);
-  }
-  .hero-services .num {
-    font-family: var(--font-display);
-    font-size: 1.5rem;
-    color: var(--accent);
-    min-width: 2.2ch;
-  }
-  .hero-services .label {
-    font-family: var(--font-display);
-    font-size: var(--display-s);
-    line-height: 1.2;
-  }
-  @media (min-width: 48rem) {
-    .hero-services {
-      grid-template-columns: repeat(3, 1fr);
-    }
-    .hero-services li {
-      padding: 1.4rem 1.5rem 0.4rem 0;
-      border-bottom: 0;
-    }
-    .hero-services li + li {
-      padding-left: 1.5rem;
-      border-left: 1px solid var(--line);
-    }
-  }
 </style>

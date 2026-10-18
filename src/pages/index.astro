@@ -3,21 +3,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
 import PhotoCard from '../components/PhotoCard.astro';
 import VideoCard from '../components/VideoCard.astro';
-import TestimonialCard from '../components/TestimonialCard.astro';
 import Diya from '../components/Diya.astro';
 import { formatPartialDate, homepage, isPrototype, selected, settings, unconfirmed } from '../lib/site';
 
-// The homepage is deliberately short: who he is, his achievements, his work, one voice, and how to reach him.
-const [allPhotos, videos, allAwards, testimonials] = await Promise.all([
+// The homepage is deliberately short: who he is, his achievements, his work, and how to reach him.
+const [allPhotos, videos, allAwards] = await Promise.all([
   selected('photos', homepage.artistPhotos),
   selected('videos', homepage.featuredVideos),
   selected('awards', homepage.awards),
-  selected('testimonials', homepage.testimonials),
 ]);
 const photos = allPhotos.slice(0, 3);
 const awards = allAwards.slice(0, 3);
 const [featuredVideo, ...moreVideos] = videos;
-const featuredQuote = testimonials[0];
 const sample = (key: string) => isPrototype && unconfirmed(key);
 
 const sameAs = [
@@ -110,7 +107,7 @@ const structuredData = {
           </div>
           <div class="screen-grid">
             <div class="screen-main">
-              <VideoCard entry={featuredVideo} sizes="(min-width: 64rem) 52rem, 100vw" />
+              <VideoCard entry={featuredVideo} compact sizes="(min-width: 64rem) 52rem, 100vw" />
             </div>
             {moreVideos.length > 0 && (
               <div class="screen-side">
@@ -120,16 +117,6 @@ const structuredData = {
               </div>
             )}
           </div>
-        </div>
-      </section>
-    )
-  }
-
-  {
-    featuredQuote && (
-      <section class="section quote-section" aria-label="What people say">
-        <div class="wrap quote-wrap">
-          <TestimonialCard entry={featuredQuote} featured />
         </div>
       </section>
     )
@@ -348,14 +335,6 @@ const structuredData = {
     .screen-side {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-  }
-
-  /* ---- One featured quote ---- */
-  .quote-section {
-    background: radial-gradient(48rem 30rem at 12% 30%, rgb(255 77 141 / 0.12), transparent 70%);
-  }
-  .quote-wrap {
-    max-width: 58rem;
   }
 
   /* ---- Contact band ---- */
