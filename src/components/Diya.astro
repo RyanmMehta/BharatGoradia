@@ -1,7 +1,7 @@
 ---
 // A clay diya (oil lamp) with a softly flickering flame. Decorative only.
-// The flame animation follows the same rules as the festival lights: gentle (no flashing),
-// paused by the "Pause animation" control, and still for prefers-reduced-motion / no JavaScript.
+// The flame animation follows the same rules as the festival lights: gentle (no flashing)
+// and still for prefers-reduced-motion / no JavaScript.
 interface Props {
   size?: number;
   class?: string;
@@ -138,11 +138,6 @@ const id = `diya-${Math.random().toString(36).slice(2, 8)}`;
     }
     :global(.js) .diya-glow {
       animation: glow 2.6s ease-in-out infinite;
-    }
-    :global(.decor-paused) .diya-flame,
-    :global(.decor-paused) .diya-inner,
-    :global(.decor-paused) .diya-glow {
-      animation-play-state: paused;
     }
   }
 </style>

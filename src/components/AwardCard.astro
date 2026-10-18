@@ -45,13 +45,13 @@ const meta = [data.issuer, data.location, data.date.length > 4 ? formatPartialDa
     grid-template-columns: 5.5rem 1fr;
     gap: 0 1.5rem;
     padding: 2rem 0;
-    border-top: 1px solid var(--rule);
+    border-top: 1px solid var(--line);
   }
   .honour-year {
     font-family: var(--font-display);
     font-size: 2.25rem;
     line-height: 1;
-    color: var(--sindoor);
+    color: var(--accent);
   }
   /* Undated entries never get an invented date: the year column is simply left out. */
   .honour.no-date {
@@ -66,11 +66,11 @@ const meta = [data.issuer, data.location, data.date.length > 4 ? formatPartialDa
     font-weight: 700;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--sindoor);
+    color: var(--accent);
   }
   .sample-text {
     margin-left: 0.35em;
-    color: var(--ink-2);
+    color: var(--text-2);
     letter-spacing: 0.06em;
   }
   .honour-title {
@@ -80,7 +80,7 @@ const meta = [data.issuer, data.location, data.date.length > 4 ? formatPartialDa
   .honour-meta {
     margin-bottom: 0.6rem;
     font-weight: 700;
-    color: var(--ink-2);
+    color: var(--text-2);
   }
   .honour-desc {
     margin-bottom: 0;

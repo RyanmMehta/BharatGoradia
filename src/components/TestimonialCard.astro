@@ -36,7 +36,7 @@ const attribution = [data.role, data.organization].filter(Boolean).join(', ');
     height: 100%;
     margin: 0;
     padding-top: 1.75rem;
-    border-top: 3px solid var(--ink);
+    border-top: 1px solid var(--gold-dim);
   }
   .quote-kind {
     margin: 0 0 1rem;
@@ -44,11 +44,11 @@ const attribution = [data.role, data.organization].filter(Boolean).join(', ');
     font-weight: 700;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--sindoor);
+    color: var(--accent);
   }
   .sample-text {
     margin-left: 0.35em;
-    color: var(--ink-2);
+    color: var(--text-2);
     letter-spacing: 0.06em;
   }
   blockquote {
@@ -71,14 +71,14 @@ const attribution = [data.role, data.organization].filter(Boolean).join(', ');
     margin: 0;
   }
   .is-featured {
-    border-top-color: var(--sindoor);
+    border-top-color: var(--accent);
   }
   .is-featured blockquote {
     font-size: clamp(1.75rem, 1.3rem + 1.8vw, 2.875rem);
     line-height: 1.2;
   }
   .is-featured blockquote::before {
-    color: var(--sindoor);
+    color: var(--accent);
   }
   .is-greeting {
     border-top-style: dashed;
@@ -96,7 +96,7 @@ const attribution = [data.role, data.organization].filter(Boolean).join(', ');
   .speaker-role {
     display: block;
     font-size: var(--text-support);
-    color: var(--ink-2);
+    color: var(--text-2);
   }
   .speaker-photo {
     border-radius: 50%;

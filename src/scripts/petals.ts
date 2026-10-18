@@ -1,10 +1,9 @@
 // A gentle shower of marigold petals when an enquiry is received. Decorative and brief
-// (about 3 seconds, then removed). Skipped for reduced motion or when animation is paused.
+// (about 3 seconds, then removed). Skipped for reduced motion.
 const COLORS = ['#e9a23b', '#f3b453', '#d98a1f', '#c4262c', '#f3d3a1'];
 
 export function showerPetals(count = 18): void {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  if (document.documentElement.classList.contains('decor-paused')) return;
 
   const layer = document.createElement('div');
   layer.setAttribute('aria-hidden', 'true');

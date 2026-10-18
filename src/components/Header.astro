@@ -34,16 +34,17 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
 
 <style>
   .site-header {
-    background: var(--paper);
-    border-bottom: 1px solid var(--rule);
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
     view-transition-name: site-header;
+    border-bottom-color: var(--line);
   }
   @media (min-width: 64rem) and (min-height: 42rem) {
     .site-header {
       position: sticky;
       top: 0;
       z-index: 50;
-      background: rgb(247 241 230 / 0.96);
+      background: rgb(15 11 20 / 0.88);
       backdrop-filter: saturate(1.2) blur(6px);
     }
   }
@@ -60,7 +61,7 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
     align-items: center;
     gap: 0.85rem;
     min-height: var(--target);
-    color: var(--ink);
+    color: var(--text);
     text-decoration: none;
   }
   /* Monogram set inside a pointed (Mughal) arch */
@@ -70,8 +71,8 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
     width: 46px;
     height: 56px;
     padding-top: 10px;
-    background: var(--sindoor);
-    color: var(--paper);
+    background: var(--flame);
+    color: var(--bg);
     font-family: var(--font-display);
     font-size: 1.15rem;
     letter-spacing: 0.02em;
@@ -91,7 +92,7 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
     font-weight: 700;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--ink-2);
+    color: var(--text-2);
   }
   .nav-list {
     display: flex;
@@ -108,7 +109,7 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
     align-items: center;
     min-height: var(--target);
     padding: 0 0.85rem;
-    color: var(--ink);
+    color: var(--text);
     font-size: var(--text-support);
     font-weight: 700;
     text-decoration: none;
@@ -126,17 +127,17 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
     transition: transform 180ms ease;
   }
   .nav-link:hover {
-    color: var(--sindoor);
+    color: var(--accent);
   }
   .nav-link:hover::after {
     transform: scaleX(1);
   }
   .nav-link[aria-current='page'] {
-    color: var(--sindoor);
+    color: var(--accent);
   }
   .nav-link[aria-current='page']::after {
     transform: scaleX(1);
-    background: var(--sindoor);
+    background: var(--accent);
   }
   .nav-cta {
     margin-left: 0.75rem;

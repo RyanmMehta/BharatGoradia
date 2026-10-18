@@ -1,37 +1,41 @@
 /* ==========================================================================
-   Bharat Goradia: design system
-   Concept: "the film title card". Bollywood poster typography, sindoor red and
-   marigold, warm paper, an arch frame and a marigold garland (toran) motif.
-   Reading text uses Atkinson Hyperlegible Next, designed for low-vision readers.
+   Bharat Goradia: design system, "Bollywood night"
+   A dark stage lit in jewel tones: aubergine-black surfaces, rani pink for
+   actions, marigold for highlights, gold for arches and rules, with pink and
+   saffron light pooling behind the content like stage lights.
+   Type: Gloock (poster serif) for headings, Atkinson Hyperlegible Next for
+   reading text (designed for low-vision readers).
    Every text colour pair below meets WCAG AA; most exceed AAA.
    ========================================================================== */
 
 :root {
-  /* Surfaces */
-  --paper: #f7f1e6; /* main background */
-  --paper-2: #efe4d0; /* alternate band */
-  --card: #fffdf8;
-  --night: #160f0d; /* screening room + footer */
-  --night-2: #251a16;
+  color-scheme: dark;
 
-  /* Ink */
-  --ink: #1b1512; /* 16.1:1 on paper */
-  --ink-2: #4d423b; /* 8.7:1 on paper */
-  --on-night: #f7f1e6;
-  --on-night-2: #d9cdbd; /* 12.1:1 on night */
+  /* Surfaces */
+  --bg: #0f0b14; /* main background */
+  --bg-2: #170f1e; /* alternate band */
+  --deep: #09070c; /* deepest sections, footer */
+  --surface: #21172b; /* cards, form panel */
+  --surface-2: #2a1d36;
+  --glow: #3a1240; /* plum light pooling in dark sections */
+
+  /* Text */
+  --text: #fbf4ea; /* 17.8:1 on bg */
+  --text-2: #d3c7da; /* 12.0:1 on bg */
 
   /* Brand */
-  --sindoor: #a3171d; /* 6.9:1 on paper, primary actions and accents */
-  --sindoor-deep: #7a0e13; /* contact band; paper text 9.8:1 */
-  --marigold: #e9a23b; /* decorative on paper; text-safe on night (8.8:1) */
-  --marigold-soft: #f3d3a1; /* text on sindoor-deep (7.7:1) */
-  --rule: #d8c8ae;
-  --rule-night: #3d2d27;
-  --night-glow: #33150f; /* warm light pooling in dark sections */
-  --sindoor-glow: #8f1218; /* highlight in the red contact band */
-  --black: #0b0807; /* behind video players */
+  --accent: #ff4d8d; /* rani pink: primary actions. 6.2:1 on bg; bg-coloured text on it 6.2:1 */
+  --accent-hover: #ff7aa8;
+  --accent-deep: #a3124f; /* contact band; text 7.0:1 */
+  --accent-glow: #d81b6a;
+  --marigold: #ffb23f; /* highlights, labels, links: 10.8:1 on bg */
+  --marigold-soft: #ffd89a; /* text on the pink band: 5.6:1 */
+  --gold: #e9c46a; /* arches and fine rules */
+  --gold-dim: #7d6634; /* quiet gold rules */
+  --line: #3b2c47; /* hairlines (decorative) */
+  --black: #050307; /* behind video players */
   --white: #fff;
-  --error: #9b1c1c; /* form errors; always paired with an "Error:" text label */
+  --error: #ff7a7a; /* form errors; always paired with an "Error:" label. 6.8:1 on surface */
 
   /* Type */
   --font-display: 'Gloock', 'Iowan Old Style', Georgia, serif;
@@ -51,9 +55,11 @@
   --section: clamp(3.5rem, 2.5rem + 4.5vw, 7rem);
   --max: 82rem;
   --measure: 62ch;
-  --radius: 6px;
+  --radius: 8px;
   --target: 52px;
-  --focus-ring: 0 0 0 3px var(--paper), 0 0 0 6px var(--sindoor);
+
+  /* Signature gradient: saffron to rani pink, used sparingly (the name, the contact band) */
+  --flame: linear-gradient(100deg, #ffc15a 0%, #ff8a4c 45%, #ff4d8d 100%);
 }
 
 /* ---------- Base ---------- */
@@ -72,8 +78,8 @@ html {
 
 body {
   margin: 0;
-  background: var(--paper);
-  color: var(--ink);
+  background: var(--bg);
+  color: var(--text);
   font-family: var(--font-body);
   font-size: var(--text-body);
   font-weight: 400;
@@ -125,30 +131,35 @@ p {
 }
 
 a {
-  color: var(--sindoor);
+  color: var(--marigold);
   text-decoration-thickness: 0.07em;
   text-underline-offset: 0.2em;
 }
 
 a:hover {
-  color: var(--sindoor-deep);
+  color: var(--marigold-soft);
   text-decoration-thickness: 0.13em;
 }
 
 :focus-visible {
-  outline: 3px solid var(--sindoor);
+  outline: 3px solid var(--marigold);
   outline-offset: 4px;
   border-radius: 2px;
 }
 
-.on-night :focus-visible,
-.on-red :focus-visible {
-  outline-color: var(--marigold);
+::selection {
+  background: var(--accent);
+  color: var(--bg);
 }
 
-::selection {
-  background: var(--marigold);
-  color: var(--ink);
+/* Faint stardust across the page, like a night sky behind the stage */
+body {
+  background-image:
+    radial-gradient(1px 1px at 20px 30px, rgb(255 255 255 / 0.22), transparent 60%),
+    radial-gradient(1px 1px at 140px 90px, rgb(255 216 154 / 0.18), transparent 60%),
+    radial-gradient(1.5px 1.5px at 260px 170px, rgb(255 255 255 / 0.14), transparent 60%),
+    radial-gradient(1px 1px at 330px 40px, rgb(255 122 168 / 0.16), transparent 60%);
+  background-size: 360px 220px;
 }
 
 /* ---------- Layout ---------- */
@@ -163,21 +174,17 @@ a:hover {
 }
 
 .band {
-  background: var(--paper-2);
+  background-color: var(--bg-2);
 }
 
 .on-night {
-  background: var(--night);
-  color: var(--on-night);
-}
-
-.on-night a {
-  color: var(--marigold);
+  background-color: var(--deep);
+  color: var(--text);
 }
 
 .on-red {
-  background: var(--sindoor-deep);
-  color: var(--paper);
+  background-color: var(--accent-deep);
+  color: var(--text);
 }
 
 .on-red a {
@@ -193,13 +200,8 @@ a:hover {
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--sindoor);
-  max-width: none;
-}
-
-.on-night .credit,
-.on-red .credit {
   color: var(--marigold);
+  max-width: none;
 }
 
 .on-red .credit {
@@ -209,11 +211,7 @@ a:hover {
 .lead {
   font-size: var(--text-lead);
   line-height: 1.5;
-  color: var(--ink-2);
-}
-
-.on-night .lead {
-  color: var(--on-night-2);
+  color: var(--text-2);
 }
 
 .on-red .lead {
@@ -266,27 +264,30 @@ a:hover {
   gap: 0.65rem;
   min-height: var(--target);
   padding: 0.8rem 1.6rem;
-  border: 2px solid var(--sindoor);
+  border: 2px solid var(--accent);
   border-radius: var(--radius);
-  background: var(--sindoor);
-  color: var(--white);
+  background: var(--accent);
+  color: var(--bg);
   font: inherit;
   font-size: var(--text-body);
   font-weight: 700;
   line-height: 1.2;
   text-decoration: none;
   cursor: pointer;
+  box-shadow: 0 6px 22px rgb(255 77 141 / 0.28);
   transition:
     background-color 160ms ease,
     border-color 160ms ease,
     color 160ms ease,
+    box-shadow 160ms ease,
     transform 160ms ease;
 }
 
 .button:hover {
-  background: var(--sindoor-deep);
-  border-color: var(--sindoor-deep);
-  color: var(--white);
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+  color: var(--bg);
+  box-shadow: 0 8px 30px rgb(255 77 141 / 0.42);
 }
 
 .button:active {
@@ -295,42 +296,33 @@ a:hover {
 
 .button-outline {
   background: transparent;
-  border-color: var(--ink);
-  color: var(--ink);
+  border-color: var(--text-2);
+  color: var(--text);
+  box-shadow: none;
 }
 
 .button-outline:hover {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: var(--paper);
+  background: var(--text);
+  border-color: var(--text);
+  color: var(--bg);
+  box-shadow: none;
 }
 
-.on-night .button,
-.on-red .button {
+/* On the pink contact band the primary action switches to marigold */
+.on-red .button:not(.button-outline) {
   background: var(--marigold);
   border-color: var(--marigold);
-  color: var(--ink);
+  color: var(--bg);
+  box-shadow: 0 6px 22px rgb(0 0 0 / 0.25);
 }
 
-.on-night .button:hover,
-.on-red .button:hover {
-  background: var(--paper);
-  border-color: var(--paper);
-  color: var(--ink);
+.on-red .button:not(.button-outline):hover {
+  background: var(--marigold-soft);
+  border-color: var(--marigold-soft);
 }
 
-.on-night .button-outline,
 .on-red .button-outline {
-  background: transparent;
-  border-color: var(--on-night-2);
-  color: var(--on-night);
-}
-
-.on-night .button-outline:hover,
-.on-red .button-outline:hover {
-  background: var(--paper);
-  border-color: var(--paper);
-  color: var(--ink);
+  border-color: var(--marigold-soft);
 }
 
 .button[disabled] {
@@ -370,7 +362,7 @@ a:hover {
   z-index: 2;
   padding: 0.2rem 0.6rem;
   border-radius: 3px;
-  background: rgb(22 15 13 / 0.78);
+  background: rgb(9 7 12 / 0.8);
   color: var(--white);
   font-size: 0.875rem;
   font-weight: 700;
@@ -383,7 +375,7 @@ a:hover {
 .photo {
   position: relative;
   overflow: hidden;
-  background: var(--night-2);
+  background: var(--surface-2);
   border-radius: var(--radius);
 }
 

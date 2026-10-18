@@ -5,12 +5,12 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 
 const palettes = [
-  ['#2b0d0f', '#7a0e13', '#e9a23b'],
-  ['#160f0d', '#4a1c14', '#f3b453'],
-  ['#3a0c12', '#a3171d', '#f3d3a1'],
-  ['#1d1210', '#5c2a18', '#e9a23b'],
-  ['#2a0b10', '#6b1630', '#f0b860'],
-  ['#140d0c', '#3d1a12', '#e9a23b'],
+  ['#1a0f22', '#5a1446', '#ff8fb5'],
+  ['#120b19', '#3d1752', '#ffb23f'],
+  ['#21082a', '#8a1554', '#ffd89a'],
+  ['#0f0b14', '#14403f', '#3dd6c3'],
+  ['#1c0a1f', '#6b1630', '#ffb23f'],
+  ['#0d0a15', '#2c1a5c', '#ff7aa8'],
 ];
 
 function rand(seed) {

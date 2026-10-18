@@ -70,9 +70,15 @@ const [first, ...rest] = settings.personName.split(' ');
 </section>
 
 <style>
+  /* Stage lighting: rani pink behind the portrait, saffron pooling at lower left */
   .hero {
+    position: relative;
     padding-block: clamp(2.5rem, 1.5rem + 4vw, 5.5rem) clamp(3rem, 2rem + 4vw, 6rem);
     overflow: hidden;
+    background:
+      radial-gradient(42rem 34rem at 82% 30%, rgb(255 77 141 / 0.26), transparent 70%),
+      radial-gradient(38rem 30rem at 6% 92%, rgb(255 178 63 / 0.18), transparent 70%),
+      radial-gradient(60rem 40rem at 50% -10%, rgb(122 34 138 / 0.28), transparent 70%);
   }
   .hero-grid {
     display: grid;
@@ -91,10 +97,19 @@ const [first, ...rest] = settings.personName.split(' ');
     font-size: var(--display-xl);
     line-height: 0.92;
     letter-spacing: -0.025em;
-    color: var(--ink);
+    color: var(--text);
   }
-  .hero-name .line:last-child {
-    color: var(--sindoor);
+  /* "Goradia" in the signature saffron-to-pink gradient (solid pink where unsupported) */
+  .hero-name .line:last-child .line-inner {
+    color: var(--accent);
+  }
+  @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+    .hero-name .line:last-child .line-inner {
+      background: var(--flame);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
   }
   /* Title-card reveal: each line rises from behind a mask, once, on load (pure CSS). */
   .hero-name .line {
@@ -132,7 +147,7 @@ const [first, ...rest] = settings.personName.split(' ');
   .hero-intro {
     font-size: var(--text-lead);
     line-height: 1.5;
-    color: var(--ink-2);
+    color: var(--text-2);
     max-width: 30em;
   }
   .hero-actions {
@@ -161,16 +176,20 @@ const [first, ...rest] = settings.personName.split(' ');
     height: calc(100% - 1.5rem);
     overflow: visible;
   }
+  .arch-outline {
+    filter: drop-shadow(0 0 10px rgb(233 196 106 / 0.55));
+  }
   .arch-outline path {
     fill: none;
-    stroke: var(--marigold);
+    stroke: var(--gold);
     stroke-width: 2.2;
     vector-effect: non-scaling-stroke;
   }
   .arch {
     position: relative;
     aspect-ratio: 4 / 5;
-    background: var(--night-2);
+    filter: drop-shadow(0 24px 60px rgb(255 77 141 / 0.3));
+    background: var(--surface-2);
     -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 125' preserveAspectRatio='none'%3E%3Cpath d='M0 125V48C0 22 30 9 50 0c20 9 50 22 50 48v77z'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
     mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 125' preserveAspectRatio='none'%3E%3Cpath d='M0 125V48C0 22 30 9 50 0c20 9 50 22 50 48v77z'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
   }
@@ -204,19 +223,19 @@ const [first, ...rest] = settings.personName.split(' ');
     margin: clamp(3rem, 2rem + 3vw, 5rem) 0 0;
     padding: 0;
     list-style: none;
-    border-top: 2px solid var(--ink);
+    border-top: 1px solid var(--gold-dim);
   }
   .hero-services li {
     display: flex;
     align-items: baseline;
     gap: 1rem;
     padding: 1.1rem 0;
-    border-bottom: 1px solid var(--rule);
+    border-bottom: 1px solid var(--line);
   }
   .hero-services .num {
     font-family: var(--font-display);
     font-size: 1.5rem;
-    color: var(--sindoor);
+    color: var(--accent);
     min-width: 2.2ch;
   }
   .hero-services .label {
@@ -234,7 +253,7 @@ const [first, ...rest] = settings.personName.split(' ');
     }
     .hero-services li + li {
       padding-left: 1.5rem;
-      border-left: 1px solid var(--rule);
+      border-left: 1px solid var(--line);
     }
   }
 </style>

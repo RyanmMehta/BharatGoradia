@@ -136,7 +136,7 @@ const describedBy = (f: keyof EnquiryInput, hint?: boolean) =>
     max-width: 44rem;
   }
   .required-note {
-    color: var(--ink-2);
+    color: var(--text-2);
     font-size: var(--text-support);
   }
   .field {
@@ -149,12 +149,12 @@ const describedBy = (f: keyof EnquiryInput, hint?: boolean) =>
   }
   .optional {
     font-weight: 400;
-    color: var(--ink-2);
+    color: var(--text-2);
   }
   .field-hint {
     margin: 0 0 0.5rem;
     font-size: var(--text-support);
-    color: var(--ink-2);
+    color: var(--text-2);
   }
   .field-error {
     margin: 0 0 0.5rem;
@@ -173,9 +173,9 @@ const describedBy = (f: keyof EnquiryInput, hint?: boolean) =>
     min-height: 3.25rem;
     padding: 0.75rem 0.9rem;
     font: inherit;
-    color: var(--ink);
-    background: var(--card);
-    border: 2px solid var(--ink-2);
+    color: var(--text);
+    background: var(--surface);
+    border: 2px solid var(--text-2);
     border-radius: var(--radius);
   }
   textarea {
@@ -184,9 +184,9 @@ const describedBy = (f: keyof EnquiryInput, hint?: boolean) =>
   }
   input:focus-visible,
   textarea:focus-visible {
-    outline: 3px solid var(--sindoor);
+    outline: 3px solid var(--accent);
     outline-offset: 2px;
-    border-color: var(--sindoor);
+    border-color: var(--accent);
   }
   .has-error input,
   .has-error textarea {
@@ -200,7 +200,7 @@ const describedBy = (f: keyof EnquiryInput, hint?: boolean) =>
   .char-count {
     margin: 0.4rem 0 0;
     font-size: var(--text-support);
-    color: var(--ink-2);
+    color: var(--text-2);
   }
   .char-count:empty {
     display: none;
@@ -228,7 +228,7 @@ const describedBy = (f: keyof EnquiryInput, hint?: boolean) =>
     padding: 1.25rem 1.5rem;
     border: 3px solid var(--error);
     border-radius: var(--radius);
-    background: var(--card);
+    background: var(--surface);
   }
   .error-summary h3 {
     font-family: var(--font-body);
@@ -245,16 +245,16 @@ const describedBy = (f: keyof EnquiryInput, hint?: boolean) =>
   }
   .success {
     padding: 1.75rem;
-    border: 2px solid var(--sindoor);
+    border: 2px solid var(--accent);
     border-left-width: 6px;
     border-radius: var(--radius);
-    background: var(--card);
+    background: var(--surface);
   }
   .success:focus {
-    outline: 3px solid var(--sindoor);
+    outline: 3px solid var(--accent);
     outline-offset: 3px;
   }
   .success h3 {
-    color: var(--sindoor);
+    color: var(--accent);
   }
 </style>

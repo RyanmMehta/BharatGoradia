@@ -74,7 +74,7 @@ const structuredData = {
 
   {
     photos.length > 0 && (
-      <section class="section" id="work" aria-labelledby="work-title">
+      <section class="section band" id="work" aria-labelledby="work-title">
         <div class="wrap">
           <div class="head-row">
             <h2 id="work-title">With the stars</h2>
@@ -170,8 +170,8 @@ const structuredData = {
     position: relative;
     overflow: hidden;
     background:
-      radial-gradient(60% 80% at 50% 0%, var(--night-glow) 0%, transparent 70%),
-      var(--night);
+      radial-gradient(60% 80% at 50% 0%, var(--glow) 0%, transparent 70%),
+      var(--deep);
   }
   .spot-head {
     text-align: center;
@@ -211,10 +211,13 @@ const structuredData = {
     height: 100%;
     overflow: visible;
   }
+  .panel-arch {
+    filter: drop-shadow(0 0 12px rgb(233 196 106 / 0.45));
+  }
   .panel-arch path {
-    fill: rgb(233 162 59 / 0.06);
-    stroke: var(--marigold);
-    stroke-width: 1.5;
+    fill: rgb(233 196 106 / 0.07);
+    stroke: var(--gold);
+    stroke-width: 1.6;
     vector-effect: non-scaling-stroke;
   }
   .panel-body {
@@ -231,12 +234,12 @@ const structuredData = {
   .honour-panel h3 {
     margin: 0 auto 0.6rem;
     font-size: var(--display-m);
-    color: var(--on-night);
+    color: var(--text);
   }
   .panel-issuer,
   .panel-date {
     margin: 0 auto;
-    color: var(--on-night-2);
+    color: var(--text-2);
   }
   .panel-sample {
     margin: 0.75rem auto 0;
@@ -316,16 +319,13 @@ const structuredData = {
     :global(.js) .mosaic :global(.tile-feature .photo img) {
       animation: slow-zoom 22s ease-in-out infinite alternate;
     }
-    :global(.decor-paused) .mosaic :global(.tile-feature .photo img) {
-      animation-play-state: paused;
-    }
   }
 
   /* ---- Screening room ---- */
   .screening {
     background:
-      radial-gradient(120% 70% at 50% 0%, var(--night-glow) 0%, transparent 60%),
-      var(--night);
+      radial-gradient(120% 70% at 50% 0%, var(--glow) 0%, transparent 60%),
+      var(--deep);
   }
   .screen-grid {
     display: grid;
@@ -351,6 +351,9 @@ const structuredData = {
   }
 
   /* ---- One featured quote ---- */
+  .quote-section {
+    background: radial-gradient(48rem 30rem at 12% 30%, rgb(255 77 141 / 0.12), transparent 70%);
+  }
   .quote-wrap {
     max-width: 58rem;
   }
@@ -358,8 +361,8 @@ const structuredData = {
   /* ---- Contact band ---- */
   .contact-band {
     background:
-      radial-gradient(90% 120% at 50% 0%, var(--sindoor-glow) 0%, transparent 60%),
-      var(--sindoor-deep);
+      radial-gradient(70% 110% at 50% 0%, var(--accent-glow) 0%, transparent 62%),
+      linear-gradient(165deg, var(--accent-deep) 0%, #6b0f45 55%, #3a0a36 100%);
   }
   .contact-inner {
     display: grid;
@@ -368,7 +371,7 @@ const structuredData = {
   }
   .contact-inner h2 {
     margin: 1rem 0 1.5rem;
-    color: var(--paper);
+    color: var(--text);
   }
   .contact-email {
     font-family: var(--font-display);

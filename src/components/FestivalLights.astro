@@ -1,7 +1,7 @@
 ---
 // A string of festival lights across the top of every page: marigolds and warm bulbs that
 // glow and gently twinkle. Decorative only, hidden from assistive technology.
-// Motion rules (PRD §12, WCAG 2.2.2): slow twinkle (no flashing), a visible Pause control,
+// Motion rules (PRD §12): slow twinkle (no flashing),
 // static glow for prefers-reduced-motion and when JavaScript is unavailable.
 // On the first page of a visit the bulbs "switch on" one by one, left to right (about 1.5s),
 // then settle into the twinkle. See scripts/lights.ts and the head script in BaseLayout.
@@ -154,10 +154,6 @@ const units = Array.from({ length: UNITS }, (_, i) => ({
     }
     :global(.lights-intro.lights-ready) .bulb {
       animation: bulb-on 0.3s ease-out var(--on, 0s) both;
-    }
-    :global(.decor-paused) .halo,
-    :global(.decor-paused) .bulb {
-      animation-play-state: paused;
     }
   }
 </style>

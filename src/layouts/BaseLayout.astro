@@ -31,7 +31,7 @@ const ogImage = new URL('/og-default.png', Astro.site);
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     {isPrototype && <meta name="robots" content="noindex, nofollow" />}
-    <meta name="theme-color" content="#f7f1e6" />
+    <meta name="theme-color" content="#0f0b14" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <meta property="og:type" content="website" />
@@ -52,15 +52,10 @@ const ogImage = new URL('/og-default.png', Astro.site);
       (function () {
         var root = document.documentElement;
         root.classList.add('js');
-        var paused = false;
-        try {
-          paused = localStorage.getItem('decor-paused') === '1';
-          if (paused) root.classList.add('decor-paused');
-        } catch (e) {}
         // Festival lights "switch on" once per visit, only when motion is welcome.
         var calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
         try {
-          if (!paused && !calm && !sessionStorage.getItem('lights-on')) {
+          if (!calm && !sessionStorage.getItem('lights-on')) {
             root.classList.add('lights-intro');
             sessionStorage.setItem('lights-on', '1');
             setTimeout(function () {
@@ -92,10 +87,6 @@ const ogImage = new URL('/og-default.png', Astro.site);
     }
     <div class="lights-bar">
       <FestivalLights />
-      <button type="button" class="motion-toggle" data-motion-toggle hidden>
-        <span class="mt-icon" aria-hidden="true"></span>
-        <span data-motion-label>Pause animation</span>
-      </button>
     </div>
     <Header />
     <main id="main" tabindex="-1">
@@ -105,12 +96,10 @@ const ogImage = new URL('/og-default.png', Astro.site);
     <script>
       import { initClickTracking } from '../scripts/analytics';
       import { initReveal } from '../scripts/reveal';
-      import { initMotionToggle } from '../scripts/motion-toggle';
       import { initLights } from '../scripts/lights';
       initLights();
       initClickTracking();
       initReveal();
-      initMotionToggle();
     </script>
   </body>
 </html>
@@ -122,7 +111,7 @@ const ogImage = new URL('/og-default.png', Astro.site);
     top: -10rem;
     z-index: 100;
     padding: 0.75rem 1.25rem;
-    background: var(--ink);
+    background: var(--text);
     color: var(--white);
     font-weight: 600;
     border-radius: 6px;
@@ -137,56 +126,9 @@ const ogImage = new URL('/og-default.png', Astro.site);
     position: relative;
     view-transition-name: festival-lights;
   }
-  .motion-toggle {
-    position: absolute;
-    top: 50%;
-    right: max(0.5rem, calc((100% - var(--max)) / 2));
-    transform: translateY(-50%);
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    min-height: 36px;
-    padding: 0.3rem 0.85rem;
-    border: 1px solid rgb(243 211 161 / 0.45);
-    border-radius: 999px;
-    background: rgb(18 12 10 / 0.88);
-    color: var(--marigold-soft);
-    font: inherit;
-    font-size: 0.9375rem;
-    font-weight: 700;
-    cursor: pointer;
-  }
-  .motion-toggle:hover {
-    background: var(--night-2);
-    border-color: var(--marigold);
-    color: var(--white);
-  }
-  .motion-toggle:focus-visible {
-    outline: 3px solid var(--marigold);
-    outline-offset: 2px;
-  }
-  .mt-icon {
-    width: 10px;
-    height: 12px;
-    border-left: 3px solid currentColor;
-    border-right: 3px solid currentColor;
-  }
-  .motion-toggle[data-paused="true"] .mt-icon {
-    width: 0;
-    height: 0;
-    border-right: 0;
-    border-left: 10px solid currentColor;
-    border-top: 6px solid transparent;
-    border-bottom: 6px solid transparent;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .motion-toggle {
-      display: none;
-    }
-  }
   .preview-bar {
-    background: var(--night);
-    color: var(--on-night-2);
+    background: var(--deep);
+    color: var(--text-2);
     padding-block: 0.55rem;
     font-size: var(--text-label);
   }
