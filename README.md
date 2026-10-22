@@ -67,15 +67,16 @@ docs/             PRD, implementation plan, owner guide
 
 ## Deploying
 
-**Prototype preview:** follow [docs/DEPLOY.md](docs/DEPLOY.md) to put it on Railway or Fly.io. Both use the included
-`Dockerfile` (`railway.json` and `fly.toml` are already set up).
+**Live site:** <https://bharatgoradia.org>, on Cloudflare Workers. Every push to `claude/sleepy-cray-cohvcw`
+redeploys it, and enquiries are stored in Cloudflare D1. See [docs/DEPLOY.md](docs/DEPLOY.md) for how it is set up,
+and for running it on Railway or Fly.io instead (both use the included `Dockerfile`).
 
 For a production launch on any host:
 
 1. Set the environment variables in `.env.example`, especially `SITE_URL` (the public address).
 2. Build with `SITE_MODE=launch`. The build stops while anything in `npm run check:content` blocks launch.
-3. Mount persistent storage at `/data` (the enquiry database) and back it up.
-4. Schedule `node scripts/enquiry-maintenance.ts` every 15 minutes.
+3. On Railway or Fly, mount persistent storage at `/data` (the enquiry database), back it up, and schedule
+   `node scripts/enquiry-maintenance.ts` every 15 minutes. Cloudflare covers both with D1 and its cron trigger.
 
-The hosting, email provider, analytics and domain are still open decisions in the PRD. The code keeps each
-behind a small interface so the choice can be made later.
+Hosting (Cloudflare) and the domain (bharatgoradia.org) are chosen. The email provider and analytics are still
+open decisions in the PRD. The code keeps each behind a small interface so the choice can be made later.

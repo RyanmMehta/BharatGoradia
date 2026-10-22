@@ -1,88 +1,58 @@
-# Putting the prototype online
+# Putting the site online
 
-The repository includes a `Dockerfile` that Railway and Fly.io both use. It builds the site in **prototype mode**:
-placeholders are labelled and search engines are told not to index it. The content editor is not included in
-the online version. Content is edited locally or through the GitHub editor once that is set up.
+The live site is **https://bharatgoradia.org**, hosted on **Cloudflare Workers**. Cloudflare holds everything in
+one place: the domain, DNS, the website and the enquiry database.
 
 The code is on the branch **`claude/sleepy-cray-cohvcw`**. There is no `main` branch yet, so pick that branch
 wherever a host asks.
 
-Check each host's current pricing before you start. Plans and free allowances change often.
+The site runs in **prototype mode**: placeholders are labelled and search engines are told not to index it.
+Keep `SITE_MODE` unset (prototype) until `npm run check:content` reports no launch blockers.
 
-## Cloudflare Workers (moving here: https://bharatgoradia.org)
+## Cloudflare Workers (live: https://bharatgoradia.org)
 
-Everything in one place: the domain, DNS, the website and the enquiry database. Cloudflare builds the site from
-GitHub on every push, the same way Vercel does.
+- **Automatic deploys:** the Worker `bharat-goradia` is connected to `RyanmMehta/BharatGoradia`. Every push to
+  `claude/sleepy-cray-cohvcw` builds (`npm run build`) and deploys (`npx wrangler deploy`). Pushes to other
+  branches build a preview version instead. Build logs: **Workers & Pages → bharat-goradia → Deployments**.
+- **Domains:** `bharatgoradia.org` and `www.bharatgoradia.org` are custom domains on the Worker. Cloudflare
+  manages their DNS records and certificates, so there are no records to edit by hand. Both addresses serve the
+  site; canonical links and the sitemap use `https://bharatgoradia.org`.
+- **Test address:** `https://bharat-goradia.rm6886.workers.dev`.
+- **Enquiries:** the contact form runs in the Worker and stores enquiries in the D1 database
+  `bharat-goradia-enquiries`, so they are kept permanently. The table is created on the first enquiry.
+- **Cron trigger:** every 15 minutes the Worker retries undelivered notification emails and deletes enquiries
+  older than 90 days.
 
-What is already set up in the code:
+What is set up in the code:
 
-- `wrangler.jsonc`: the Worker (`bharat-goradia`), the D1 database for enquiries (`bharat-goradia-enquiries`,
-  already created, table included) and a cron trigger every 15 minutes that retries undelivered notification
-  emails and deletes enquiries older than 90 days.
+- `wrangler.jsonc`: the Worker name, the D1 binding (`DB`) and the cron trigger.
 - `astro.config.mjs` switches to Cloudflare's adapter when Cloudflare builds it (`WORKERS_CI=1`). Pages are
-  static files; the contact form runs in the Worker and stores enquiries in D1, so they are kept permanently
-  (unlike Vercel's temporary storage).
+  static files served by the Worker.
 - To try the Cloudflare version locally: `DEPLOY_TARGET=cloudflare npm run build`, then
   `npx wrangler dev --config dist/server/wrangler.json`.
+- To deploy by hand (normally not needed): `DEPLOY_TARGET=cloudflare npm run build`, then `npx wrangler deploy`.
 
-Steps in the Cloudflare dashboard:
-
-1. **Workers & Pages → Create → Import a repository.** Connect GitHub (this is the one time Cloudflare needs
-   GitHub access) and pick `RyanmMehta/BharatGoradia`.
-2. Settings on the next screen:
-   - Project name: `bharat-goradia` (must match `name` in `wrangler.jsonc`)
-   - Build command: `npm run build`
-   - Deploy command: `npx wrangler deploy`
-   - Under advanced settings, set the production branch to `claude/sleepy-cray-cohvcw`.
-3. Deploy, and check the site on the `bharat-goradia.<account>.workers.dev` address Cloudflare shows.
-4. Move the domain:
-   - In **Vercel → Settings → Domains**, remove `bharatgoradia.org` and `www.bharatgoradia.org`.
-   - In **Cloudflare → bharatgoradia.org → DNS → Records**, delete the A record (`216.198.79.1`) and the CNAME
-     (`…vercel-dns-017.com`) that pointed at Vercel.
-   - In **Workers & Pages → bharat-goradia → Settings → Domains & Routes → Add → Custom domain**, add
-     `bharatgoradia.org`, then `www.bharatgoradia.org`. Cloudflare creates the DNS records and the certificate.
-5. Email notifications (optional until real visitors use the form): under the Worker's
-   **Settings → Variables and Secrets**, add `NOTIFY_PROVIDER=resend`, `NOTIFY_FROM`, `NOTIFY_TO`,
-   `NOTIFY_BACKUP_TO`, and `RESEND_API_KEY` as a **Secret**. Without them, enquiries are still saved in D1 and
-   notifications are only written to the Worker's logs.
-6. Once the Cloudflare site is confirmed working, delete the Vercel project.
+Email notifications (optional until real visitors use the form): under the Worker's
+**Settings → Variables and Secrets**, add `NOTIFY_PROVIDER=resend`, `NOTIFY_FROM`, `NOTIFY_TO`,
+`NOTIFY_BACKUP_TO`, and `RESEND_API_KEY` as a **Secret**. Without them, enquiries are still saved in D1 and
+notifications are only written to the Worker's logs.
 
 To read enquiries: **Storage & Databases → D1 → bharat-goradia-enquiries → Console**, then run
 `SELECT created_at, name, email, phone, message, delivery_state FROM enquiries ORDER BY created_at DESC;`
 
 ## Vercel (previous host: https://bharat-goradia.vercel.app)
 
-Vercel builds the site automatically. When it builds, the site switches to Vercel's adapter: pages are
-served as static files, and the contact form runs as a serverless function.
+The site was on Vercel until October 2026. `bharatgoradia.org` and `www.bharatgoradia.org` have been removed
+from the Vercel project and now point to Cloudflare. The Vercel project still builds on every push until it is
+deleted (**Settings → Advanced → Delete Project**). Its contact form never kept enquiries, because Vercel
+functions only have temporary storage.
 
-- **Production branch:** `claude/sleepy-cray-cohvcw`. Every push to it redeploys.
-- **Contact form storage:** Vercel functions can only write to temporary storage, so form messages on Vercel
-  are **not kept** between requests or redeploys. That is fine for trying out the form. Before real visitors
-  use it, connect a hosted database (for example Turso or Vercel Postgres) or switch to Railway/Fly with a volume.
-- **Email notifications:** add `NOTIFY_PROVIDER=resend`, `RESEND_API_KEY`, `NOTIFY_FROM`, `NOTIFY_TO` and
-  `NOTIFY_BACKUP_TO` under **Settings → Environment Variables**, then redeploy.
-- Keep `SITE_MODE` unset (prototype) until `npm run check:content` reports no launch blockers.
+## Other hosts
 
-### Custom domain: bharatgoradia.org (registered with Cloudflare)
+The repository also includes a `Dockerfile` that Railway and Fly.io both use, in case the site ever needs to
+run somewhere other than Cloudflare. Check each host's current pricing before you start.
 
-1. Vercel → the project → **Settings → Domains** → add `bharatgoradia.org`, then add `www.bharatgoradia.org`
-   and choose to redirect it to `bharatgoradia.org`.
-2. Vercel lists the DNS records it needs. In Cloudflare → `bharatgoradia.org` → **DNS → Records**, add exactly
-   those records, typically:
-   - `A` record, name `@`, value as shown by Vercel (for example `76.76.21.21`)
-   - `CNAME` record, name `www`, value as shown by Vercel (for example `cname.vercel-dns.com`)
-3. Set **Proxy status to "DNS only"** (grey cloud) on both records. Vercel issues the HTTPS certificate itself.
-   An orange cloud (Cloudflare proxy) can cause certificate errors or redirect loops.
-4. Wait until Vercel shows both domains as "Valid Configuration". This usually takes minutes, occasionally
-   up to a few hours.
-5. Optional: under **Settings → Domains**, redirect `bharat-goradia.vercel.app` to `bharatgoradia.org` so
-   there is only one public address.
-
-Canonical links and the sitemap use `VERCEL_PROJECT_PRODUCTION_URL`, which Vercel switches to the custom domain
-automatically once it is added, so no code change is needed. Setting `SITE_URL=https://bharatgoradia.org` under
-Environment Variables pins it explicitly.
-
-## Option A: Railway (everything in the browser)
+### Option A: Railway (everything in the browser)
 
 1. Go to <https://railway.com> and sign in with GitHub.
 2. Choose **New Project → Deploy from GitHub repo** and pick **RyanmMehta/BharatGoradia**.
@@ -97,7 +67,7 @@ Environment Variables pins it explicitly.
 
 From then on, every push to the branch redeploys automatically.
 
-## Option B: Fly.io (uses a command-line tool)
+### Option B: Fly.io (uses a command-line tool)
 
 1. Install flyctl: <https://fly.io/docs/flyctl/install/>, then run `fly auth login`. Fly asks for a card when you sign up.
 2. Get the code:
@@ -122,7 +92,7 @@ From then on, every push to the branch redeploys automatically.
 The machine stops when nobody is visiting and starts again on the next visit, so the first page load after a
 quiet spell takes a few seconds.
 
-## After it is online
+### After it is online (Railway or Fly)
 
 - Contact-form messages are stored on the server, but nobody is emailed until an email provider is set up.
   To set one up, add `NOTIFY_PROVIDER=resend`, `RESEND_API_KEY`, `NOTIFY_FROM`, `NOTIFY_TO` and
