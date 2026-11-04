@@ -3,9 +3,10 @@
 //   SITE_MODE=launch npm run build   runs this first and stops the build if anything blocks launch
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const launch = process.env.SITE_MODE === 'launch' || process.argv.includes('--launch');
-const root = new URL('..', import.meta.url).pathname;
+const root = fileURLToPath(new URL('..', import.meta.url));
 const read = (p) => JSON.parse(readFileSync(join(root, p), 'utf8'));
 const collection = (name) => {
   const dir = join(root, 'src/content', name);
